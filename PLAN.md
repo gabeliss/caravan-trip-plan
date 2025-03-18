@@ -5,6 +5,7 @@ Tech Stack:
 - TailwindCSS
 - ShadCN
 - Supabase (for db, storage, authentication)
+- Vercel
 
 Color scheme:
 :root {
