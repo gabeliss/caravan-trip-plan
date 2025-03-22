@@ -51,10 +51,59 @@ export default function Home() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="text-lg bg-transparent border-white text-white hover:bg-white hover:text-primary">
-              <Link href="/about">
-                Learn More
+              <Link href="/build-trip">
+                Build Your Trip
               </Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Build Your Trip Section */}
+      <section className="py-16 px-4 bg-white">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1">
+              <h2 className="text-3xl font-bold text-primary mb-4">Create Your Perfect Trip</h2>
+              <p className="text-lg text-muted-foreground mb-6">
+                Not sure which trip is right for you? Build your own custom camping adventure by selecting your preferred campgrounds, trip length, and destinations.
+              </p>
+              <ul className="mb-6 space-y-2">
+                <li className="flex items-center gap-2">
+                  <div className="rounded-full bg-primary/10 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <span>Choose from our database of vetted campgrounds</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="rounded-full bg-primary/10 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <span>Specify your ideal trip length</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="rounded-full bg-primary/10 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <span>Get a personalized route with recommendations</span>
+                </li>
+              </ul>
+              <Button asChild size="lg" className="text-lg">
+                <Link href="/build-trip">
+                  Start Building Your Trip
+                </Link>
+              </Button>
+            </div>
+            <div className="flex-1">
+              <div className="relative rounded-lg overflow-hidden shadow-lg h-80">
+                <Image
+                  src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                  alt="Custom trip planning"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
