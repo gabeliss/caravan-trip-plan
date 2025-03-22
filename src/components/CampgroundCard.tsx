@@ -62,18 +62,18 @@ const CampgroundCard = ({ campground }: CampgroundCardProps) => {
         </Card>
       </DialogTrigger>
       
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">{campground.title}</DialogTitle>
         </DialogHeader>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <Carousel className="w-full">
+            <Carousel className="w-full relative mb-8">
               <CarouselContent>
                 {campground.imageUrls.map((url, index) => (
                   <CarouselItem key={index}>
-                    <div className="relative h-64 w-full">
+                    <div className="relative h-56 w-full">
                       <Image
                         src={url}
                         alt={`${campground.title} - Image ${index + 1}`}
@@ -84,8 +84,10 @@ const CampgroundCard = ({ campground }: CampgroundCardProps) => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
+              <div className="absolute inset-0 flex items-center justify-between pointer-events-none px-2">
+                <CarouselPrevious className="pointer-events-auto relative left-0 h-8 w-8 bg-white/80 shadow-md rounded-full opacity-80 hover:opacity-100" />
+                <CarouselNext className="pointer-events-auto relative right-0 h-8 w-8 bg-white/80 shadow-md rounded-full opacity-80 hover:opacity-100" />
+              </div>
             </Carousel>
             
             <div className="mt-6">
