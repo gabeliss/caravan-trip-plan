@@ -136,3 +136,16 @@ npm run dev
     │   └── types.ts      # TypeScript type definitions
     └── package.json      # Node dependencies and scripts
 ```
+
+## Deploying to Vercel
+
+This project is configured for easy deployment on Vercel:
+
+1. Fork or clone this repository to your GitHub account
+2. Connect your GitHub repository to Vercel
+3. Configure the following environment variables in the Vercel dashboard:
+   - `VITE_API_URL`: URL to your backend API (e.g., https://your-backend-api.com/api)
+   - `VITE_MAPBOX_TOKEN`: Your Mapbox API token
+   - `VITE_STRIPE_PUBLIC_KEY`: Your Stripe public key
+
+Note: The backend is not included in the Vercel deployment. You'll need to deploy the backend separately.
