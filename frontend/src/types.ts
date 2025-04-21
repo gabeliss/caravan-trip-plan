@@ -218,5 +218,6 @@ export interface ItineraryPlan {
     startDate: Date;
     endDate: Date;
     nights: number;
+    campgrounds?: Campground[];
   }[];
 }

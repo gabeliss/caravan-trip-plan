@@ -78,13 +78,13 @@ export const fetchCityAvailability = async (
 };
 
 /**
- * Generates a trip plan and fetches availability for all stops
+ * Generates a trip plan without pre-fetching availability for all campgrounds
  * @param destinationId ID of the destination
  * @param nights Total number of nights
  * @param startDate Starting date of the trip
  * @param numAdults Number of adults
  * @param numKids Number of kids
- * @returns Promise with trip plan and availability data
+ * @returns Promise with trip plan structure
  */
 export const generateTripWithAvailability = async (
   destinationId: string,
@@ -136,6 +136,8 @@ export const generateTripWithAvailability = async (
       })
     };
     
+    // Return the plan and the raw data
+    // Availability data is no longer pre-fetched by the backend
     return {
       plan,
       availability: tripPlanData.stops

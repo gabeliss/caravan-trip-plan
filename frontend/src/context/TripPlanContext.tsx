@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { ItineraryPlan } from '../types';
-import { generateTripPlan } from '../utils/tripPlanGenerator';
 import tripService from '../services/tripService';
 
 interface TripPlanContextType {
@@ -51,7 +50,7 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
     try {
       console.log(`Generating plan for destination: ${destinationId}, nights: ${nights} (type: ${typeof nights})`);
       
-      // Generate trip plan with availability data
+      // Generate trip plan - availability will be fetched lazily by individual components
       const result = await tripService.generateTripWithAvailability(
         destinationId,
         nights,
@@ -62,6 +61,8 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
       
       setTripPlan(result.plan);
       setAvailabilityData(result.availability);
+      
+      console.log('Trip plan generated successfully - availability will be fetched by campground cards as needed');
     } catch (err: any) {
       const errorMessage = err?.message || 'Failed to generate trip plan. Please try again.';
       setError(errorMessage);

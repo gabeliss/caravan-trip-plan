@@ -422,7 +422,7 @@ def check_availability():
 
 @app.route('/api/trip-plan', methods=['POST'])
 def generate_trip_plan():
-    """Generate a trip plan with availability data for a specific itinerary"""
+    """Generate a trip plan structure for a specific itinerary without checking availability"""
     data = request.json
     if not data:
         return jsonify({"error": "No data provided"}), 400
@@ -488,15 +488,14 @@ def generate_trip_plan():
             # Update current date for next stop
             current_date = stop_end_date
         
-        # For each stop, get campgrounds and their availability
-        stops_with_availability = []
+        # For each stop, just get the campgrounds without checking availability
+        stops_with_campgrounds = []
         
         for stop in detailed_itinerary:
             # Get campgrounds for this city
             city_id = stop['city']
             print(f"Processing city: {city_id}")
             
-            # This will reuse our existing endpoint
             # In a real app, we might want to make this more efficient
             try:
                 with app.test_client() as client:
@@ -511,42 +510,16 @@ def generate_trip_plan():
                 print(f"Exception while getting campgrounds for {city_id}: {str(e)}")
                 campgrounds = []
             
-            # For each campground, check availability
-            campgrounds_with_availability = []
-            
-            for campground in campgrounds:
-                # Call our availability endpoint
-                availability_data = {
-                    "campgroundId": campground['id'],
-                    "startDate": stop['startDate'],
-                    "endDate": stop['endDate'],
-                    "numAdults": num_adults,
-                    "numKids": num_kids
-                }
-                
-                with app.test_client() as client:
-                    availability_response = client.post(
-                        "/api/availability",
-                        json=availability_data
-                    )
-                    availability = availability_response.json
-                    print(f"Availability data: {availability_data}")
-                    print(f"Availability response: {availability}")
-                
-                # Add availability to campground
-                campground['availability'] = availability
-                campgrounds_with_availability.append(campground)
-            
-            # Add campgrounds to the stop
-            stop['campgrounds'] = campgrounds_with_availability
-            stops_with_availability.append(stop)
+            # Don't check availability - just add campgrounds to the stop
+            stop['campgrounds'] = campgrounds
+            stops_with_campgrounds.append(stop)
         
-        # Return the complete trip plan with availability
+        # Return the trip plan without availability data
         response = {
             "destinationId": destination_id,
             "totalNights": nights,
             "startDate": start_date_str,
-            "stops": stops_with_availability,
+            "stops": stops_with_campgrounds,
             "timestamp": datetime.now().isoformat()
         }
         

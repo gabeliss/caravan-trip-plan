@@ -188,14 +188,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
             details: detailedData.cancellationPolicy
           },
           maxGuests: parseInt(detailedData.guidelines?.match(/(\d+)\s+Guests/i)?.[1] || '6'),
-          taxRate: detailedData.taxRate || campground.taxRate || 0.06,
-          availability: campground.availability || {
-            available: detailedData.message !== "Unavailable",
-            price: campground.price || 37,
-            message: detailedData.message !== "Unavailable" 
-              ? `$${campground.price || 35} per night` 
-              : "Not available for selected dates"
-          }
+          taxRate: detailedData.taxRate || campground.taxRate || 0.06
         };
       }
       
@@ -283,29 +276,40 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       
       if (stopAvailability && stopAvailability.campgrounds) {
         // Transform the campground data to match the expected format and enhance with detailed data
-        const transformedCampgrounds = stopAvailability.campgrounds.map((campground: any) => ({
-          ...campground,
-          rating: campground.rating || 4 + Math.random(),
-          amenities: campground.amenities || ['WiFi', 'Showers', 'Toilets', 'Fire pit'],
-          images: campground.images || [
-            { url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4', alt: 'Campsite' },
-            { url: 'https://images.unsplash.com/photo-1532339142463-fd0a8979791a', alt: 'Campsite view' }
-          ],
-          imageUrl: campground.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4',
-          address: campground.address || `${currentStay.location}, MI`,
-          providers: campground.providers || [
-            {
-              id: 'direct',
-              name: 'Direct Booking',
-              type: 'direct' as 'direct' | 'external'
+        const transformedCampgrounds = stopAvailability.campgrounds.map((campground: any) => {
+          // If the campground already has availability data from the API, preserve it,
+          // otherwise let each CampgroundCard component fetch its own data
+          const campgroundData = {
+            ...campground,
+            rating: campground.rating || 4 + Math.random(),
+            amenities: campground.amenities || ['WiFi', 'Showers', 'Toilets', 'Fire pit'],
+            images: campground.images || [
+              { url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4', alt: 'Campsite' },
+              { url: 'https://images.unsplash.com/photo-1532339142463-fd0a8979791a', alt: 'Campsite view' }
+            ],
+            imageUrl: campground.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4',
+            address: campground.address || `${currentStay.location}, MI`,
+            providers: campground.providers || [
+              {
+                id: 'direct',
+                name: 'Direct Booking',
+                type: 'direct' as 'direct' | 'external'
+              }
+            ],
+            siteTypes: campground.siteTypes || {
+              tent: true,
+              rv: true,
+              glamping: false
             }
-          ],
-          siteTypes: campground.siteTypes || {
-            tent: true,
-            rv: true,
-            glamping: false
+          };
+
+          // If availability comes from a real API response (not default), preserve it
+          if (campground.availability?.timestamp) {
+            campgroundData.availability = campground.availability;
           }
-        }));
+
+          return campgroundData;
+        });
         
         // Enhance campgrounds with detailed data from the JSON file
         const enhancedCampgrounds = enhanceCampgroundsWithData(transformedCampgrounds, cityName);
@@ -322,104 +326,51 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     }
   }, [availabilityData, selectedDay]);
 
-  // Original fetchCampgrounds function as a fallback
+  // Update the fetchCampgrounds function - no initial availability checks are needed
   const fetchCampgrounds = async () => {
+    if (!tripPlan) return;
+    
+    setLoading(true);
+    
     try {
-      setLoading(true);
-      
-      // Get the current location based on the selected day
-      const currentStay = getLocationStays().find(stay => 
-        selectedDay >= stay.startNight && selectedDay <= stay.endNight
-      );
-      
-      if (!currentStay) {
-        console.warn('No stay found for selected day:', selectedDay);
-        setLoading(false);
+      const currentStop = tripPlan.stops[selectedDay - 1];
+      if (!currentStop) {
         setCampgrounds([]);
+        setLoading(false);
         return;
       }
       
-      // Get the scraper ID for the current location from tripItineraries
-      const itinerary = tripItineraries[destination.id];
-      const location = currentStay.location;
-      const scraperId = itinerary?.cityScraperIds[location] || destination.id;
+      // Get campgrounds from the tripPlan if available
+      const cityId = currentStop.scraperId || currentStop.city.toLowerCase().replace(/\s+/g, '-');
+      const stopData = tripPlan.stops[selectedDay - 1];
       
-      const data = await apiService.getCampgrounds(scraperId);
-      console.log(`Campgrounds data: ${JSON.stringify(data)}`);
-      
-      if (!data || data.length === 0) {
-        console.warn(`No campgrounds found for location: ${location} (scraper ID: ${scraperId})`);
-        setLoading(false);
-        setCampgrounds([]);
-        return;
-      }
-      
-      // Map campgrounds to enhanced objects with fallback values
-      const transformedCampgrounds = data.map(campground => {
-        // Try to get availability data for this campground
-        let availability = { available: true, price: campground.price, message: 'Default pricing' };
+      if (stopData && stopData.campgrounds && stopData.campgrounds.length > 0) {
+        // Use the campgrounds from the trip plan
+        console.log(`Using ${stopData.campgrounds.length} campgrounds from trip plan for ${cityId}`);
         
-        // Add additional frontend-specific fields
-        return {
-          ...campground,
-          rating: campground.rating || 4 + Math.random(),
-          amenities: campground.amenities || ['WiFi', 'Showers', 'Toilets', 'Fire pit'],
-          images: campground.images || [
-            { url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4', alt: 'Campsite' },
-            { url: 'https://images.unsplash.com/photo-1532339142463-fd0a8979791a', alt: 'Campsite view' }
-          ],
-          imageUrl: campground.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4',
-          address: campground.address || `${location}, MI`,
-          distanceToTown: campground.distanceToTown || `5 miles to ${location}`,
-          season: campground.season || {
-            start: 'April',
-            end: 'October'
-          },
-          checkIn: campground.checkIn || {
-            time: '3:00 PM',
-            lateArrival: 'Call ahead',
-            checkout: '11:00 AM',
-            lateFees: '$10 per hour'
-          },
-          siteGuidelines: campground.siteGuidelines || {
-            maxGuests: 6,
-            maxVehicles: 2,
-            quietHours: '10:00 PM - 7:00 AM',
-            petRules: 'Dogs allowed on leash',
-            ageRestrictions: 'None'
-          },
-          cancellationPolicy: campground.cancellationPolicy || {
-            fullRefund: '7+ days before arrival',
-            partialRefund: '3-6 days before arrival',
-            noRefund: 'Less than 3 days before arrival',
-            modifications: 'Subject to availability',
-            weatherPolicy: 'No refunds for weather'
-          },
-          maxGuests: campground.maxGuests || 6,
-          taxRate: campground.taxRate || 0.06,
-          providers: campground.providers || [
-            {
-              id: 'direct',
-              name: 'Direct Booking',
-              type: 'direct' as 'direct' | 'external'
-            }
-          ],
-          nearbyAttractions: campground.nearbyAttractions || ['Downtown', 'Beach', 'Hiking trails'],
-          siteTypes: campground.siteTypes || {
-            tent: true,
-            rv: true,
-            glamping: false
-          },
-          availability
-        };
-      });
-      
-      // Enhance campgrounds with detailed data from the JSON file
-      const enhancedCampgrounds = enhanceCampgroundsWithData(transformedCampgrounds, location);
-      
-      setCampgrounds(enhancedCampgrounds);
+        // Enhance campgrounds with additional data
+        const enhancedCampgrounds = enhanceCampgroundsWithData(
+          stopData.campgrounds,
+          currentStop.city
+        );
+        
+        setCampgrounds(enhancedCampgrounds);
+      } else {
+        // Fetch campgrounds if not available in the trip plan
+        console.log(`Fetching campgrounds for ${cityId}`);
+        const fetchedCampgrounds = await apiService.getCampgrounds(cityId);
+        
+        // Enhance campgrounds with additional data
+        const enhancedCampgrounds = enhanceCampgroundsWithData(
+          fetchedCampgrounds,
+          currentStop.city
+        );
+        
+        setCampgrounds(enhancedCampgrounds);
+      }
     } catch (error) {
       console.error('Error fetching campgrounds:', error);
+      setCampgrounds([]);
     } finally {
       setLoading(false);
     }
@@ -685,11 +636,55 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <div>
-              <CampgroundList 
-                campgrounds={campgrounds} 
-                onSelect={handleCampgroundSelect} 
-                loading={loading} 
-              />
+              {/* Get the current stay based on selected day */}
+              {(() => {
+                const currentStay = getLocationStays().find(stay => 
+                  selectedDay >= stay.startNight && selectedDay <= stay.endNight
+                );
+                
+                // Calculate the start and end dates for this stay
+                let stayStartDate = undefined;
+                let stayEndDate = undefined;
+                
+                if (currentStay && tripPlan) {
+                  console.log("Current stay:", currentStay);
+                  console.log("Trip plan:", tripPlan);
+                  
+                  const tripStop = tripPlan.stops.find(stop => 
+                    stop.city.toLowerCase().replace(/\s+/g, '-') === currentStay.location.toLowerCase()
+                  );
+                  
+                  if (tripStop) {
+                    console.log("Found matching trip stop:", tripStop);
+                    stayStartDate = tripStop.startDate;
+                    stayEndDate = tripStop.endDate;
+                    console.log("Using dates from trip stop:", stayStartDate, stayEndDate);
+                  } else if (duration.startDate) {
+                    // Fallback if we can't find the exact trip stop
+                    console.log("No matching trip stop found, using fallback date calculation");
+                    stayStartDate = new Date(duration.startDate);
+                    stayStartDate.setDate(stayStartDate.getDate() + currentStay.startNight - 1);
+                    
+                    stayEndDate = new Date(stayStartDate);
+                    stayEndDate.setDate(stayEndDate.getDate() + (currentStay.endNight - currentStay.startNight + 1));
+                    console.log("Calculated fallback dates:", stayStartDate, stayEndDate);
+                  }
+                } else {
+                  console.log("No current stay or trip plan found");
+                  console.log("Current day:", selectedDay);
+                  console.log("Location stays:", getLocationStays());
+                }
+                
+                return (
+                  <CampgroundList 
+                    campgrounds={campgrounds} 
+                    onSelect={handleCampgroundSelect} 
+                    loading={loading}
+                    tripStartDate={stayStartDate}
+                    tripEndDate={stayEndDate}
+                  />
+                );
+              })()}
             </div>
           </div>
 

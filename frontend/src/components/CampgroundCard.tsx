@@ -25,7 +25,8 @@ import {
   Waves,
   ShieldAlert,
   SunIcon,
-  ThermometerSun
+  ThermometerSun,
+  RefreshCw
 } from 'lucide-react';
 import { Campground } from '../types';
 import apiService from '../services/apiService';
@@ -34,40 +35,62 @@ import { format, addDays } from 'date-fns';
 interface CampgroundCardProps {
   campground: Campground;
   onSelect: (campground: Campground, accommodationType: string) => void;
+  tripStartDate?: Date;  // Add trip start date
+  tripEndDate?: Date;    // Add trip end date
 }
 
 export const CampgroundCard: React.FC<CampgroundCardProps> = ({
   campground,
-  onSelect
+  onSelect,
+  tripStartDate,
+  tripEndDate
 }) => {
   const [selectedAccommodationType, setSelectedAccommodationType] = useState<string>('tent');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [availability, setAvailability] = useState<{
     available: boolean;
     price: number | null;
     message: string;
-  } | null>(campground.availability || null);
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  // Use availability from the campground object if it exists
+  // Update the useEffect to make the component more eager to check availability
   React.useEffect(() => {
-    if (campground.availability) {
-      setAvailability(campground.availability);
-    } else {
+    // Always check availability when component mounts or when trip dates/campground changes
+    console.log(`Checking availability for ${campground.name} when component mounts or trip dates change`);
+    checkAvailability();
+  }, [campground.id, tripStartDate, tripEndDate]);
+
+  // When accommodation type changes, re-check availability
+  React.useEffect(() => {
+    if (!isInitialLoad) { // Skip on initial load as the first useEffect will handle it
+      console.log(`Accommodation type changed to ${selectedAccommodationType}, re-checking availability`);
       checkAvailability();
     }
-  }, [campground.id, campground.availability]);
+  }, [selectedAccommodationType]);
 
   const checkAvailability = async () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // Get current date and end date (3 days later)
-      const today = new Date();
-      const startDate = format(today, 'MM/dd/yy');
-      const endDate = format(addDays(today, 3), 'MM/dd/yy');
+      // Use trip dates if provided, otherwise use current date + 3 days
+      let startDate: string;
+      let endDate: string;
+      
+      if (tripStartDate && tripEndDate) {
+        startDate = format(tripStartDate, 'MM/dd/yy');
+        endDate = format(tripEndDate, 'MM/dd/yy');
+      } else {
+        // Fallback to default behavior
+        const today = new Date();
+        startDate = format(today, 'MM/dd/yy');
+        endDate = format(addDays(today, 3), 'MM/dd/yy');
+      }
+      
+      console.log(`Fetching availability for ${campground.name} from ${startDate} to ${endDate}`);
       
       const result = await apiService.checkAvailability(
         campground.id,
@@ -82,19 +105,21 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
         throw new Error(result.error);
       }
       
+      console.log(`Received availability result for ${campground.name}:`, result);
       setAvailability(result);
     } catch (error) {
-      console.error('Error checking availability:', error);
+      console.error(`Error checking availability for ${campground.name}:`, error);
       setError('Failed to check availability');
       
-      // Set fallback availability with the default price from the campground
+      // Instead of using default pricing, use a more informative message
       setAvailability({
         available: true,
         price: campground.price,
-        message: 'Using default pricing'
+        message: 'Estimated price - availability unconfirmed'
       });
     } finally {
       setIsLoading(false);
+      setIsInitialLoad(false); // No longer the initial load after first API call
     }
   };
 
@@ -166,6 +191,66 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
     return `${campground.cancellationPolicy.fullRefund} for full refund. 
             ${campground.cancellationPolicy.partialRefund} for partial refund. 
             ${campground.cancellationPolicy.noRefund} for no refund.`;
+  };
+
+  const renderFooter = () => {
+    const hasAvailability = availability && (availability.available !== undefined);
+    const isUnavailable = hasAvailability && availability && availability.available === false;
+    
+    return (
+      <div className="rounded-b-lg mt-4 flex flex-col gap-2">
+        <div className="flex justify-between items-center">
+          <div className="flex flex-col">
+            {isLoading ? (
+              <div className="flex items-center">
+                <RefreshCw size={16} className="animate-spin text-primary-dark mr-2" />
+                <span className="text-sm text-gray-600">Checking availability...</span>
+              </div>
+            ) : error ? (
+              <div className="text-sm text-red-500 flex items-center">
+                <AlertTriangle size={16} className="mr-1" />
+                {error}
+              </div>
+            ) : hasAvailability ? (
+              <>
+                <div className="flex items-center">
+                  {availability && availability.available ? (
+                    <>
+                      <CheckCircle2 size={16} className="text-emerald-500 mr-1" />
+                      <span className="text-sm font-medium text-emerald-600">Available</span>
+                    </>
+                  ) : (
+                    <>
+                      <AlertTriangle size={16} className="text-amber-500 mr-1" />
+                      <span className="text-sm font-medium text-amber-600">Not Available</span>
+                    </>
+                  )}
+                </div>
+                <span className="text-sm text-gray-600 mt-1">
+                  {availability?.message || ''}
+                </span>
+              </>
+            ) : (
+              <div className="text-sm text-gray-500">
+                Select dates to check availability
+              </div>
+            )}
+          </div>
+          
+          <button
+            className={`py-2 px-4 rounded font-medium transition-colors duration-200 ${
+              isLoading || isUnavailable 
+                ? 'bg-gray-400 text-gray-100 cursor-not-allowed' 
+                : 'bg-primary hover:bg-primary-dark text-beige'
+            }`}
+            onClick={isLoading || isUnavailable ? undefined : handleSelect}
+            type="button"
+          >
+            {isLoading ? 'Checking...' : isUnavailable ? 'Unavailable' : 'Select'}
+          </button>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -348,45 +433,7 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
           </div>
 
           {/* Price & Availability */}
-          <div className="flex justify-between items-center mt-4 border-t pt-4">
-            <div>
-              {isLoading ? (
-                <p className="text-sm text-gray-500">Checking availability...</p>
-              ) : error ? (
-                <p className="text-sm text-red-500">{error}</p>
-              ) : availability ? (
-                <>
-                  <div className="flex items-center gap-1">
-                    {availability.available ? (
-                      <CheckCircle2 size={16} className="text-green-500" />
-                    ) : (
-                      <AlertTriangle size={16} className="text-amber-500" />
-                    )}
-                    <p className="text-lg font-semibold">
-                      {availability.available 
-                        ? `$${availability.price || campground.price}/night` 
-                        : 'Not available'}
-                    </p>
-                  </div>
-                  <p className="text-xs text-gray-500">{availability.message}</p>
-                </>
-              ) : (
-                <p className="text-lg font-semibold">${campground.price}/night</p>
-              )}
-            </div>
-            
-            <button
-              onClick={handleSelect}
-              disabled={isLoading || (availability ? !availability.available : false)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                isLoading || (availability && availability.available === false)
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-primary-dark text-white hover:bg-primary-dark/90'
-              }`}
-            >
-              {availability && availability.available === false ? 'Unavailable' : 'Select'}
-            </button>
-          </div>
+          {renderFooter()}
         </div>
       </div>
     </motion.div>
