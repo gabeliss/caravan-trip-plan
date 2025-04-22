@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
 from datetime import datetime, timedelta
+import os
 from scrapers.traverse_city import (
     scrape_traverseCityStatePark,
     scrape_traverseCityKoa,
@@ -26,7 +27,12 @@ from scrapers.pictured_rocks import (
 )
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+
+# Configure CORS to allow requests from the frontend
+# In production, you might want to restrict this to your Vercel domain
+# Get allowed origins from environment or use wildcard for development
+FRONTEND_URL = os.environ.get('FRONTEND_URL', '*')
+CORS(app, resources={r"/api/*": {"origins": FRONTEND_URL}})
 
 # Define trip itineraries based on destinations and number of nights
 TRIP_ITINERARIES = {
@@ -529,4 +535,10 @@ def generate_trip_plan():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001) 
+    # Get port from environment variable or use default
+    port = int(os.environ.get('PORT', 5001))
+    # In production, ensure we bind to 0.0.0.0 so the app is accessible
+    host = '0.0.0.0' if os.environ.get('FLASK_ENV') == 'production' else 'localhost'
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    
+    app.run(debug=debug, host=host, port=port) 

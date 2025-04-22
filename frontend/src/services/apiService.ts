@@ -4,6 +4,9 @@ import { Destination, Campground, CampgroundAvailability } from '../types';
 // Get the API URL from environment variables or use default
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
+// Log the API URL for debugging
+console.log('Using API URL:', API_URL);
+
 // Create an axios instance with base URL
 const api = axios.create({
   baseURL: API_URL,

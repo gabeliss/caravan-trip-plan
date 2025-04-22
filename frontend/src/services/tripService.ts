@@ -1,7 +1,10 @@
 import { ItineraryPlan } from '../types';
 import { formatDateForApi } from '../utils/tripPlanGenerator';
 
-const API_BASE_URL = 'http://localhost:5001/api';
+// Get the API URL from environment variables or use default
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
+console.log('Trip service using API URL:', API_BASE_URL);
 
 /**
  * Fetches availability for a specific city and date range
