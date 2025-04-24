@@ -1,0 +1,14 @@
+{
+  "name": "caravan-scrapers",
+  "version": "1.0.0",
+  "description": "AWS Lambda functions for Caravan Trip Planner scrapers",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "deploy:prod": "serverless deploy --stage prod"
+  },
+  "dependencies": {
+    "serverless": "^3.34.0",
+    "serverless-python-requirements": "^6.0.0"
+  }
+} 

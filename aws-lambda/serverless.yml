@@ -1,0 +1,277 @@
+service: caravan-scrapers
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1 # Change to your preferred region
+  timeout: 60 # 60 seconds timeout for scrapers
+  memorySize: 512 # 512MB of memory should be sufficient for most scrapers
+  logRetentionInDays: 14
+
+package:
+  individually: true # Package each function individually
+  patterns:
+    - "!node_modules/**"
+    - "!venv/**"
+    - "!.git/**"
+    - "!.env*"
+    - "!__pycache__/**"
+    - "!*.pyc"
+    - "!scrapers/**" # Exclude all scrapers by default
+    - "!create_lambda_scrapers.py" # Exclude the script file
+    - "!README.md" # Exclude README.md
+    - "!serverless*.yml" # Exclude serverless configuration
+    # Keep package.json and requirements.txt for dependencies
+
+functions:
+  # Traverse City Scrapers
+  scrapeTraverseCityStatePark:
+    handler: scrapers/traverse_city/scrapeTraverseCityStatePark/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/traverse_city/scrapeTraverseCityStatePark/lambda_function.py"
+        - "scrapers/traverse_city/scrapeTraverseCityStatePark/__init__.py"
+        - "scrapers/__init__.py"
+        - "scrapers/midnrReservations/lambda_function.py" # Updated dependency
+        - "scrapers/midnrReservations/__init__.py" # Include midnrReservations __init__
+    events:
+      - http:
+          path: scrapers/traverse-city-state-park
+          method: post
+          cors: true
+
+  scrapeTraverseCityKoa:
+    handler: scrapers/traverse_city/scrapeTraverseCityKoa/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/traverse_city/scrapeTraverseCityKoa/lambda_function.py"
+        - "scrapers/traverse_city/scrapeTraverseCityKoa/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/traverse-city-koa
+          method: post
+          cors: true
+
+  scrapeUncleDuckysPaddlersVillage:
+    handler: scrapers/traverse_city/scrapeUncleDuckysPaddlersVillage/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/traverse_city/scrapeUncleDuckysPaddlersVillage/lambda_function.py"
+        - "scrapers/traverse_city/scrapeUncleDuckysPaddlersVillage/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/uncle-duckys-paddlers-village
+          method: post
+          cors: true
+
+  scrapeAnchorInn:
+    handler: scrapers/traverse_city/scrapeAnchorInn/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/traverse_city/scrapeAnchorInn/lambda_function.py"
+        - "scrapers/traverse_city/scrapeAnchorInn/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/anchor-inn
+          method: post
+          cors: true
+
+  scrapeLeelanauPines:
+    handler: scrapers/traverse_city/scrapeLeelanauPines/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/traverse_city/scrapeLeelanauPines/lambda_function.py"
+        - "scrapers/traverse_city/scrapeLeelanauPines/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/leelanau-pines
+          method: post
+          cors: true
+
+  scrapeTimberRidge:
+    handler: scrapers/traverse_city/scrapeTimberRidge/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/traverse_city/scrapeTimberRidge/lambda_function.py"
+        - "scrapers/traverse_city/scrapeTimberRidge/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/timber-ridge
+          method: post
+          cors: true
+
+  # Mackinac City Scrapers
+  scrapeStIgnaceKoa:
+    handler: scrapers/mackinac_city/scrapeStIgnaceKoa/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/mackinac_city/scrapeStIgnaceKoa/lambda_function.py"
+        - "scrapers/mackinac_city/scrapeStIgnaceKoa/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/st-ignace-koa
+          method: post
+          cors: true
+
+  scrapeIndianRiver:
+    handler: scrapers/mackinac_city/scrapeIndianRiver/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/mackinac_city/scrapeIndianRiver/lambda_function.py"
+        - "scrapers/mackinac_city/scrapeIndianRiver/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/indian-river
+          method: post
+          cors: true
+
+  scrapeStraitsStatePark:
+    handler: scrapers/mackinac_city/scrapeStraitsStatePark/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/mackinac_city/scrapeStraitsStatePark/lambda_function.py"
+        - "scrapers/mackinac_city/scrapeStraitsStatePark/__init__.py"
+        - "scrapers/__init__.py"
+        - "scrapers/midnrReservations/lambda_function.py" # Updated dependency
+        - "scrapers/midnrReservations/__init__.py" # Include midnrReservations __init__
+    events:
+      - http:
+          path: scrapers/straits-state-park
+          method: post
+          cors: true
+
+  scrapeCabinsOfMackinaw:
+    handler: scrapers/mackinac_city/scrapeCabinsOfMackinaw/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/mackinac_city/scrapeCabinsOfMackinaw/lambda_function.py"
+        - "scrapers/mackinac_city/scrapeCabinsOfMackinaw/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/cabins-of-mackinaw
+          method: post
+          cors: true
+
+  scrapeTeePeeCampground:
+    handler: scrapers/mackinac_city/scrapeTeePeeCampground/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/mackinac_city/scrapeTeePeeCampground/lambda_function.py"
+        - "scrapers/mackinac_city/scrapeTeePeeCampground/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/teepee-campground
+          method: post
+          cors: true
+
+  # Pictured Rocks Scrapers
+  scrapeMunisingKoa:
+    handler: scrapers/pictured_rocks/scrapeMunisingKoa/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/pictured_rocks/scrapeMunisingKoa/lambda_function.py"
+        - "scrapers/pictured_rocks/scrapeMunisingKoa/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/munising-koa
+          method: post
+          cors: true
+
+  scrapeTouristPark:
+    handler: scrapers/pictured_rocks/scrapeTouristPark/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/pictured_rocks/scrapeTouristPark/lambda_function.py"
+        - "scrapers/pictured_rocks/scrapeTouristPark/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/tourist-park
+          method: post
+          cors: true
+
+  scrapeUncleDuckysAuTrain:
+    handler: scrapers/pictured_rocks/scrapeUncleDuckysAuTrain/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/pictured_rocks/scrapeUncleDuckysAuTrain/lambda_function.py"
+        - "scrapers/pictured_rocks/scrapeUncleDuckysAuTrain/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/uncle-duckys-au-train
+          method: post
+          cors: true
+
+  scrapeFortSuperior:
+    handler: scrapers/pictured_rocks/scrapeFortSuperior/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/pictured_rocks/scrapeFortSuperior/lambda_function.py"
+        - "scrapers/pictured_rocks/scrapeFortSuperior/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/fort-superior
+          method: post
+          cors: true
+
+  scrapeAuTrainLakeCampground:
+    handler: scrapers/pictured_rocks/scrapeAuTrainLakeCampground/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/pictured_rocks/scrapeAuTrainLakeCampground/lambda_function.py"
+        - "scrapers/pictured_rocks/scrapeAuTrainLakeCampground/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/au-train-lake
+          method: post
+          cors: true
+
+  # Helper scraper for MIDNR reservations
+  scrapeMidnrReservations:
+    handler: scrapers/midnrReservations/lambda_function.lambda_handler
+    package:
+      patterns:
+        - "scrapers/midnrReservations/lambda_function.py"
+        - "scrapers/midnrReservations/__init__.py"
+        - "scrapers/__init__.py"
+    events:
+      - http:
+          path: scrapers/midnr-reservations
+          method: post
+          cors: true
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true # Use Docker for compiling dependencies
+    slim: true # Slim down the package size
+    useDownloadCache: true
+    useStaticCache: true
+    layer: false # Don't use Lambda layers - include dependencies directly in packages
+    slimPatternsAppendDefaults: false # Don't append default patterns, we'll define our own
+    strip: true # Strip unnecessary files
+    noDeploy: # Don't deploy these packages as they're already in the Lambda runtime
+      - boto3
+      - botocore
+      - pip
+      - setuptools
+      - docutils
+      - jmespath
+      - python-dateutil
+      - s3transfer
+      - six

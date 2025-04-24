@@ -6,7 +6,6 @@ import { Destination, TripDuration, Campground } from '../types';
 import { MapView } from './Map';
 import { PaymentModal } from './PaymentModal';
 import { useNavigate } from 'react-router-dom';
-import { priceScrapingService } from '../services/priceScrapingService';
 
 interface TripOverviewProps {
   destination: Destination;

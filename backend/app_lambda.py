@@ -1,43 +1,23 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
+import requests
 from datetime import datetime, timedelta
 import os
-import requests  # Add this import for making HTTP requests to AWS
-from dotenv import load_dotenv  # Add this import for loading .env file
-from scrapers.traverse_city import (
-    scrape_traverseCityStatePark,
-    scrape_traverseCityKoa,
-    scrape_uncleDuckysPaddlersVillage,
-    scrape_anchorInn,
-    scrape_leelanauPines,
-    scrape_timberRidge
-)
-from scrapers.mackinac_city import (
-    scrape_stIgnaceKoa,
-    scrape_indianRiver,
-    scrape_straitsStatePark,
-    scrape_cabinsOfMackinaw,
-    scrape_teePeeCampground
-)
-from scrapers.pictured_rocks import (
-    scrape_munisingKoa,
-    scrape_touristPark,
-    scrape_uncleDuckysAuTrain,
-    scrape_fortSuperior,
-    scrape_auTrainLakeCampground
-)
+import logging
 
-# Load environment variables from .env file
-load_dotenv()
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
 # Configure CORS to allow requests from the frontend
-# In production, you might want to restrict this to your Vercel domain
-# Get allowed origins from environment or use wildcard for development
 FRONTEND_URL = os.environ.get('FRONTEND_URL', '*')
 CORS(app, resources={r"/api/*": {"origins": FRONTEND_URL}})
+
+# Lambda API Gateway base URL - this will be set once deployed
+LAMBDA_BASE_URL = os.environ.get('LAMBDA_BASE_URL', 'https://your-api-gateway-id.execute-api.us-east-1.amazonaws.com/dev')
 
 # Define trip itineraries based on destinations and number of nights
 TRIP_ITINERARIES = {
@@ -150,9 +130,6 @@ TRIP_ITINERARIES = {
     }
 }
 
-# Get the AWS API Gateway base URL from environment or use default
-BASE_AWS_URL = os.environ.get('AWS_API_URL', 'https://your-api-id.execute-api.us-east-1.amazonaws.com/dev')
-
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Basic health check endpoint"""
@@ -258,25 +235,25 @@ def get_campgrounds(city_id):
             {
                 "id": "straits-state-park",
                 "name": "Straits State Park",
-                "description": "Scenic campground with stunning views of the Mackinac Bridge.",
-                "price": 32,
-                "coordinates": [45.8512, -84.7234],
+                "description": "State park with stunning views of the Mackinac Bridge and Straits of Mackinac.",
+                "price": 35,
+                "coordinates": [45.8423, -84.7256],
                 "scraperFunction": "scrape_straitsStatePark"
             },
             {
                 "id": "cabins-of-mackinaw",
                 "name": "Cabins of Mackinaw",
-                "description": "Cozy cabins offering a rustic yet comfortable lodging experience near Mackinac Island.",
-                "price": 75,
-                "coordinates": [45.7821, -84.7257],
+                "description": "Comfortable cabins near Mackinaw City with various amenities.",
+                "price": 65,
+                "coordinates": [45.7823, -84.7256],
                 "scraperFunction": "scrape_cabinsOfMackinaw"
             },
             {
                 "id": "teepee-campground",
-                "name": "TeePee Campground",
-                "description": "Unique campground with teepee-style accommodations and views of the Mackinac Bridge.",
+                "name": "Tee Pee Campground",
+                "description": "Family-owned campground with a variety of sites and proximity to attractions.",
                 "price": 38,
-                "coordinates": [45.7834, -84.7301],
+                "coordinates": [45.7733, -84.7346],
                 "scraperFunction": "scrape_teePeeCampground"
             }
         ],
@@ -284,67 +261,50 @@ def get_campgrounds(city_id):
             {
                 "id": "munising-koa",
                 "name": "Munising KOA",
-                "description": "Located near Pictured Rocks, this KOA offers convenient access to all area attractions.",
-                "price": 38,
-                "coordinates": [46.4156, -86.6212],
+                "description": "A KOA Journey campground, close to Pictured Rocks National Lakeshore.",
+                "price": 45,
+                "coordinates": [46.4156, -86.6123],
                 "scraperFunction": "scrape_munisingKoa"
             },
             {
                 "id": "tourist-park",
-                "name": "Tourist Park Campground",
-                "description": "Municipal campground with beach access and proximity to Pictured Rocks.",
-                "price": 30,
-                "coordinates": [46.5789, -87.3912],
+                "name": "Tourist Park",
+                "description": "City-owned park on Lake Superior with beautiful beach access.",
+                "price": 35,
+                "coordinates": [46.5631, -87.3789],
                 "scraperFunction": "scrape_touristPark"
             },
             {
                 "id": "uncle-duckys-au-train",
-                "name": "Uncle Ducky's - Au Train",
-                "description": "Adventure-focused campground with direct access to kayaking and outdoor activities.",
-                "price": 35,
-                "coordinates": [46.4323, -86.8456],
+                "name": "Uncle Ducky's Au Train",
+                "description": "Campground with easy access to kayaking and outdoor activities.",
+                "price": 40,
+                "coordinates": [46.4398, -86.8208],
                 "scraperFunction": "scrape_uncleDuckysAuTrain"
             },
             {
                 "id": "fort-superior",
-                "name": "Fort Superior Campground",
-                "description": "Historic site camping with panoramic views of Lake Superior.",
-                "price": 32,
-                "coordinates": [46.5123, -86.4789],
+                "name": "Fort Superior",
+                "description": "Historic fort site with camping areas and Lake Superior views.",
+                "price": 38,
+                "coordinates": [46.5789, -87.4156],
                 "scraperFunction": "scrape_fortSuperior"
             },
             {
                 "id": "au-train-lake",
                 "name": "Au Train Lake Campground",
-                "description": "Peaceful lakeside camping with opportunities for fishing and water activities.",
-                "price": 24,
-                "coordinates": [46.4356, -86.8123],
+                "description": "Lakeside camping with opportunities for fishing and water activities.",
+                "price": 35,
+                "coordinates": [46.3521, -86.8321],
                 "scraperFunction": "scrape_auTrainLakeCampground"
             }
         ]
     }
     
-    # For other cities not yet implemented, return sample data
     if city_id not in city_campgrounds:
-        # Return default data for testing
-        return jsonify([
-            {
-                "id": f"{city_id}-campground-1",
-                "name": f"{city_id.replace('-', ' ').title()} Campground",
-                "description": "A sample campground for testing purposes.",
-                "price": 35,
-                "coordinates": [0, 0]
-            },
-            {
-                "id": f"{city_id}-campground-2",
-                "name": f"{city_id.replace('-', ' ').title()} State Park",
-                "description": "Another sample campground for testing purposes.",
-                "price": 28,
-                "coordinates": [0, 0]
-            }
-        ])
-        
-    return jsonify(city_campgrounds.get(city_id, []))
+        return jsonify([])
+    
+    return jsonify(city_campgrounds[city_id])
 
 @app.route('/api/availability', methods=['POST'])
 def check_availability():
@@ -365,8 +325,8 @@ def check_availability():
         return jsonify({"error": "Missing required parameters"}), 400
     
     try:
-        # Map campground_id to the appropriate API Gateway endpoint
-        scraper_map = {
+        # Map campground_id to the appropriate Lambda function URL
+        lambda_map = {
             # Traverse City
             "traverse-city-state-park": "scrapers/traverse-city-state-park",
             "traverse-city-koa": "scrapers/traverse-city-koa",
@@ -395,8 +355,8 @@ def check_availability():
         # Use campground_id and date for a deterministic but random-looking price
         seed_value = hash(f"{campground_id}_{start_date}_{end_date}") % 100
         
-        endpoint = scraper_map.get(campground_id)
-        if not endpoint:
+        lambda_path = lambda_map.get(campground_id)
+        if not lambda_path:
             # Generate a reasonable price based on date and campground ID
             base_price = 30 + (seed_value % 40)  # Price between $30-$70
             
@@ -413,15 +373,17 @@ def check_availability():
             result = {
                 "available": True,
                 "price": base_price,
-                "message": "Test availability response (no scraper found)"
+                "message": "Test availability response (no scraper found)",
+                "timestamp": datetime.now().isoformat()
             }
         else:
-            # Forward the request to AWS API Gateway
-            aws_url = f"{BASE_AWS_URL}/{endpoint}"
-            print(f"Forwarding request to AWS: {aws_url}")
+            # Call the appropriate Lambda function
+            lambda_url = f"{LAMBDA_BASE_URL}/{lambda_path}"
             
-            # Prepare request payload - sending parameters directly without nesting in 'body'
-            payload = {
+            logger.info(f"Calling Lambda function: {lambda_url}")
+            
+            # Call the Lambda function with the same parameters
+            lambda_payload = {
                 "startDate": start_date,
                 "endDate": end_date,
                 "numAdults": num_adults,
@@ -429,43 +391,47 @@ def check_availability():
                 "accommodationType": accommodation_type
             }
             
-            # Send request to AWS Lambda via API Gateway
-            aws_response = requests.post(aws_url, json=payload, timeout=30)
-            
-            if aws_response.status_code != 200:
-                print(f"AWS API call failed: {aws_response.status_code}, {aws_response.text}")
-                return jsonify({
-                    "available": False,
-                    "price": None,
-                    "message": f"Error from AWS Lambda: {aws_response.text}",
-                    "timestamp": datetime.now().isoformat()
-                }), aws_response.status_code
-            
-            # Parse the response
             try:
-                aws_result = aws_response.json()
-                # Extract the actual response from the Lambda structure if needed
-                if "body" in aws_result and isinstance(aws_result["body"], str):
-                    result = json.loads(aws_result["body"])
+                lambda_response = requests.post(
+                    lambda_url, 
+                    json=lambda_payload,
+                    timeout=30  # 30 second timeout
+                )
+                
+                # Check if the response is successful
+                if lambda_response.status_code == 200:
+                    # Parse the Lambda response
+                    lambda_result = lambda_response.json()
+                    return jsonify(lambda_result)
                 else:
-                    result = aws_result
-            except Exception as e:
-                print(f"Error parsing AWS response: {str(e)}")
-                return jsonify({
+                    logger.error(f"Lambda function returned error: {lambda_response.status_code}, {lambda_response.text}")
+                    result = {
+                        "available": False,
+                        "price": None,
+                        "message": f"Error checking availability: Lambda function returned {lambda_response.status_code}",
+                        "timestamp": datetime.now().isoformat()
+                    }
+            except requests.exceptions.Timeout:
+                logger.error(f"Lambda function timed out: {lambda_url}")
+                result = {
                     "available": False,
                     "price": None,
-                    "message": f"Error parsing AWS response: {str(e)}",
+                    "message": "Error checking availability: Lambda function timed out",
                     "timestamp": datetime.now().isoformat()
-                }), 500
+                }
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Error calling Lambda function: {str(e)}")
+                result = {
+                    "available": False,
+                    "price": None,
+                    "message": f"Error checking availability: {str(e)}",
+                    "timestamp": datetime.now().isoformat()
+                }
         
-        # Add timestamp to the response
-        result["timestamp"] = datetime.now().isoformat()
         return jsonify(result)
     
     except Exception as e:
-        import traceback
-        error_traceback = traceback.format_exc()
-        print(f"Error in availability check: {str(e)}\n{error_traceback}")
+        logger.error(f"Error in availability check: {str(e)}")
         return jsonify({
             "available": False, 
             "price": None, 
@@ -487,7 +453,7 @@ def generate_trip_plan():
     num_adults = data.get('numAdults', 2)
     num_kids = data.get('numKids', 0)
     
-    print(f"Received request: destinationId={destination_id}, nights={nights} (type: {type(nights)}), startDate={start_date_str}")
+    logger.info(f"Received request: destinationId={destination_id}, nights={nights} (type: {type(nights)}), startDate={start_date_str}")
     
     if not all([destination_id, nights, start_date_str]):
         return jsonify({"error": "Missing required parameters"}), 400
@@ -500,7 +466,7 @@ def generate_trip_plan():
         # Ensure nights is an integer
         try:
             nights = int(nights)
-            print(f"Converted nights to int: {nights}")
+            logger.info(f"Converted nights to int: {nights}")
         except ValueError as e:
             return jsonify({"error": f"Invalid nights value: {nights}, error: {str(e)}"}), 400
         
@@ -508,13 +474,13 @@ def generate_trip_plan():
         if destination_id not in TRIP_ITINERARIES:
             return jsonify({"error": f"No itinerary found for destination: {destination_id}"}), 404
             
-        print(f"Available night options for {destination_id}: {list(TRIP_ITINERARIES[destination_id].keys())}")
+        logger.info(f"Available night options for {destination_id}: {list(TRIP_ITINERARIES[destination_id].keys())}")
             
         if nights not in TRIP_ITINERARIES[destination_id]:
             return jsonify({"error": f"No itinerary found for {destination_id} with {nights} nights"}), 404
         
         itinerary = TRIP_ITINERARIES[destination_id][nights]
-        print(f"Found itinerary: {itinerary}")
+        logger.info(f"Found itinerary: {itinerary}")
         
         # Generate detailed itinerary with dates
         detailed_itinerary = []
@@ -547,20 +513,20 @@ def generate_trip_plan():
         for stop in detailed_itinerary:
             # Get campgrounds for this city
             city_id = stop['city']
-            print(f"Processing city: {city_id}")
+            logger.info(f"Processing city: {city_id}")
             
             # In a real app, we might want to make this more efficient
             try:
                 with app.test_client() as client:
                     campgrounds_response = client.get(f"/api/campgrounds/{city_id}")
                     if campgrounds_response.status_code != 200:
-                        print(f"Failed to get campgrounds for {city_id}, status: {campgrounds_response.status_code}")
+                        logger.warning(f"Failed to get campgrounds for {city_id}, status: {campgrounds_response.status_code}")
                         campgrounds = []
                     else:
                         campgrounds = campgrounds_response.json
-                        print(f"Found {len(campgrounds)} campgrounds for {city_id}")
+                        logger.info(f"Found {len(campgrounds)} campgrounds for {city_id}")
             except Exception as e:
-                print(f"Exception while getting campgrounds for {city_id}: {str(e)}")
+                logger.error(f"Exception while getting campgrounds for {city_id}: {str(e)}")
                 campgrounds = []
             
             # Don't check availability - just add campgrounds to the stop
@@ -579,13 +545,10 @@ def generate_trip_plan():
         return jsonify(response)
     
     except Exception as e:
+        logger.error(f"Error generating trip plan: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     # Get port from environment variable or use default
     port = int(os.environ.get('PORT', 5001))
-    # In production, ensure we bind to 0.0.0.0 so the app is accessible
-    host = '0.0.0.0' if os.environ.get('FLASK_ENV') == 'production' else 'localhost'
-    debug = os.environ.get('FLASK_ENV') != 'production'
-    
-    app.run(debug=debug, host=host, port=port) 
+    app.run(host='0.0.0.0', port=port) 
