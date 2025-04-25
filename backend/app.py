@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import os
 import logging
 from dotenv import load_dotenv  # Import dotenv for loading .env file
+import time  # For cache timestamps
 
 # Load environment variables from .env file
 load_dotenv()
@@ -13,6 +14,10 @@ load_dotenv()
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Simple in-memory cache for availability results
+availability_cache = {}
+CACHE_DURATION = 300  # Cache duration in seconds (5 minutes)
 
 app = Flask(__name__)
 
@@ -332,6 +337,18 @@ def check_availability():
         return jsonify({"error": "Missing required parameters"}), 400
     
     try:
+        # Create a cache key from the request parameters
+        cache_key = f"{campground_id}_{start_date}_{end_date}_{num_adults}_{num_kids}_{accommodation_type}"
+        
+        # Check if we have a cached result that's still valid
+        if cache_key in availability_cache:
+            cached_result, timestamp = availability_cache[cache_key]
+            if time.time() - timestamp < CACHE_DURATION:
+                logger.info(f"Cache hit for {campground_id}")
+                return jsonify(cached_result)
+            else:
+                logger.info(f"Cache expired for {campground_id}")
+        
         # Map campground_id to the appropriate Lambda function URL
         lambda_map = {
             # Traverse City
@@ -409,6 +426,8 @@ def check_availability():
                 if lambda_response.status_code == 200:
                     # Parse the Lambda response
                     lambda_result = lambda_response.json()
+                    # Cache the result
+                    availability_cache[cache_key] = (lambda_result, time.time())
                     return jsonify(lambda_result)
                 else:
                     logger.error(f"Lambda function returned error: {lambda_response.status_code}, {lambda_response.text}")
@@ -435,6 +454,8 @@ def check_availability():
                     "timestamp": datetime.now().isoformat()
                 }
         
+        # Cache the result before returning
+        availability_cache[cache_key] = (result, time.time())
         return jsonify(result)
     
     except Exception as e:

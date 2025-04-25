@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Hero } from './components/Hero';
 import { Navigation } from './components/Navigation';
+import { Footer } from './components/Footer';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
 import { Dashboard } from './components/dashboard/Dashboard';
@@ -48,25 +49,29 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-secondary">
+        <div className="bg-beige overflow-hidden">
           <Navigation isPaid={false} />
           
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/destinations/:id" element={<TripOverviewPage />} />
-            <Route path="/select-destination" element={<DestinationSelectionPage />} />
-            <Route
-              path="/dashboard/*"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route path="/" element={<HomePage />} />
-          </Routes>
+          <main className="relative overflow-y-auto hide-scrollbar">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/destinations/:id" element={<TripOverviewPage />} />
+              <Route path="/select-destination" element={<DestinationSelectionPage />} />
+              <Route
+                path="/dashboard/*"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/" element={<HomePage />} />
+            </Routes>
+          </main>
+          
+          <Footer />
         </div>
       </Router>
     </AuthProvider>

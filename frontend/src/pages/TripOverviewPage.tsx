@@ -234,8 +234,6 @@ export const TripOverviewPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-beige-light">
-      <Navigation />
-      
       <div className="relative">
         <div className="bg-beige-light text-primary-dark">
           <div className="max-w-7xl mx-auto px-4 pt-8">

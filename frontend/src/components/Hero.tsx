@@ -184,6 +184,15 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
               </button>
             )}
 
+            {/* Mobile Swipe Indicator */}
+            {/* <div className="md:hidden flex items-center justify-center mb-4">
+              <div className="flex space-x-1 items-center bg-[#22342B]/10 px-4 py-2 rounded-full">
+                <ChevronLeft className="w-4 h-4 text-[#22342B]/60" />
+                <span className="text-sm text-[#22342B]/80">Swipe to explore</span>
+                <ChevronRight className="w-4 h-4 text-[#22342B]/60" />
+              </div>
+            </div> */}
+
             <div
               ref={stepsContainerRef}
               onScroll={handleScroll}
@@ -218,6 +227,16 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 </motion.div>
               ))}
             </div>
+
+            {/* Mobile Swipe Indicator */}
+            <div className="md:hidden flex items-center justify-center mb-0">
+              <div className="flex space-x-1 items-center bg-[#22342B]/10 px-4 py-2 rounded-full">
+                <ChevronLeft className="w-4 h-4 text-[#22342B]/60" />
+                <span className="text-sm text-[#22342B]/80">Swipe to explore</span>
+                <ChevronRight className="w-4 h-4 text-[#22342B]/60" />
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -235,9 +254,9 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
             <h2 className="text-4xl font-display text-[#194027] mb-4">Our Trips</h2>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-8 px-4">
             {/* Northern Michigan */}
-            <div className="col-span-2 md:col-span-1">
+            <div className="col-span-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -245,13 +264,12 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 transition={{ duration: 0.6 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div className="relative w-full pt-8">
+                <div className="relative w-full pt-8 overflow-hidden">
                   <div 
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-full"
-                    style={{ transform: 'translateY(-25%)' }}
+                    className="relative text-center mb-2"
                   >
                     <div 
-                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider text-center"
+                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
                       style={{
                         transform: 'perspective(100px) rotateX(10deg)',
                         transformOrigin: 'bottom',
@@ -280,7 +298,7 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
             </div>
 
             {/* Arizona */}
-            <div className="md:col-span-1">
+            <div className="col-span-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -288,13 +306,12 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div className="relative w-full pt-8">
+                <div className="relative w-full pt-8 overflow-hidden">
                   <div 
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-full"
-                    style={{ transform: 'translateY(-25%)' }}
+                    className="relative text-center mb-2"
                   >
                     <div 
-                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider text-center"
+                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
                       style={{
                         transform: 'perspective(100px) rotateX(10deg)',
                         transformOrigin: 'bottom',
@@ -323,7 +340,7 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
             </div>
 
             {/* Washington */}
-            <div className="md:col-span-1">
+            <div className="col-span-1">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -331,13 +348,12 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div className="relative w-full pt-8">
+                <div className="relative w-full pt-8 overflow-hidden">
                   <div 
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-full"
-                    style={{ transform: 'translateY(-25%)' }}
+                    className="relative text-center mb-2"
                   >
                     <div 
-                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider text-center"
+                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
                       style={{
                         transform: 'perspective(100px) rotateX(10deg)',
                         transformOrigin: 'bottom',
@@ -365,93 +381,88 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
               </motion.div>
             </div>
 
-            {/* Bottom row - 2 destinations */}
-            <div className="col-span-2 md:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-              {/* Smoky Mountains */}
-              <div className="col-span-1 md:col-start-2 md:w-[calc(100%+50%)]">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  className="flex flex-col items-center gap-3"
-                >
-                  <div className="relative w-full pt-8">
+            {/* Smoky Mountains */}
+            <div className="col-span-1">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex flex-col items-center gap-3"
+              >
+                <div className="relative w-full pt-8 overflow-hidden">
+                  <div 
+                    className="relative text-center mb-2"
+                  >
                     <div 
-                      className="absolute top-0 left-1/2 -translate-x-1/2 w-full"
-                      style={{ transform: 'translateY(-25%)' }}
+                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
+                      style={{
+                        transform: 'perspective(100px) rotateX(10deg)',
+                        transformOrigin: 'bottom',
+                        letterSpacing: '0.1em'
+                      }}
                     >
-                      <div 
-                        className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider text-center"
-                        style={{
-                          transform: 'perspective(100px) rotateX(10deg)',
-                          transformOrigin: 'bottom',
-                          letterSpacing: '0.1em'
-                        }}
-                      >
-                        Smoky Mountains
-                      </div>
-                    </div>
-
-                    <div 
-                      onClick={() => handleLearnMore(destinations[3].id)}
-                      className="relative w-full aspect-square cursor-pointer group"
-                    >
-                      <img
-                        src={destinations[3].imageUrl}
-                        alt={destinations[3].name}
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                      <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <span className="text-beige font-display text-lg">Coming Soon</span>
-                      </div>
+                      Smoky Mountains
                     </div>
                   </div>
-                </motion.div>
-              </div>
 
-              {/* Southern California */}
-              <div className="col-span-1 md:w-[calc(100%+50%)]">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  className="flex flex-col items-center gap-3"
-                >
-                  <div className="relative w-full pt-8">
-                    <div 
-                      className="absolute top-0 left-1/2 -translate-x-1/2 w-full"
-                      style={{ transform: 'translateY(-25%)' }}
-                    >
-                      <div 
-                        className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider text-center"
-                        style={{
-                          transform: 'perspective(100px) rotateX(10deg)',
-                          transformOrigin: 'bottom',
-                          letterSpacing: '0.1em'
-                        }}
-                      >
-                        Southern California
-                      </div>
-                    </div>
-
-                    <div 
-                      onClick={() => handleLearnMore(destinations[4].id)}
-                      className="relative w-full aspect-square cursor-pointer group"
-                    >
-                      <img
-                        src={destinations[4].imageUrl}
-                        alt={destinations[4].name}
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                      <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <span className="text-beige font-display text-lg">Coming Soon</span>
-                      </div>
+                  <div 
+                    onClick={() => handleLearnMore(destinations[3].id)}
+                    className="relative w-full aspect-square cursor-pointer group"
+                  >
+                    <img
+                      src={destinations[3].imageUrl}
+                      alt={destinations[3].name}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                    <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <span className="text-beige font-display text-lg">Coming Soon</span>
                     </div>
                   </div>
-                </motion.div>
-              </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Southern California */}
+            <div className="col-span-1">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="flex flex-col items-center gap-3"
+              >
+                <div className="relative w-full pt-8 overflow-hidden">
+                  <div 
+                    className="relative text-center mb-2"
+                  >
+                    <div 
+                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
+                      style={{
+                        transform: 'perspective(100px) rotateX(10deg)',
+                        transformOrigin: 'bottom',
+                        letterSpacing: '0.1em'
+                      }}
+                    >
+                      Southern California
+                    </div>
+                  </div>
+
+                  <div 
+                    onClick={() => handleLearnMore(destinations[4].id)}
+                    className="relative w-full aspect-square cursor-pointer group"
+                  >
+                    <img
+                      src={destinations[4].imageUrl}
+                      alt={destinations[4].name}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                    <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <span className="text-beige font-display text-lg">Coming Soon</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>

@@ -5,8 +5,24 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    @apply overflow-x-hidden bg-beige;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    overscroll-behavior-y: none; /* Prevent bounce on mobile */
+  }
+  
   body {
-    @apply bg-primary-light text-primary font-body;
+    @apply text-primary font-body;
+    /* Fix iOS height issue */
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Fix for Safari viewport height issue */
+  #root {
+    width: 100%;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, .brand-title {
