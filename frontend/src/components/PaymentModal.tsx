@@ -11,6 +11,7 @@ import {
 import { Destination, TripDuration, Campground } from '../types';
 import { paymentService } from '../services/paymentService';
 import { useAuth } from '../context/AuthContext';
+import { tripService } from '../services/tripService';
 
 interface PaymentModalProps {
   destination: Destination;
@@ -57,19 +58,37 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         }
       );
 
-      // Add trip to user's trips
+      // Create a new trip object
+      const newTrip = {
+        id: tripId,
+        confirmationId: tripId,
+        destination,
+        duration,
+        selectedCampgrounds,
+        createdAt: new Date().toISOString(),
+        status: 'planned' as const
+      };
+      
+      // Save trip to Supabase
       if (user) {
-        const newTrip = {
-          id: tripId,
-          confirmationId: tripId,
-          destination,
-          duration,
-          selectedCampgrounds,
-          createdAt: new Date().toISOString(),
-          status: 'planned' as const
-        };
-        
-        updateUserTrips([...user.trips, newTrip]);
+        try {
+          console.log('Saving trip to Supabase:', tripId);
+          // Create the trip in Supabase first
+          const savedTrip = await tripService.createTrip(
+            user.id,
+            destination,
+            duration,
+            selectedCampgrounds
+          );
+          
+          // Then update local state with the saved trip
+          // This will avoid triggering another create operation in updateUserTrips
+          // since the trip is already in Supabase
+          updateUserTrips([...user.trips, savedTrip]);
+        } catch (err) {
+          console.error('Error saving trip to Supabase:', err);
+          // Continue with the flow even if saving to Supabase fails
+        }
       }
 
       // Simulate successful payment

@@ -89,7 +89,9 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip }) => {
     let currentStay: ConsolidatedStay | null = null;
 
     trip.selectedCampgrounds.forEach((campground, index) => {
-      const location = campground.distanceToTown.split(' to ')[1];
+      const location = campground.distanceToTown 
+        ? campground.distanceToTown.split(' to ')[1] 
+        : campground.address ? campground.address.split(',')[0] : 'Unknown location';
       const date = trip.duration.startDate && addDays(trip.duration.startDate, index);
       
       if (!currentStay || currentStay.campground.id !== campground.id) {

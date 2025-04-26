@@ -118,17 +118,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // For each trip, make sure it's in the database
       for (const trip of trips) {
-        if (!trip.id.startsWith('TRIP-')) {
-          // Create a new trip
-          await tripService.createTrip(
-            user.id,
-            trip.destination,
-            trip.duration,
-            trip.selectedCampgrounds
-          );
-        } else {
-          // Update existing trip
-          await tripService.updateTrip(trip);
+        try {
+          // First check if this trip already exists in Supabase
+          const existingTrip = await tripService.getTripById(trip.id);
+          
+          if (!existingTrip) {
+            // Trip doesn't exist in Supabase yet, create it
+            console.log('Creating new trip in Supabase:', trip.id);
+            await tripService.createTrip(
+              user.id,
+              trip.destination,
+              trip.duration,
+              trip.selectedCampgrounds
+            );
+          } else if (JSON.stringify(existingTrip) !== JSON.stringify(trip)) {
+            // Trip exists but has changes, update it
+            console.log('Updating existing trip in Supabase:', trip.id);
+            await tripService.updateTrip(trip);
+          } else {
+            // Trip exists and is unchanged
+            console.log('Trip already exists and is up to date in Supabase:', trip.id);
+          }
+        } catch (error) {
+          console.error(`Error handling trip ${trip.id}:`, error);
         }
       }
     } catch (error) {
