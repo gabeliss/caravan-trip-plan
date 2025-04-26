@@ -15,6 +15,7 @@
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@stripe/stripe-js": "^2.4.0",
+    "@supabase/supabase-js": "^2.49.4",
     "axios": "^1.6.7",
     "cheerio": "^1.0.0-rc.12",
     "clsx": "^2.1.0",

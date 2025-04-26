@@ -1,5 +1,7 @@
 import { ItineraryPlan } from '../types';
 import { formatDateForApi } from '../utils/tripPlanGenerator';
+import { supabase } from './supabaseClient';
+import { SavedTrip, TripDuration, Destination, Campground } from '../types';
 
 // Get the API URL from environment variables or use default
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
@@ -148,6 +150,153 @@ export const generateTripWithAvailability = async (
   } catch (error) {
     console.error('Error generating trip with availability:', error);
     throw error;
+  }
+};
+
+export const tripService = {
+  /**
+   * Get trips for a specific user
+   */
+  async getUserTrips(userId: string): Promise<SavedTrip[]> {
+    try {
+      const { data, error } = await supabase
+        .from('trips')
+        .select('*')
+        .eq('user_id', userId);
+        
+      if (error) throw error;
+      
+      return data ? data.map(trip => ({
+        id: trip.id,
+        confirmationId: trip.confirmation_id,
+        destination: trip.destination as Destination,
+        duration: trip.duration as TripDuration,
+        selectedCampgrounds: trip.campgrounds as Campground[],
+        createdAt: trip.created_at,
+        status: trip.status,
+        guideUrl: trip.guide_url
+      })) : [];
+    } catch (error) {
+      console.error('Error fetching user trips:', error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Get a specific trip by ID
+   */
+  async getTripById(tripId: string): Promise<SavedTrip | null> {
+    try {
+      const { data, error } = await supabase
+        .from('trips')
+        .select('*')
+        .eq('id', tripId)
+        .single();
+        
+      if (error) throw error;
+      if (!data) return null;
+      
+      return {
+        id: data.id,
+        confirmationId: data.confirmation_id,
+        destination: data.destination as Destination,
+        duration: data.duration as TripDuration,
+        selectedCampgrounds: data.campgrounds as Campground[],
+        createdAt: data.created_at,
+        status: data.status,
+        guideUrl: data.guide_url
+      };
+    } catch (error) {
+      console.error(`Error fetching trip ${tripId}:`, error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Create a new trip
+   */
+  async createTrip(
+    userId: string,
+    destination: Destination,
+    duration: TripDuration,
+    selectedCampgrounds: Campground[]
+  ): Promise<SavedTrip> {
+    try {
+      const tripId = `TRIP-${Math.random().toString(36).substr(2, 9)}`;
+      const confirmationId = `CONF-${Math.random().toString(36).substr(2, 9)}`;
+      
+      const tripData = {
+        id: tripId,
+        confirmation_id: confirmationId,
+        user_id: userId,
+        destination,
+        duration,
+        campgrounds: selectedCampgrounds,
+        created_at: new Date().toISOString(),
+        status: 'planned'
+      };
+      
+      const { error } = await supabase
+        .from('trips')
+        .insert(tripData);
+        
+      if (error) throw error;
+      
+      return {
+        id: tripId,
+        confirmationId,
+        destination,
+        duration,
+        selectedCampgrounds,
+        createdAt: tripData.created_at,
+        status: 'planned',
+      };
+    } catch (error) {
+      console.error('Error creating trip:', error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Update an existing trip
+   */
+  async updateTrip(trip: SavedTrip): Promise<SavedTrip> {
+    try {
+      const { error } = await supabase
+        .from('trips')
+        .update({
+          destination: trip.destination,
+          duration: trip.duration,
+          campgrounds: trip.selectedCampgrounds,
+          status: trip.status,
+          guide_url: trip.guideUrl
+        })
+        .eq('id', trip.id);
+        
+      if (error) throw error;
+      
+      return trip;
+    } catch (error) {
+      console.error(`Error updating trip ${trip.id}:`, error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Delete a trip
+   */
+  async deleteTrip(tripId: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('trips')
+        .delete()
+        .eq('id', tripId);
+        
+      if (error) throw error;
+    } catch (error) {
+      console.error(`Error deleting trip ${tripId}:`, error);
+      throw error;
+    }
   }
 };
 

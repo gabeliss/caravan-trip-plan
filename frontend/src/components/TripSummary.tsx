@@ -84,12 +84,22 @@ const TripSummary: React.FC<TripSummaryProps> = ({
     selectedCampgrounds.forEach((campground, index) => {
       if (!campground) return; // Skip null/undefined campgrounds
       
-      if (!currentStay || currentStay.campground.id !== campground.id) {
+      // Ensure campground has all required properties
+      const validCampground = {
+        ...campground,
+        id: campground.id || `temp-id-${index}`,
+        name: campground.name || 'Campground',
+        imageUrl: campground.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4',
+        // Ensure distanceToTown is defined for TripConfirmation
+        distanceToTown: campground.distanceToTown || `5 miles to ${destination.name || 'destination'}`
+      };
+      
+      if (!currentStay || currentStay.campground.id !== validCampground.id) {
         if (currentStay) {
           stays.push(currentStay);
         }
         currentStay = {
-          campground,
+          campground: validCampground,
           startNight: index + 1,
           endNight: index + 1,
           totalNights: 1
@@ -113,7 +123,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
 
   const totalPrice = mergedStays.reduce((total, stay) => {
     const priceInfo = priceScrapingService.getBasePrice(stay.campground, 'standard');
-    return total + (priceInfo.price * stay.totalNights || 0);
+    return total + ((priceInfo.price ?? 0) * stay.totalNights);
   }, 0);
 
   return (
@@ -211,11 +221,11 @@ const TripSummary: React.FC<TripSummaryProps> = ({
                             </div>
                             <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
                               <div className="text-xs sm:text-sm">
-                                <span className="font-medium">${priceInfo.price}/night × {stay.totalNights}</span>
+                                <span className="font-medium">${priceInfo.price ?? 0}/night × {stay.totalNights}</span>
                               </div>
                               <span className="text-gray-400">•</span>
                               <div className="text-xs sm:text-sm font-medium">
-                                Total: ${priceInfo.price * stay.totalNights}
+                                Total: ${(priceInfo.price ?? 0) * stay.totalNights}
                               </div>
                             </div>
                           </div>

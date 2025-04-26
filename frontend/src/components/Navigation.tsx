@@ -39,24 +39,37 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
   };
 
   const handleNavigation = (path: string) => {
-    // Close menus first
-    setShowMenu(false);
-    setShowDestinations(false);
-    setShowDesktopDestinations(false);
-    // Then navigate
+    // Navigate immediately
+    navigate(path);
+    
+    // Then close menus (to avoid any state update issues during navigation)
     setTimeout(() => {
-      navigate(path);
+      setShowMenu(false);
+      setShowDestinations(false);
+      setShowDesktopDestinations(false);
     }, 0);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setShowMenu(false);
     setShowDestinations(false);
     setShowDesktopDestinations(false);
-    logout();
-    setTimeout(() => {
-      navigate('/login');
-    }, 0);
+    
+    try {
+      // Show some visual feedback that logout is in progress
+      // by navigating to login first with a state param
+      navigate('/login', { state: { loggingOut: true } });
+      
+      // Then complete the logout process in the background
+      await logout();
+      
+      // After logout completes, redirect to home page
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // If there's an error, still try to navigate home
+      navigate('/', { replace: true });
+    }
   };
 
   const handleLogoClick = () => {

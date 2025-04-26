@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { UserPlus, Mail, Lock, User } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export const Register: React.FC = () => {
@@ -9,24 +9,75 @@ export const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, isAuthenticated, loading, confirmationError } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-beige-light">
+        <div className="animate-pulse text-primary text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setIsLoading(true);
 
     try {
-      await register(email, password, name);
-      navigate('/dashboard');
+      const result = await register(email, password, name);
+      if (result.success) {
+        setSuccess(result.message);
+        // Clear form fields on success
+        setName('');
+        setEmail('');
+        setPassword('');
+      } else {
+        setError(result.message);
+      }
     } catch (err) {
       setError('Failed to create account');
     } finally {
       setIsLoading(false);
     }
   };
+
+  // If registration was successful but requires email confirmation
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-beige-light py-12 px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md w-full bg-white p-8 rounded-lg shadow-sm"
+        >
+          <div className="text-center">
+            <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Check Your Email</h2>
+            <p className="mb-4">{success}</p>
+            <Link 
+              to="/login" 
+              className="mt-4 inline-block text-sm text-blue-600 hover:text-blue-500"
+            >
+              Return to login
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -117,6 +168,10 @@ export const Register: React.FC = () => {
 
           {error && (
             <div className="text-red-600 text-sm text-center">{error}</div>
+          )}
+
+          {confirmationError && (
+            <div className="text-red-600 text-sm text-center">{confirmationError}</div>
           )}
 
           <div>

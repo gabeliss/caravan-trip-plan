@@ -1,11 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, MapPin, FileText, Book, ArrowRight, Clock, Moon } from 'lucide-react';
+import { Calendar, MapPin, FileText, Book, ArrowRight, Clock, Moon, RefreshCw } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { useAuth } from '../../context/AuthContext';
 
-export const TripList: React.FC = () => {
+interface TripListProps {
+  refreshing?: boolean;
+  onRefresh?: () => Promise<void>;
+}
+
+export const TripList: React.FC<TripListProps> = ({ refreshing = false, onRefresh }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -18,28 +23,37 @@ export const TripList: React.FC = () => {
             <h1 className="text-3xl font-display font-bold text-primary-dark mb-2">My Trips</h1>
             <p className="text-gray-600">Manage and view your upcoming adventures</p>
           </div>
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center gap-2 bg-primary-dark text-beige px-6 py-3 rounded-lg hover:bg-primary-dark/90 transition-colors text-sm sm:text-base whitespace-nowrap"
-          >
-            Plan New Trip
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex items-center gap-3">
+            {onRefresh && (
+              <button
+                onClick={onRefresh}
+                disabled={refreshing}
+                className="inline-flex items-center justify-center gap-2 bg-beige/80 hover:bg-beige text-primary-dark px-4 py-2 rounded-lg transition-colors text-sm"
+              >
+                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                {refreshing ? 'Refreshing...' : 'Refresh'}
+              </button>
+            )}
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center gap-2 bg-primary-dark text-beige px-6 py-3 rounded-lg hover:bg-primary-dark/90 transition-colors text-sm sm:text-base whitespace-nowrap"
+            >
+              Plan New Trip
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
 
         {user?.trips.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
-            <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-medium text-gray-900 mb-2">No trips planned yet</h2>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Start planning your next adventure and discover beautiful destinations across the country.
-            </p>
+          <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
+            <h2 className="text-xl font-display font-bold text-primary-dark mb-4">No trips yet</h2>
+            <p className="text-gray-600 mb-6">Start planning your adventure now!</p>
             <Link
               to="/"
-              className="inline-flex items-center gap-2 bg-primary-dark text-beige px-6 py-3 rounded-lg hover:bg-primary-dark/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-primary-dark text-beige px-6 py-3 rounded-lg hover:bg-primary-dark/90 transition-colors"
             >
               Plan Your First Trip
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         ) : (

@@ -54,7 +54,17 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
     let currentGroup: StayGroup | null = null;
 
     selectedCampgrounds.forEach((campground, index) => {
-      const location = campground.distanceToTown.split(' to ')[1];
+      // Default location value in case distanceToTown is undefined
+      let location = destination?.name || 'Unknown location';
+      
+      // Safely extract location from distanceToTown if it exists
+      if (campground.distanceToTown) {
+        const parts = campground.distanceToTown.split(' to ');
+        if (parts.length > 1) {
+          location = parts[1];
+        }
+      }
+
       const date = duration.startDate && addDays(duration.startDate, index);
 
       if (!currentGroup || currentGroup.campground.id !== campground.id) {
