@@ -54,11 +54,11 @@ functions:
           cors: true
 
   scrapeUncleDuckysPaddlersVillage:
-    handler: scrapers/traverse_city/scrapeUncleDuckysPaddlersVillage/lambda_function.lambda_handler
+    handler: scrapers/pictured_rocks/scrapeUncleDuckysPaddlersVillage/lambda_function.lambda_handler
     package:
       patterns:
-        - "scrapers/traverse_city/scrapeUncleDuckysPaddlersVillage/lambda_function.py"
-        - "scrapers/traverse_city/scrapeUncleDuckysPaddlersVillage/__init__.py"
+        - "scrapers/pictured_rocks/scrapeUncleDuckysPaddlersVillage/lambda_function.py"
+        - "scrapers/pictured_rocks/scrapeUncleDuckysPaddlersVillage/__init__.py"
         - "scrapers/__init__.py"
     events:
       - http:

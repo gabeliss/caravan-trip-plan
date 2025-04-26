@@ -181,49 +181,26 @@ def get_campgrounds(city_id):
             {
                 "id": "traverse-city-state-park",
                 "name": "Traverse City State Park",
-                "description": "Located on the east arm of Grand Traverse Bay, this park offers a beautiful beach and is close to the city.",
-                "price": 35,
-                "coordinates": [44.7631, -85.5789],
                 "scraperFunction": "scrape_traverseCityStatePark"
             },
             {
                 "id": "traverse-city-koa",
                 "name": "Traverse City KOA",
-                "description": "Family-friendly campground with amenities including a pool, mini-golf, and more.",
-                "price": 45,
-                "coordinates": [44.7215, -85.6382],
                 "scraperFunction": "scrape_traverseCityKoa"
-            },
-            {
-                "id": "uncle-duckys-paddlers-village",
-                "name": "Uncle Ducky's Paddlers Village",
-                "description": "Riverside camping with easy access to paddle sports and outdoor adventures.",
-                "price": 40,
-                "coordinates": [44.7398, -85.6208],
-                "scraperFunction": "scrape_uncleDuckysPaddlersVillage"
             },
             {
                 "id": "anchor-inn",
                 "name": "Anchor Inn",
-                "description": "Comfortable lodging near the water with various accommodation options.",
-                "price": 55,
-                "coordinates": [44.7456, -85.6102],
                 "scraperFunction": "scrape_anchorInn"
             },
             {
                 "id": "leelanau-pines",
                 "name": "Leelanau Pines",
-                "description": "Lakefront camping on Lake Leelanau with beautiful views and water activities.",
-                "price": 42,
-                "coordinates": [44.8890, -85.7213],
                 "scraperFunction": "scrape_leelanauPines"
             },
             {
                 "id": "timber-ridge",
                 "name": "Timber Ridge",
-                "description": "Wooded campground with various recreational activities and hiking trails.",
-                "price": 38,
-                "coordinates": [44.7299, -85.6891],
                 "scraperFunction": "scrape_timberRidge"
             }
         ],
@@ -231,41 +208,26 @@ def get_campgrounds(city_id):
             {
                 "id": "st-ignace-koa",
                 "name": "St. Ignace KOA",
-                "description": "Family-friendly KOA campground with views of the Straits of Mackinac.",
-                "price": 45,
-                "coordinates": [45.8852, -84.7289],
                 "scraperFunction": "scrape_stIgnaceKoa"
             },
             {
                 "id": "indian-river",
-                "name": "Indian River RV Resort",
-                "description": "Resort-style camping with river access and modern amenities.",
-                "price": 42,
-                "coordinates": [45.4156, -84.6123],
+                "name": "Indian River",
                 "scraperFunction": "scrape_indianRiver"
             },
             {
                 "id": "straits-state-park",
-                "name": "Straits State Park",
-                "description": "State park with stunning views of the Mackinac Bridge and Straits of Mackinac.",
-                "price": 35,
-                "coordinates": [45.8423, -84.7256],
+                "name": "Straights State Park",
                 "scraperFunction": "scrape_straitsStatePark"
             },
             {
                 "id": "cabins-of-mackinaw",
                 "name": "Cabins of Mackinaw",
-                "description": "Comfortable cabins near Mackinaw City with various amenities.",
-                "price": 65,
-                "coordinates": [45.7823, -84.7256],
                 "scraperFunction": "scrape_cabinsOfMackinaw"
             },
             {
                 "id": "teepee-campground",
-                "name": "Tee Pee Campground",
-                "description": "Family-owned campground with a variety of sites and proximity to attractions.",
-                "price": 38,
-                "coordinates": [45.7733, -84.7346],
+                "name": "Teepee Campground",
                 "scraperFunction": "scrape_teePeeCampground"
             }
         ],
@@ -273,41 +235,31 @@ def get_campgrounds(city_id):
             {
                 "id": "munising-koa",
                 "name": "Munising KOA",
-                "description": "A KOA Journey campground, close to Pictured Rocks National Lakeshore.",
-                "price": 45,
-                "coordinates": [46.4156, -86.6123],
                 "scraperFunction": "scrape_munisingKoa"
             },
             {
                 "id": "tourist-park",
                 "name": "Tourist Park",
-                "description": "City-owned park on Lake Superior with beautiful beach access.",
-                "price": 35,
-                "coordinates": [46.5631, -87.3789],
                 "scraperFunction": "scrape_touristPark"
             },
             {
                 "id": "uncle-duckys-au-train",
                 "name": "Uncle Ducky's Au Train",
-                "description": "Campground with easy access to kayaking and outdoor activities.",
-                "price": 40,
-                "coordinates": [46.4398, -86.8208],
                 "scraperFunction": "scrape_uncleDuckysAuTrain"
+            },
+            {
+                "id": "uncle-duckys-paddlers-village",
+                "name": "Uncle Ducky's Paddlers Village",
+                "scraperFunction": "scrape_uncleDuckysPaddlersVillage"
             },
             {
                 "id": "fort-superior",
                 "name": "Fort Superior",
-                "description": "Historic fort site with camping areas and Lake Superior views.",
-                "price": 38,
-                "coordinates": [46.5789, -87.4156],
                 "scraperFunction": "scrape_fortSuperior"
             },
             {
                 "id": "au-train-lake",
                 "name": "Au Train Lake Campground",
-                "description": "Lakeside camping with opportunities for fishing and water activities.",
-                "price": 35,
-                "coordinates": [46.3521, -86.8321],
                 "scraperFunction": "scrape_auTrainLakeCampground"
             }
         ]
@@ -354,7 +306,6 @@ def check_availability():
             # Traverse City
             "traverse-city-state-park": "scrapers/traverse-city-state-park",
             "traverse-city-koa": "scrapers/traverse-city-koa",
-            "uncle-duckys-paddlers-village": "scrapers/uncle-duckys-paddlers-village",
             "anchor-inn": "scrapers/anchor-inn",
             "leelanau-pines": "scrapers/leelanau-pines",
             "timber-ridge": "scrapers/timber-ridge",
@@ -370,6 +321,7 @@ def check_availability():
             "munising-koa": "scrapers/munising-koa",
             "tourist-park": "scrapers/tourist-park",
             "uncle-duckys-au-train": "scrapers/uncle-duckys-au-train",
+            "uncle-duckys-paddlers-village": "scrapers/uncle-duckys-paddlers-village",
             "fort-superior": "scrapers/fort-superior",
             "au-train-lake": "scrapers/au-train-lake"
         }
