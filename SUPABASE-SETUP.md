@@ -24,7 +24,7 @@ If you haven't already, create a free Supabase account at [https://supabase.com]
 
 ```
 VITE_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_ANON_KEY=your-anon-key
 ```
 
 ## 4. Set Up the Database Tables
