@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npm ci --force && npm run build",
+  "framework": "vite",
+  "installCommand": "npm install --force",
+  "devCommand": "npm run dev"
+} 
