@@ -12,8 +12,11 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
     # Calculate num_travelers from num_adults and num_kids
     num_travelers = num_adults + num_kids
 
-    # Initialize results dictionary
-    results = {}
+    # Initialize results dictionary for the accommodations
+    results = {
+        "tent": {"available": False, "price": None, "message": "Not available"},
+        "lodging": {"available": False, "price": None, "message": "Not available"}
+    }
 
     start_date = datetime.strptime(start_date_str, '%m/%d/%y').strftime('%Y-%m-%d')
     end_date = datetime.strptime(end_date_str, '%m/%d/%y').strftime('%Y-%m-%d')
@@ -35,7 +38,7 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
     }
 
     # Function to process results for each category
-    def process_category(category_id, category_name):
+    def process_category(category_id, category_name, num_travelers):
         params = {
             'inline': '1',
             'header': 'hide',
@@ -147,11 +150,34 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
             traceback.print_exc()
             return {"available": False, "price": None, "message": f"Error processing {category_name}: {str(e)}"}
 
-    # Get results for yurts (category_id = 2)
-    results["yurt"] = process_category("2", "yurt")
+    # Check if start date is before May 23, 2025
+    start_month, start_day, start_year = map(int, start_date.split('/'))
+    if start_year < 25 or (start_year == 25 and (start_month < 5 or (start_month == 5 and start_day < 23))):
+        error_message = "Not available before May 23, 2025"
+        results["tent"]["message"] = error_message
+        results["lodging"]["message"] = error_message
+        return results
+
+    # Process tent category
+    results["tent"] = process_category("14", "tent", num_travelers)
     
-    # Get results for platform tents (category_id = 4)
-    results["platform_tent"] = process_category("4", "platform tent")
+    # For lodging, check yurts first (if group size <= 5), then platform tents
+    if num_travelers > 5:
+        # Skip yurts and only check platform tents for large groups
+        platform_tent_result = process_category("15", "platform tent", num_travelers)
+        if platform_tent_result["available"]:
+            results["lodging"] = platform_tent_result
+    else:
+        # For smaller groups, check yurts first
+        yurt_result = process_category("16", "yurt", num_travelers)
+        if yurt_result["available"]:
+            # If yurts are available, use them for lodging
+            results["lodging"] = yurt_result
+        else:
+            # If no yurts, check platform tents as fallback
+            platform_tent_result = process_category("15", "platform tent", num_travelers)
+            if platform_tent_result["available"]:
+                results["lodging"] = platform_tent_result
     
     return results
 

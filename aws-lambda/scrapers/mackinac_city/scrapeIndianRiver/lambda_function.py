@@ -13,9 +13,9 @@ def scrape_indianRiver(start_date, end_date, num_adults, num_kids):
     start_month, start_day, start_year = map(int, start_date.split('/'))
     if start_year < 25 or (start_year == 25 and (start_month < 5)):
         results = {
-            "tent": {"available": False, "price": None, "message": "Not available before May 1, 2025"},
             "rv": {"available": False, "price": None, "message": "Not available before May 1, 2025"},
-            "cabin": {"available": False, "price": None, "message": "Not available before May 1, 2025"}
+            "tent": {"available": False, "price": None, "message": "Not available before May 1, 2025"},
+            "lodging": {"available": False, "price": None, "message": "Not available before May 1, 2025"}
         }
         return results
 
@@ -47,7 +47,11 @@ def scrape_indianRiver(start_date, end_date, num_adults, num_kids):
         "includeUnavailable": True
     }
 
-    results = {}
+    results = {
+        "rv": {"available": False, "price": None, "message": "Not available"},
+        "tent": {"available": False, "price": None, "message": "Not available"},
+        "lodging": {"available": False, "price": None, "message": "Not available"}
+    }
 
     session = requests.Session()
     response = session.get(url, headers=headers, params=params, timeout=30)
@@ -128,18 +132,18 @@ def scrape_indianRiver(start_date, end_date, num_adults, num_kids):
                 "message": "No RV sites available."
             }
         
-        # Set results for cabin
+        # Set results for lodging
         if cabin_min_price != float('inf'):
-            results["cabin"] = {
+            results["lodging"] = {
                 "available": True,
                 "price": cabin_min_price,
                 "message": f"${cabin_min_price:.2f} per night - {cabin_site_name}"
             }
         else:
-            results["cabin"] = {
+            results["lodging"] = {
                 "available": False,
                 "price": None,
-                "message": "No cabin options available."
+                "message": "No lodging options available."
             }
         
         return results
@@ -147,9 +151,9 @@ def scrape_indianRiver(start_date, end_date, num_adults, num_kids):
         print("Failed to retrieve data:", response)
         error_message = "Failed to retrieve data"
         results = {
-            "tent": {"available": False, "price": None, "message": error_message},
             "rv": {"available": False, "price": None, "message": error_message},
-            "cabin": {"available": False, "price": None, "message": error_message}
+            "tent": {"available": False, "price": None, "message": error_message},
+            "lodging": {"available": False, "price": None, "message": error_message}
         }
         return results
 

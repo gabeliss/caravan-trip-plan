@@ -32,8 +32,7 @@ def scrape_traverseCityStatePark(start_date, end_date, num_adults, num_kids):
         dict: Availability and pricing information with standardized multi-accommodation format:
         {
             "rv": { "available": True/False, "price": float or None, "message": str },
-            "tent": { "available": True/False, "price": float or None, "message": str },
-            "cabin": { "available": True/False, "price": float or None, "message": str }
+            "tent": { "available": True/False, "price": float or None, "message": str }
         }
     """
     # Define Traverse City State Park specific parameters
@@ -50,8 +49,7 @@ def scrape_traverseCityStatePark(start_date, end_date, num_adults, num_kids):
     # Convert the basic result to the standardized multi-accommodation format
     result = {
         "rv": basic_result.copy(),
-        "tent": basic_result.copy(),
-        "cabin": {"available": False, "price": None, "message": "No cabins available at this park."}
+        "tent": basic_result.copy()
     }
     
     # Update messages for clarity

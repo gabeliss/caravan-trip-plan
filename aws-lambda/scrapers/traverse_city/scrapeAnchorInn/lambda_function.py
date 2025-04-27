@@ -38,7 +38,9 @@ def scrape_anchorInn(start_date_str, end_date_str, num_adults, num_kids=0):
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)"
     }
  
-    results = {}
+    results = {
+        "lodging": {"available": False, "price": None, "message": "Not available for selected dates"}
+    }
      
     # Send the request
     response = requests.post(url, headers=headers, data={})  # Sending an empty JSON object as payload
@@ -55,16 +57,16 @@ def scrape_anchorInn(start_date_str, end_date_str, num_adults, num_kids=0):
         for stay in stays_ordered:
             if stays[stay] != "Unavailable":
                 price = stays[stay]
-                results["cabin"] = {
-                    "available": True, 
-                    "price": price, 
+                results["lodging"] = {
+                    "available": True,
+                    "price": price,
                     "message": f"${price:.2f} per night - {stay}"
                 }
                 break
         
         # If no available stays were found
-        if "cabin" not in results:
-            results["cabin"] = {
+        if "lodging" not in results:
+            results["lodging"] = {
                 "available": False, 
                 "price": None, 
                 "message": "No cabins available for selected dates."
@@ -74,7 +76,7 @@ def scrape_anchorInn(start_date_str, end_date_str, num_adults, num_kids=0):
     else:
         print(f"Failed to fetch data: {response.status_code}, {response.text}")
         return {
-            "cabin": {
+            "lodging": {
                 "available": False,
                 "price": None,
                 "message": f"Failed to retrieve data: {response.status_code}"

@@ -31,7 +31,11 @@ def scrape_timberRidge(start_date, end_date, num_adults, num_kids):
     start_date_formatted = convert_date(start_date)
     end_date_formatted = convert_date(end_date)
 
-    results = {}
+    results = {
+        "rv": {"available": False, "price": None, "message": "Not available"},
+        "tent": {"available": False, "price": None, "message": "Not available"},
+        "lodging": {"available": False, "price": None, "message": "Not available"}
+    }
 
     # First, make a request for tent/RV sites with equipment parameters
     tent_rv_data = {
@@ -165,21 +169,21 @@ def scrape_timberRidge(start_date, end_date, num_adults, num_kids):
                 break
         
         if selected_cabin and selected_price:
-            results["cabin"] = {
+            results["lodging"] = {
                 "available": True,
                 "price": selected_price,
                 "message": f"${selected_price:.2f} per night - {selected_cabin}"
             }
         else:
-            results["cabin"] = {
+            results["lodging"] = {
                 "available": False,
                 "price": None,
-                "message": "No suitable cabin available for the selected dates and party size."
+                "message": "No suitable lodging available for the selected dates and party size."
             }
     else:
-        # If the API request failed, set cabin type to unavailable
-        error_message = "Failed to retrieve cabin data"
-        results["cabin"] = {"available": False, "price": None, "message": error_message}
+        # If the API request failed, set lodging type to unavailable
+        error_message = "Failed to retrieve lodging data"
+        results["lodging"] = {"available": False, "price": None, "message": error_message}
     
     return results
 

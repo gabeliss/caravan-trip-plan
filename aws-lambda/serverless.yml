@@ -5,7 +5,7 @@ provider:
   runtime: python3.9
   region: us-east-1 # Change to your preferred region
   timeout: 60 # 60 seconds timeout for scrapers
-  memorySize: 512 # 512MB of memory should be sufficient for most scrapers
+  memorySize: 1024 # 1024MB of memory should be sufficient for most scrapers
   logRetentionInDays: 14
 
 package:

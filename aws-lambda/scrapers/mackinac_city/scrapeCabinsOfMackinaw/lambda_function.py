@@ -43,7 +43,9 @@ def scrape_cabinsOfMackinaw(start_date_str, end_date_str, num_adults, num_kids=0
         'submit_x': 'true'
     }
 
-    results = {}
+    results = {
+        "lodging": {"available": False, "price": None, "message": "Not available for selected dates"}
+    }
 
     response = session.get(url, headers=headers, params=params)
 
@@ -101,25 +103,25 @@ def scrape_cabinsOfMackinaw(start_date_str, end_date_str, num_adults, num_kids=0
 
             if available:
                 price = price.strip("$")
-                results["cabin"] = {
-                    "available": True, 
-                    "price": float(price), 
+                results["lodging"] = {
+                    "available": True,
+                    "price": float(price),
                     "message": f"${price} per night - {selected_cabin}"
                 }
             else:
-                results["cabin"] = {
+                results["lodging"] = {
                     "available": False, 
                     "price": None, 
                     "message": "No cabins available for selected dates."
                 }
         else:
-            results["cabin"] = {
+            results["lodging"] = {
                 "available": False, 
                 "price": None, 
                 "message": "No data found."
             }
     else:
-        results["cabin"] = {
+        results["lodging"] = {
             "available": False, 
             "price": None, 
             "message": "Failed to retrieve data."

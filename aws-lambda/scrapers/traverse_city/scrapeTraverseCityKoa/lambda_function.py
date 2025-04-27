@@ -41,7 +41,7 @@ def scrape_traverseCityKoa(start_date, end_date, num_adults=2, num_kids=0, retry
         return {
             "rv": {"available": False, "price": None, "message": error_message},
             "tent": {"available": False, "price": None, "message": error_message},
-            "cabin": {"available": False, "price": None, "message": error_message}
+            "lodging": {"available": False, "price": None, "message": error_message}
         }
 
     get_url = "https://koa.com/campgrounds/traverse-city/"
@@ -111,19 +111,19 @@ def scrape_traverseCityKoa(start_date, end_date, num_adults=2, num_kids=0, retry
                     return {
                         "rv": {"available": False, "price": None, "message": error_message},
                         "tent": {"available": False, "price": None, "message": error_message},
-                        "cabin": {"available": False, "price": None, "message": error_message}
+                        "lodging": {"available": False, "price": None, "message": error_message}
                     }
             
             containers = soup.find_all('div', class_='reserve-sitetype-main-row')
             available_rv = False
             available_tent = False
-            available_cabin = False
+            available_lodging = False
             cheapest_rv_price = 1000000
             cheapest_tent_price = 1000000
-            cheapest_cabin_price = 1000000
+            cheapest_lodging_price = 1000000
             cheapest_rv_name = None
             cheapest_tent_name = None
-            cheapest_cabin_name = None
+            cheapest_lodging_name = None
             
             for container in containers:
                 name_element = container.find('h4', class_='reserve-sitetype-title')
@@ -153,10 +153,10 @@ def scrape_traverseCityKoa(start_date, end_date, num_adults=2, num_kids=0, retry
                             available_tent = True
                             cheapest_tent_name = name
                     elif 'cabin' in name_lower or 'lodge' in name_lower or 'cottage' in name_lower:
-                        if price < cheapest_cabin_price:
-                            cheapest_cabin_price = price
-                            available_cabin = True
-                            cheapest_cabin_name = name
+                        if price < cheapest_lodging_price:
+                            cheapest_lodging_price = price
+                            available_lodging = True
+                            cheapest_lodging_name = name
                 except (ValueError, AttributeError) as e:
                     logger.warning(f"Error parsing price: {e}")
                     continue
@@ -165,7 +165,7 @@ def scrape_traverseCityKoa(start_date, end_date, num_adults=2, num_kids=0, retry
             results = {
                 "rv": {"available": False, "price": None, "message": "No RV sites available."},
                 "tent": {"available": False, "price": None, "message": "No tent sites available."},
-                "cabin": {"available": False, "price": None, "message": "No cabins available."}
+                "lodging": {"available": False, "price": None, "message": "No lodging available."}
             }
             
             # Update with available options
@@ -183,11 +183,11 @@ def scrape_traverseCityKoa(start_date, end_date, num_adults=2, num_kids=0, retry
                     "message": f"${cheapest_tent_price:.2f} per night - {cheapest_tent_name}"
                 }
                 
-            if available_cabin:
-                results["cabin"] = {
+            if available_lodging:
+                results["lodging"] = {
                     "available": True, 
-                    "price": cheapest_cabin_price, 
-                    "message": f"${cheapest_cabin_price:.2f} per night - {cheapest_cabin_name}"
+                    "price": cheapest_lodging_price, 
+                    "message": f"${cheapest_lodging_price:.2f} per night - {cheapest_lodging_name}"
                 }
                 
             return results
@@ -201,7 +201,7 @@ def scrape_traverseCityKoa(start_date, end_date, num_adults=2, num_kids=0, retry
                 return {
                     "rv": {"available": False, "price": None, "message": error_message},
                     "tent": {"available": False, "price": None, "message": error_message},
-                    "cabin": {"available": False, "price": None, "message": error_message}
+                    "lodging": {"available": False, "price": None, "message": error_message}
                 }
     
     except (RequestException, ValueError, Exception) as e:
@@ -215,7 +215,7 @@ def scrape_traverseCityKoa(start_date, end_date, num_adults=2, num_kids=0, retry
             return {
                 "rv": {"available": False, "price": None, "message": error_message},
                 "tent": {"available": False, "price": None, "message": error_message},
-                "cabin": {"available": False, "price": None, "message": error_message}
+                "lodging": {"available": False, "price": None, "message": error_message}
             }
 
 

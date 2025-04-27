@@ -9,8 +9,11 @@ import requests
 import json
 
 def scrape_touristPark(start_date, end_date, num_adults, num_kids):
-    # Initialize results dictionary
-    results = {}
+    # Initialize results dictionary with defaults
+    results = {
+        "tent": {"available": False, "price": None, "message": "Not available"},
+        "rv": {"available": False, "price": None, "message": "Not available"}
+    }
     
     start_month, start_day, start_year = map(int, start_date.split('/'))
     if start_year < 25 or (start_year == 25 and (start_month < 5 or (start_month == 5 and start_day < 15))):

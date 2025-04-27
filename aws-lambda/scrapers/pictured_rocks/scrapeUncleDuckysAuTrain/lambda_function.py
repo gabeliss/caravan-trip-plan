@@ -13,11 +13,10 @@ def scrape_uncleDuckysAuTrain(start_date, end_date, num_adults, num_kids):
     # Calculate total travelers
     num_travelers = num_adults + num_kids
     
-    # Initialize results dictionary for the three categories
+    # Initialize results dictionary for the accommodations
     results = {
         "tent": {"available": False, "price": None, "message": "Not available"},
-        "yurt": {"available": False, "price": None, "message": "Not available"},
-        "platform_tent": {"available": False, "price": None, "message": "Not available"}
+        "lodging": {"available": False, "price": None, "message": "Not available"},
     }
     
     # Check if start date is before May 23, 2025
@@ -25,8 +24,7 @@ def scrape_uncleDuckysAuTrain(start_date, end_date, num_adults, num_kids):
     if start_year < 25 or (start_year == 25 and (start_month < 5 or (start_month == 5 and start_day < 23))):
         error_message = "Not available before May 23, 2025"
         results["tent"]["message"] = error_message
-        results["yurt"]["message"] = error_message
-        results["platform_tent"]["message"] = error_message
+        results["lodging"]["message"] = error_message
         return results
 
     # Function to process results for each category
@@ -175,16 +173,27 @@ def scrape_uncleDuckysAuTrain(start_date, end_date, num_adults, num_kids):
             print(f"Error processing {category_name}: {str(e)}")
             traceback.print_exc()
             return {"available": False, "price": None, "message": f"Error processing {category_name}: {str(e)}"}
-        
-    # If group size exceeds 5, yurts are not available
-    if num_travelers > 5:
-        results["yurt"]["message"] = "Yurts can only accommodate up to 5 people"
-    else:
-        results["yurt"] = process_category("16", "yurt", num_travelers)
-
-    # Process tent and platform tent categories
+    
+    # Process tent category
     results["tent"] = process_category("14", "tent", num_travelers)
-    results["platform_tent"] = process_category("15", "platform tent", num_travelers)
+    
+    # For lodging, check yurts first (if group size <= 5), then platform tents
+    if num_travelers > 5:
+        # Skip yurts and only check platform tents for large groups
+        platform_tent_result = process_category("15", "platform tent", num_travelers)
+        if platform_tent_result["available"]:
+            results["lodging"] = platform_tent_result
+    else:
+        # For smaller groups, check yurts first
+        yurt_result = process_category("16", "yurt", num_travelers)
+        if yurt_result["available"]:
+            # If yurts are available, use them for lodging
+            results["lodging"] = yurt_result
+        else:
+            # If no yurts, check platform tents as fallback
+            platform_tent_result = process_category("15", "platform tent", num_travelers)
+            if platform_tent_result["available"]:
+                results["lodging"] = platform_tent_result
     
     return results
 

@@ -2,7 +2,7 @@
     "traverseCity": {
         "traverseCityStatePark": {
             "title": "Traverse City State Park",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "1132 US-31 N, Traverse City, MI 49686",
             "cityAndState": "Traverse City, MI",
             "content": "Located on the east arm of Grand Traverse Bay, this park offers a beautiful beach and is close to the city. Traverse City State Park features a quarter-mile of Grand Traverse Bay shoreline and offers a unique urban camping experience with easy access to downtown.",
@@ -33,7 +33,7 @@
         },
         "traverseCityKoa": {
             "title": "Traverse City KOA",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "9700 M-37, Buckley, MI 49620",
             "cityAndState": "Traverse City, MI",
             "content": "Family-friendly campground with amenities including a pool, mini-golf, and more. This KOA offers a perfect blend of comfort and outdoor recreation with activities for campers of all ages.",
@@ -96,7 +96,7 @@
         },
         "leelanauPines": {
             "title": "Leelanau Pines Campground",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "6500 E. Leelanau Pines Drive, Cedar, MI 49621",
             "cityAndState": "Leelanau, MI",
             "content": "Located on the picturesque shores of Lake Leelanau, Leelanau Pines Campground is a prime spot for waterfront camping. Tent sites offer stunning lake views and direct access to the water, making it a haven for boating, fishing, and water sports enthusiasts. Campers rave about the peaceful sunrise views over the lake, and the campground's proximity to the wineries of Leelanau Peninsula adds a perfect touch for those looking to indulge in local culture.",
@@ -132,7 +132,7 @@
         },
         "timberRidge": {
             "title": "Timber Ridge Recreation Area",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "4050 E Hammond Rd, Traverse City, MI 49686",
             "cityAndState": "Traverse City, MI",
             "content": "Timber Ridge is a highly-rated campground nestled in the lush woodlands just outside Traverse City, Michigan. Known for its family-friendly atmosphere and proximity to local attractions, it offers a perfect blend of outdoor adventure and modern conveniences.",
@@ -204,7 +204,7 @@
     "mackinacCity": {
         "indianRiver": {
             "title": "Indian River RV Resort",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "561 N. Straits Hwy., Indian River, MI 49749",
             "cityAndState": "Indian River, MI",
             "content": "Indian River Resort offers a serene escape along Michigan's beautiful Inland Waterway, just a short distance from Mackinac Island. Tent sites are surrounded by lush forests and situated along tranquil riverbanks, providing campers with easy access to kayaking and canoeing. This campground is a popular choice for outdoor enthusiasts, with ample opportunities for water-based activities as well as nearby hiking and ATV trails. The soothing sounds of the flowing river create a peaceful ambiance, making it an ideal spot to unwind after a day of exploration in the stunning surrounding parks.",
@@ -238,7 +238,7 @@
         },
         "stIgnaceKoa": {
             "title": "St. Ignace KOA",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "1131 N State St, St Ignace, MI 49781",
             "cityAndState": "St. Ignace, MI",
             "content": "St. Ignace KOA offers a premium camping experience with easy access to Mackinac Island and stunning views of the Straits of Mackinac. This family-friendly campground features spacious tent sites nestled among pine trees, providing a peaceful retreat while still being close to area attractions. The KOA is known for its exceptional amenities and friendly staff, making it a favorite for travelers exploring Michigan's Upper Peninsula.",
@@ -272,7 +272,7 @@
         },
         "straitsStatePark": {
             "title": "Straits State Park",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "720 Church St, St Ignace, MI 49781",
             "cityAndState": "St. Ignace, MI",
             "content": "Straits State Park offers some of the most spectacular views of the Mackinac Bridge and the Straits of Mackinac. This scenic state park is an ideal base for exploring both the Upper and Lower Peninsulas of Michigan. Campgrounds are nestled in wooded areas with modern facilities while still maintaining a rustic outdoor experience. The park's observation platform provides unforgettable sunsets over the Mackinac Bridge.",
@@ -304,7 +304,7 @@
         },
         "cabinsOfMackinaw": {
             "title": "Cabins of Mackinaw",
-            "accomodationType": ["cabin"],
+            "accomodationType": ["lodging"],
             "address": "714 S Huron Ave, Mackinaw City, MI 49701",
             "cityAndState": "Mackinaw City, MI",
             "content": "Cabins of Mackinaw offers a cozy and rustic lodging experience with all the comforts of home. These charming cabins provide an ideal mix of wilderness feel with modern conveniences, perfect for those who want to enjoy the outdoors without sacrificing comfort. Located just minutes from downtown Mackinaw City and ferry services to Mackinac Island, the cabins offer a convenient yet peaceful retreat after a day of exploring Northern Michigan.",
@@ -336,7 +336,7 @@
         },
         "teePeeCampground": {
             "title": "TeePee Campground",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "11262 US-23, Mackinaw City, MI 49701",
             "cityAndState": "Mackinac City, MI",
             "content": "Tee Pee Campground is a charming, family-owned private campground overlooking the Straits of Mackinac with spectacular views of the Mackinac Bridge, Mackinac Island, and Great Lakes Freighter traffic. With easy access to Mackinac Island ferries, historic sites, and outdoor adventures, it's an ideal base for exploring Mackinac Island.",
@@ -378,7 +378,7 @@
     "picturedRocks": {
         "munisingKoa": {
             "title": "Munising KOA",
-            "accomodationType": ["tent", "rv", "cabin"],
+            "accomodationType": ["tent", "rv", "lodging"],
             "address": "E8181 M-28, Munising, MI 49862",
             "cityAndState": "Munising, MI",
             "content": "Munising KOA provides a comfortable camping experience with excellent amenities and a prime location for exploring Pictured Rocks National Lakeshore. Set amongst tall pine trees, this well-maintained campground offers a variety of site options and is known for its friendly staff and clean facilities. The campground's central location makes it easy to access all the natural wonders of the Pictured Rocks area.",
@@ -445,7 +445,7 @@
         },
         "uncleDuckysAuTrain": {
             "title": "Uncle Ducky's - Au Train",
-            "accomodationType": ["tent", "yurt", "platform_tent"],
+            "accomodationType": ["tent", "lodging"],
             "address": "E4947 M-28, Au Train, MI 49806",
             "cityAndState": "Au Train, MI",
             "content": "Uncle Ducky's in Au Train offers a unique adventure-focused camping experience with convenient access to kayaking, paddleboarding, and other water sports. Located just a short drive from Pictured Rocks National Lakeshore, this campground caters to outdoor enthusiasts looking to maximize their exploration of the area. The campground features rustic tent sites and is known for its guided tours and rental equipment, making it easy to experience the beauty of Lake Superior and the surrounding landscape.",
@@ -476,7 +476,7 @@
         },
         "uncleDuckysPaddlersVillage": {
             "title": "Uncle Ducky's Paddlers Village",
-            "accomodationType": ["yurt", "platform_tent"],
+            "accomodationType": ["lodging"],
             "address": "121 River St, Traverse City, MI 49684",
             "cityAndState": "Traverse City, MI",
             "content": "Riverside camping with easy access to paddle sports and outdoor adventures. This unique campground caters to water enthusiasts and provides convenient rental options for exploring the local waterways.",
