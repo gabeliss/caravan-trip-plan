@@ -21,12 +21,7 @@ def scrape_auTrainLakeCampground(start_date: str, end_date: str, num_adults: int
         num_kids: Number of children
         
     Returns:
-        Dictionary with standardized availability information:
-        {
-            "available": True/False,
-            "price": float or None,
-            "message": str
-        }
+        Dictionary with standardized availability information for tent and RV
     """
     # Constants
     FACILITY_ID = "233172"  # Au Train Lake Campground facility ID
@@ -45,16 +40,25 @@ def scrape_auTrainLakeCampground(start_date: str, end_date: str, num_adults: int
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36"
     }
     
+    # Initialize results dictionary
+    results = {}
+    
     # Format dates for the API calls
     try:
         start_datetime = datetime.strptime(start_date, "%m/%d/%y")
         end_datetime = datetime.strptime(end_date, "%m/%d/%y")
     except ValueError:
-        return {"available": False, "price": None, "message": "Invalid date format. Use MM/DD/YY"}
+        error_message = "Invalid date format. Use MM/DD/YY"
+        results["tent"] = {"available": False, "price": None, "message": error_message}
+        results["rv"] = {"available": False, "price": None, "message": error_message}
+        return results
     
     # Check date validity
     if end_datetime <= start_datetime:
-        return {"available": False, "price": None, "message": "End date must be after start date"}
+        error_message = "End date must be after start date"
+        results["tent"] = {"available": False, "price": None, "message": error_message}
+        results["rv"] = {"available": False, "price": None, "message": error_message}
+        return results
     
     # Calculate number of nights
     num_nights = (end_datetime - start_datetime).days
@@ -72,7 +76,10 @@ def scrape_auTrainLakeCampground(start_date: str, end_date: str, num_adults: int
         campsites_response = requests.get(campsites_url, headers=campgrounds_headers)
         campsites_data = campsites_response.json()
     except (requests.RequestException, json.JSONDecodeError) as e:
-        return {"available": False, "price": None, "message": f"Error fetching campsite data: {str(e)}"}
+        error_message = f"Error fetching campsite data: {str(e)}"
+        results["tent"] = {"available": False, "price": None, "message": error_message}
+        results["rv"] = {"available": False, "price": None, "message": error_message}
+        return results
     
     # Extract campsite IDs for non-MANAGEMENT sites
     campsite_ids = []
@@ -100,7 +107,10 @@ def scrape_auTrainLakeCampground(start_date: str, end_date: str, num_adults: int
                 })
     
     if not campsite_ids:
-        return {"available": False, "price": None, "message": "No suitable campsites found for your group size"}
+        error_message = "No suitable campsites found for your group size"
+        results["tent"] = {"available": False, "price": None, "message": error_message}
+        results["rv"] = {"available": False, "price": None, "message": error_message}
+        return results
     
     # Check availability for each campsite
     available_sites = []
@@ -134,11 +144,10 @@ def scrape_auTrainLakeCampground(start_date: str, end_date: str, num_adults: int
     
     # If no available sites, return unavailable
     if not available_sites:
-        return {
-            "available": False,
-            "price": None,
-            "message": f"No available campsites at Au Train Lake Campground from {start_date} to {end_date}"
-        }
+        error_message = f"No available campsites at Au Train Lake Campground from {start_date} to {end_date}"
+        results["tent"] = {"available": False, "price": None, "message": error_message}
+        results["rv"] = {"available": False, "price": None, "message": error_message}
+        return results
     
     # Get pricing information
     pricing_url = f"https://www.recreation.gov/api/camps/campgrounds/{FACILITY_ID}/rates"
@@ -151,14 +160,15 @@ def scrape_auTrainLakeCampground(start_date: str, end_date: str, num_adults: int
         pricing_data = pricing_response.json()
     except (requests.RequestException, json.JSONDecodeError) as e:
         # Even if we can't get pricing, we know sites are available
-        return {
-            "available": True,
-            "price": 24,  # Default price as fallback
-            "message": "$24.00 per night (estimated)"
-        }
+        availability_message = f"$24.00 per night (estimated) - Standard Nonelectric Site"
+        results["tent"] = {"available": True, "price": 24, "message": availability_message}
+        results["rv"] = {"available": True, "price": 24, "message": availability_message}
+        return results
     
     # Determine the price per night
     price_per_night = None
+    site_type_name = "Standard Nonelectric Site"
+    
     for rate_info in pricing_data.get("rates_list", []):
         try:
             season_start = datetime.strptime(rate_info.get("season_start", ""), "%Y-%m-%dT%H:%M:%SZ")
@@ -169,6 +179,7 @@ def scrape_auTrainLakeCampground(start_date: str, end_date: str, num_adults: int
                 for site_type, price in rate_info.get("price_map", {}).items():
                     if "STANDARD NONELECTRIC" in site_type:
                         price_per_night = price
+                        site_type_name = "Standard Nonelectric Site"
                         break
         except (ValueError, TypeError):
             continue
@@ -177,14 +188,12 @@ def scrape_auTrainLakeCampground(start_date: str, end_date: str, num_adults: int
     if price_per_night is None:
         price_per_night = 24  # Default price based on historical data
     
-    # Prepare standardized response
-    result = {
-        "available": True,
-        "price": price_per_night,
-        "message": f"${price_per_night:.2f} per night"
-    }
+    # Prepare standardized response for both tent and RV
+    availability_message = f"${price_per_night:.2f} per night - {site_type_name}"
+    results["tent"] = {"available": True, "price": price_per_night, "message": availability_message}
+    results["rv"] = {"available": True, "price": price_per_night, "message": availability_message}
     
-    return result
+    return results
 
 
 

@@ -12,7 +12,12 @@ def scrape_indianRiver(start_date, end_date, num_adults, num_kids):
     # Check if start date is before May 1, 2025
     start_month, start_day, start_year = map(int, start_date.split('/'))
     if start_year < 25 or (start_year == 25 and (start_month < 5)):
-        return {"available": False, "price": None, "message": "Not available before May 1, 2025"}
+        results = {
+            "tent": {"available": False, "price": None, "message": "Not available before May 1, 2025"},
+            "rv": {"available": False, "price": None, "message": "Not available before May 1, 2025"},
+            "cabin": {"available": False, "price": None, "message": "Not available before May 1, 2025"}
+        }
+        return results
 
     start_date_formatted = datetime.strptime(start_date, '%m/%d/%y').strftime('%Y-%m-%d')
     end_date_formatted = datetime.strptime(end_date, '%m/%d/%y').strftime('%Y-%m-%d')
@@ -42,6 +47,8 @@ def scrape_indianRiver(start_date, end_date, num_adults, num_kids):
         "includeUnavailable": True
     }
 
+    results = {}
+
     session = requests.Session()
     response = session.get(url, headers=headers, params=params, timeout=30)
 
@@ -49,22 +56,102 @@ def scrape_indianRiver(start_date, end_date, num_adults, num_kids):
         text = response.text
         inventory = json.loads(text)
 
-        minPrice = float('inf')
+        # Define site types for each category
+        tent_sites = ["Water and Electric"]
+        rv_sites = ["Back In Deluxe", "Pull Through Buddy", "Back In", "Pull Through", 
+                    "Water and Electric", "Pull Through Super", "Back In Extended Stay"]
+        cabin_sites = ["Tiny Cottages", "Cabins"]
+        
+        # Initialize variables to track cheapest options
+        tent_min_price = float('inf')
+        tent_site_name = None
+        rv_min_price = float('inf')
+        rv_site_name = None
+        cabin_min_price = float('inf')
+        cabin_site_name = None
+        
+        # Process all available options
         for place in inventory:
             if place["availability"] != "AVAILABLE":
                 continue
-
-            if place['name'] == "Water and Electric":
-                minPrice = place['averagePricePerNight']
-                break
-
-        if minPrice == float('inf'):
-            return {"available": False, "price": None, "message": "No options available."}
+            
+            site_name = place.get('name', '')
+            price = place.get('averagePricePerNight')
+            
+            # Skip if price is missing
+            if not price:
+                continue
+                
+            # Check for tent sites
+            if site_name in tent_sites:
+                if price < tent_min_price:
+                    tent_min_price = price
+                    tent_site_name = site_name
+            
+            # Check for RV sites
+            if site_name in rv_sites:
+                if price < rv_min_price:
+                    rv_min_price = price
+                    rv_site_name = site_name
+            
+            # Check for cabin sites
+            if site_name in cabin_sites:
+                if price < cabin_min_price:
+                    cabin_min_price = price
+                    cabin_site_name = site_name
+        
+        # Set results for tent
+        if tent_min_price != float('inf'):
+            results["tent"] = {
+                "available": True,
+                "price": tent_min_price,
+                "message": f"${tent_min_price:.2f} per night - {tent_site_name}"
+            }
         else:
-            return {"available": True, "price": minPrice, "message": f"${minPrice:.2f} per night"}
+            results["tent"] = {
+                "available": False,
+                "price": None,
+                "message": "No tent sites available."
+            }
+        
+        # Set results for RV
+        if rv_min_price != float('inf'):
+            results["rv"] = {
+                "available": True,
+                "price": rv_min_price,
+                "message": f"${rv_min_price:.2f} per night - {rv_site_name}"
+            }
+        else:
+            results["rv"] = {
+                "available": False,
+                "price": None,
+                "message": "No RV sites available."
+            }
+        
+        # Set results for cabin
+        if cabin_min_price != float('inf'):
+            results["cabin"] = {
+                "available": True,
+                "price": cabin_min_price,
+                "message": f"${cabin_min_price:.2f} per night - {cabin_site_name}"
+            }
+        else:
+            results["cabin"] = {
+                "available": False,
+                "price": None,
+                "message": "No cabin options available."
+            }
+        
+        return results
     else:
         print("Failed to retrieve data:", response)
-        return {"available": False, "price": None, "message": "Failed to retrieve data"}
+        error_message = "Failed to retrieve data"
+        results = {
+            "tent": {"available": False, "price": None, "message": error_message},
+            "rv": {"available": False, "price": None, "message": error_message},
+            "cabin": {"available": False, "price": None, "message": error_message}
+        }
+        return results
 
 
 

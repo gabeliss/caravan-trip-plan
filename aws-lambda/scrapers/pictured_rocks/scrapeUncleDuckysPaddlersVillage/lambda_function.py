@@ -12,32 +12,13 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
     # Calculate num_travelers from num_adults and num_kids
     num_travelers = num_adults + num_kids
 
+    # Initialize results dictionary
+    results = {}
+
     start_date = datetime.strptime(start_date_str, '%m/%d/%y').strftime('%Y-%m-%d')
     end_date = datetime.strptime(end_date_str, '%m/%d/%y').strftime('%Y-%m-%d')
 
     url = 'https://paddlersvillage.checkfront.com/reserve/inventory/'
-
-    params = {
-        'inline': '1',
-        'header': 'hide',
-        'src': 'https://www.paddlingmichigan.com',
-        'filter_category_id': '3,2,4,9',
-        'ssl': '1',
-        'provider': 'droplet',
-        'filter_item_id': '',
-        'customer_id': '',
-        'original_start_date': '',
-        'original_end_date': '',
-        'date': '',
-        'language': '',
-        'cacheable': '1',
-        'category_id': '2',
-        'view': '',
-        'start_date': start_date,
-        'end_date': end_date,
-        'keyword': '',
-        'cf-month': start_date[:7].replace('-', '') + '01'
-    }
 
     headers = {
         'Accept': '*/*',
@@ -53,39 +34,126 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
         'X-Requested-With': 'XMLHttpRequest'
     }
 
-    response = requests.get(url, params=params, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        inventory = data["inventory"]
+    # Function to process results for each category
+    def process_category(category_id, category_name):
+        params = {
+            'inline': '1',
+            'header': 'hide',
+            'src': 'https://www.paddlingmichigan.com',
+            'filter_category_id': '3,2,4,9',
+            'ssl': '1',
+            'provider': 'droplet',
+            'filter_item_id': '',
+            'customer_id': '',
+            'original_start_date': '',
+            'original_end_date': '',
+            'date': '',
+            'language': '',
+            'cacheable': '1',
+            'category_id': category_id,
+            'view': '',
+            'start_date': start_date,
+            'end_date': end_date,
+            'keyword': '',
+            'cf-month': start_date[:7].replace('-', '') + '01'
+        }
 
-        soup = BeautifulSoup(inventory, 'html.parser')
-        
-        unavailable = soup.find_all(string="Nothing available for the dates selected.")
-        if unavailable:
-            return {"available": False, "price": None, "message": "Not available for selected dates."}
-        else:
-            items = soup.find_all(class_="cf-item-data")
-            price = '0'
-            for item in items:
-                item_summary = item.find(class_="cf-item-summary")
-                p_tag_text = item_summary.get_text()
+        try:
+            response = requests.get(url, params=params, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                inventory = data.get("inventory", "")
 
-                if num_travelers > 5:
-                    if "Sleeps 8" in p_tag_text:
-                        item_price_span = item.find(class_="cf-price").strong.span
-                        price = item_price_span.text.strip("$")
-                        break
+                if not inventory:
+                    return {"available": False, "price": None, "message": f"No {category_name} data available."}
+
+                soup = BeautifulSoup(inventory, 'html.parser')
+                
+                unavailable = soup.find_all(string="Nothing available for the dates selected.")
+                if unavailable:
+                    return {"available": False, "price": None, "message": f"No {category_name} options available."}
                 else:
-                    if "Sleeps 5" in p_tag_text:
-                        item_price_span = item.find(class_="cf-price").strong.span
-                        price = item_price_span.text.strip("$")
-                        break
+                    items = soup.find_all(class_="cf-item-data")
+                    if not items:
+                        return {"available": False, "price": None, "message": f"No {category_name} options found."}
+                    
+                    price = None
+                    item_name = None
+                    
+                    for item in items:
+                        # Find the item title and summary section
+                        title_summary = item.find(class_="cf-item-title-summary")
+                        if not title_summary:
+                            continue
                         
-            return {"available": True, "price": price, "message": "Available: $" + price + " per night"}
+                        # Extract item name from cf-title > h2
+                        title_div = title_summary.find(class_="cf-title")
+                        if not title_div:
+                            continue
+                            
+                        # Find the h2 tag with the item name
+                        h2_tag = title_div.find('h2')
+                        if not h2_tag:
+                            continue
+                            
+                        # Extract the full item name and remove any trailing/leading whitespace
+                        item_name_candidate = h2_tag.text.strip()
+                        
+                        # Find the item summary for checking sleeps capacity
+                        item_summary = title_summary.find(class_="cf-item-summary")
+                        if not item_summary:
+                            continue
+                            
+                        # Extract text from p tag to check capacity
+                        p_tag = item_summary.find('p')
+                        if not p_tag:
+                            continue
+                            
+                        p_tag_text = p_tag.get_text().strip()
+                        
+                        # Find price element - it's now in the cf-title div
+                        price_element = title_div.find(class_="cf-price")
+                        if not price_element or not price_element.strong or not price_element.strong.span:
+                            continue
+                            
+                        try:
+                            if num_travelers > 5:
+                                if "Sleeps 8" in p_tag_text:
+                                    price_text = price_element.strong.span.text.strip("$")
+                                    if price_text:
+                                        price = float(price_text)
+                                        item_name = item_name_candidate
+                                        break
+                            else:
+                                if "Sleeps 5" in p_tag_text:
+                                    price_text = price_element.strong.span.text.strip("$")
+                                    if price_text:
+                                        price = float(price_text)
+                                        item_name = item_name_candidate
+                                        break
+                        except (ValueError, AttributeError) as e:
+                            print(f"Error parsing {category_name} price: {e}")
+                            continue
+                    
+                    if price is not None and item_name:
+                        return {"available": True, "price": price, "message": f"${price:.2f} per night - {item_name}"}
+                    else:
+                        return {"available": False, "price": None, "message": f"No suitable {category_name} found for your group size."}
+            else:
+                print(f"Failed to retrieve {category_name} data:", response.status_code)
+                return {"available": False, "price": None, "message": f"Failed to retrieve {category_name} data"}
+        except Exception as e:
+            print(f"Error processing {category_name}: {str(e)}")
+            traceback.print_exc()
+            return {"available": False, "price": None, "message": f"Error processing {category_name}: {str(e)}"}
 
-    else:
-        print("Failed to retrieve data:", response.status_code)
-        return {"error": "Failed to retrieve data", "code": response.status_code}
+    # Get results for yurts (category_id = 2)
+    results["yurt"] = process_category("2", "yurt")
+    
+    # Get results for platform tents (category_id = 4)
+    results["platform_tent"] = process_category("4", "platform tent")
+    
+    return results
 
 
 
@@ -156,6 +224,7 @@ def lambda_handler(event, context):
     except Exception as e:
         error_traceback = traceback.format_exc()
         print(f"Error in Uncleduckyspaddlersvillage Lambda: {str(e)}")
+        print(f"Traceback: {error_traceback}")
         
         # Get current time for timestamp
         from datetime import datetime
@@ -183,7 +252,7 @@ if __name__ == '__main__':
         'body': json.dumps({
             'startDate': '06/29/25',
             'endDate': '07/02/25',
-            'numAdults': 2,
+            'numAdults': 6,
             'numKids': 0
         })
     }

@@ -43,12 +43,15 @@ def scrape_cabinsOfMackinaw(start_date_str, end_date_str, num_adults, num_kids=0
         'submit_x': 'true'
     }
 
+    results = {}
+
     response = session.get(url, headers=headers, params=params)
 
     if response.status_code == 200 and response.text:
         soup = BeautifulSoup(response.text, 'html.parser')
 
         cabins_data = {}
+        selected_cabin = None
         
         table = soup.find_all('table', class_='data')[1]
         
@@ -75,18 +78,22 @@ def scrape_cabinsOfMackinaw(start_date_str, end_date_str, num_adults, num_kids=0
             if num_travelers <= 2:
                 if pc1 in cabins_data and cabins_data[pc1] != 'not available':
                     price = cabins_data[pc1]
+                    selected_cabin = pc1
                 else:
                     available = False
             elif num_travelers <= 4:
                 if pc2 in cabins_data and cabins_data[pc2] != 'not available':
                     price = cabins_data[pc2]
+                    selected_cabin = pc2
                 elif pc3 in cabins_data and cabins_data[pc3] != 'not available':
                     price = cabins_data[pc3]
+                    selected_cabin = pc3
                 else:
                     available = False
             elif num_travelers <= 6:
                 if pc4 in cabins_data and cabins_data[pc4] != 'not available':
                     price = cabins_data[pc4]
+                    selected_cabin = pc4
                 else:
                     available = False 
             else:
@@ -94,13 +101,32 @@ def scrape_cabinsOfMackinaw(start_date_str, end_date_str, num_adults, num_kids=0
 
             if available:
                 price = price.strip("$")
-                return {"available": True, "price": price, "message": "Available: $" + price + " per night"}
+                results["cabin"] = {
+                    "available": True, 
+                    "price": float(price), 
+                    "message": f"${price} per night - {selected_cabin}"
+                }
             else:
-                return {"available": False, "price": None, "message": "Not available for selected dates."}              
-
+                results["cabin"] = {
+                    "available": False, 
+                    "price": None, 
+                    "message": "No cabins available for selected dates."
+                }
+        else:
+            results["cabin"] = {
+                "available": False, 
+                "price": None, 
+                "message": "No data found."
+            }
     else:
+        results["cabin"] = {
+            "available": False, 
+            "price": None, 
+            "message": "Failed to retrieve data."
+        }
         print("Failed to retrieve data, or data is empty.")
-
+    
+    return results
 
 
 def lambda_handler(event, context):

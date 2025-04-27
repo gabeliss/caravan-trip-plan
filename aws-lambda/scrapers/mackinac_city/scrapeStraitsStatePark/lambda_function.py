@@ -31,9 +31,8 @@ def scrape_straitsStatePark(start_date, end_date, num_adults, num_kids):
     Returns:
         dict: Availability and pricing information with format:
         {
-            "available": True/False,
-            "price": float or None,
-            "message": str
+            "rv": { "available": True/False, "price": float or None, "message": str },
+            "tent": { "available": True/False, "price": float or None, "message": str }
         }
     """
     # Define Straits State Park specific parameters
@@ -45,7 +44,21 @@ def scrape_straitsStatePark(start_date, end_date, num_adults, num_kids):
     }
     
     # Use the generalized function with Straits State Park parameters
-    return scrape_midnrReservations(start_date, end_date, num_adults, num_kids, park_params=straits_params)
+    basic_result = scrape_midnrReservations(start_date, end_date, num_adults, num_kids, park_params=straits_params)
+    
+    # Convert the basic result to the standardized multi-accommodation format
+    result = {
+        "rv": basic_result.copy(),
+        "tent": basic_result.copy()
+    }
+    
+    # Update messages for clarity
+    if basic_result["available"]:
+        # If available, add accommodation type to message
+        result["rv"]["message"] = "RV: " + basic_result["message"]
+        result["tent"]["message"] = "Tent: " + basic_result["message"]
+    
+    return result
 
 
 
@@ -116,6 +129,7 @@ def lambda_handler(event, context):
     except Exception as e:
         error_traceback = traceback.format_exc()
         print(f"Error in Straitsstatepark Lambda: {str(e)}")
+        print(f"Traceback: {error_traceback}")
         
         # Get current time for timestamp
         from datetime import datetime

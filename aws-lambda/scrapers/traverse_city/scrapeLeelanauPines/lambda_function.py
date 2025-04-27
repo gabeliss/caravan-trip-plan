@@ -14,7 +14,12 @@ def scrape_leelanauPines(start_date, end_date, num_adults, num_kids):
     # Check if start date is before May 2, 2025
     start_month, start_day, start_year = map(int, start_date.split('/'))
     if start_year < 25 or (start_year == 25 and (start_month < 5 or (start_month == 5 and start_day < 2))):
-        return {"available": False, "price": None, "message": "Not available before May 2, 2025"}
+        results = {
+            "tent": {"available": False, "price": None, "message": "Not available before May 2, 2025"},
+            "rv": {"available": False, "price": None, "message": "Not available before May 2, 2025"},
+            "cabin": {"available": False, "price": None, "message": "Not available before May 2, 2025"}
+        }
+        return results
 
     start_date_formatted = datetime.strptime(start_date, '%m/%d/%y').strftime('%Y-%m-%d')
     end_date_formatted = datetime.strptime(end_date, '%m/%d/%y').strftime('%Y-%m-%d')
@@ -43,6 +48,8 @@ def scrape_leelanauPines(start_date, end_date, num_adults, num_kids):
         "pets": 0,
     }
 
+    results = {}
+    
     response = requests.get(url, headers=headers, params=params, timeout=30)
 
     if response.status_code == 200:
@@ -59,30 +66,98 @@ def scrape_leelanauPines(start_date, end_date, num_adults, num_kids):
                 text = response.text
 
             inventory = json.loads(text)
-            tent_sites = ["Standard Back-In RV", "Deluxe Back-In RV", "Lakefront Basic RV", "Premium Back-In RV"]
-            minPrice = float('inf')
+            
+            # Define the site types
+            tent_rv_sites = ["Lakefront Standard RV", "Standard Back-In RV", "Deluxe Back-In RV", "Lakefront Basic RV", "Premium Back-In RV"]
+            cabin_sites = ["Rice Creek Glamping Pod", "White Pine Cabin"]
+            
+            # Store all available sites in a dictionary
+            available_sites = {}
             for place in inventory.get('data', []):
-                if place["availability"] != "AVAILABLE":
-                    continue
-
-                if place['name'] == "Lakefront Basic RV":
-                    minPrice = place['averagePricePerNight']
-                    break
-
-                if place['name'] in tent_sites and place['averagePricePerNight'] < minPrice:
-                    minPrice = place['averagePricePerNight']
-
-            if minPrice == float('inf'):
-                return {"available": False, "price": None, "message": "No options available."}
+                if place["availability"] == "AVAILABLE":
+                    available_sites[place['name']] = place['averagePricePerNight']
+            
+            # Process tent/RV sites
+            tent_rv_min_price = float('inf')
+            tent_rv_site_name = None
+            
+            # First check if the preferred tent/RV site is available
+            if "Lakefront Basic RV" in available_sites:
+                tent_rv_min_price = available_sites["Lakefront Basic RV"]
+                tent_rv_site_name = "Lakefront Basic RV"
             else:
-                return {"available": True, "price": minPrice, "message": f"${minPrice:.2f} per night"}
+                # Otherwise find the cheapest tent/RV site
+                for site_name in tent_rv_sites:
+                    if site_name in available_sites and available_sites[site_name] < tent_rv_min_price:
+                        tent_rv_min_price = available_sites[site_name]
+                        tent_rv_site_name = site_name
+            
+            # Process cabin sites
+            cabin_min_price = float('inf')
+            cabin_site_name = None
+            
+            # First check if the preferred cabin site is available
+            if "Rice Creek Glamping Pod" in available_sites:
+                cabin_min_price = available_sites["Rice Creek Glamping Pod"]
+                cabin_site_name = "Rice Creek Glamping Pod"
+            else:
+                # Otherwise find the cheapest cabin site
+                for site_name in cabin_sites:
+                    if site_name in available_sites and available_sites[site_name] < cabin_min_price:
+                        cabin_min_price = available_sites[site_name]
+                        cabin_site_name = site_name
+            
+            # Set results for tent and RV (same results for both)
+            if tent_rv_min_price != float('inf'):
+                tent_rv_result = {
+                    "available": True,
+                    "price": tent_rv_min_price,
+                    "message": f"${tent_rv_min_price:.2f} per night - {tent_rv_site_name}"
+                }
+            else:
+                tent_rv_result = {
+                    "available": False,
+                    "price": None,
+                    "message": "No tent/RV sites available."
+                }
+            
+            results["tent"] = tent_rv_result
+            results["rv"] = tent_rv_result  # Same results for tent and RV
+            
+            # Set results for cabin
+            if cabin_min_price != float('inf'):
+                results["cabin"] = {
+                    "available": True,
+                    "price": cabin_min_price,
+                    "message": f"${cabin_min_price:.2f} per night - {cabin_site_name}"
+                }
+            else:
+                results["cabin"] = {
+                    "available": False,
+                    "price": None,
+                    "message": "No cabin options available."
+                }
+            
+            return results
 
         except json.JSONDecodeError as e:
             print("Failed to parse JSON response:", text)
-            return {"available": False, "price": None, "message": "Invalid JSON response from API"}
+            error_message = "Invalid JSON response from API"
+            results = {
+                "tent": {"available": False, "price": None, "message": error_message},
+                "rv": {"available": False, "price": None, "message": error_message},
+                "cabin": {"available": False, "price": None, "message": error_message}
+            }
+            return results
     else:
         print(f"Failed to retrieve data: Status Code {response.status_code}, Response: {response.text}")
-        return {"available": False, "price": None, "message": "Failed to retrieve data"}
+        error_message = "Failed to retrieve data"
+        results = {
+            "tent": {"available": False, "price": None, "message": error_message},
+            "rv": {"available": False, "price": None, "message": error_message},
+            "cabin": {"available": False, "price": None, "message": error_message}
+        }
+        return results
 
 
 
@@ -178,8 +253,8 @@ if __name__ == '__main__':
     # Test the function with sample event
     test_event = {
         'body': json.dumps({
-            'startDate': '06/29/25',
-            'endDate': '07/02/25',
+            'startDate': '06/04/25',
+            'endDate': '06/06/25',
             'numAdults': 2,
             'numKids': 0
         })

@@ -7,111 +7,186 @@ import traceback
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
+import re
 
 def scrape_uncleDuckysAuTrain(start_date, end_date, num_adults, num_kids):
+    # Calculate total travelers
+    num_travelers = num_adults + num_kids
+    
+    # Initialize results dictionary for the three categories
+    results = {
+        "tent": {"available": False, "price": None, "message": "Not available"},
+        "yurt": {"available": False, "price": None, "message": "Not available"},
+        "platform_tent": {"available": False, "price": None, "message": "Not available"}
+    }
+    
     # Check if start date is before May 23, 2025
     start_month, start_day, start_year = map(int, start_date.split('/'))
     if start_year < 25 or (start_year == 25 and (start_month < 5 or (start_month == 5 and start_day < 23))):
-        return {"available": False, "price": None, "message": "Not available before May 23, 2025"}
+        error_message = "Not available before May 23, 2025"
+        results["tent"]["message"] = error_message
+        results["yurt"]["message"] = error_message
+        results["platform_tent"]["message"] = error_message
+        return results
 
-    try:
-        # Format the start and end dates
-        start_date_formatted = datetime.strptime(start_date, '%m/%d/%y').strftime('%Y-%m-%d')
-        end_date_formatted = datetime.strptime(end_date, "%m/%d/%y").strftime("%Y-%m-%d")
-        cf_month = f"{start_date_formatted[:4]}{start_date_formatted[5:7]}01"  # Extract year and month for cf-month
+    # Function to process results for each category
+    def process_category(category_id, category_name, num_travelers):
+        try:
+            # Format the start and end dates
+            start_date_formatted = datetime.strptime(start_date, '%m/%d/%y').strftime('%Y-%m-%d')
+            end_date_formatted = datetime.strptime(end_date, "%m/%d/%y").strftime("%Y-%m-%d")
+            cf_month = f"{start_date_formatted[:4]}{start_date_formatted[5:7]}01"  # Extract year and month for cf-month
 
-        # Set up URL and query parameters
-        url = "https://paddlersvillage.checkfront.com/reserve/inventory/"
-        params = {
-            "inline": "1",
-            "header": "hide",
-            "options": "tabs",
-            "src": "https://www.paddlingmichigan.com",
-            "filter_category_id": "8,15,14,13,16,20",
-            "ssl": "1",
-            "provider": "droplet",
-            "filter_item_id": "",
-            "customer_id": "",
-            "original_start_date": "",
-            "original_end_date": "",
-            "date": "",
-            "language": "",
-            "cacheable": "1",
-            "category_id": "14",
-            "view": "",
-            "start_date": start_date_formatted,
-            "end_date": end_date_formatted,
-            "keyword": "",
-            "cf-month": cf_month
-        }
+            # Set up URL and query parameters - using the correct domain from the headers
+            url = "https://paddlersvillage.checkfront.com/reserve/inventory/"
+            params = {
+                "inline": "1",
+                "header": "hide",
+                "options": "tabs",
+                "src": "https://www.paddlingmichigan.com",
+                "filter_category_id": "8,15,14,13,16,20",
+                "ssl": "1",
+                "provider": "droplet",
+                "filter_item_id": "",
+                "customer_id": "",
+                "original_start_date": "",
+                "original_end_date": "",
+                "date": "",
+                "language": "",
+                "cacheable": "1",
+                "category_id": category_id,
+                "view": "",
+                "start_date": start_date_formatted,
+                "end_date": end_date_formatted,
+                "keyword": "",
+                "cf-month": cf_month
+            }
 
-        # Set up headers
-        headers = {
-            "accept": "*/*",
-            "accept-encoding": "gzip, deflate, br, zstd",
-            "accept-language": "en-US,en;q=0.9",
-            "sec-ch-ua": '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"macOS"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-            "x-newrelic-id": "Vg4FUF9WCxABVlVbAgIFUFAG",
-            "x-requested-with": "XMLHttpRequest"
-        }
+            # Set up headers
+            headers = {
+                "accept": "*/*",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "accept-language": "en-US,en;q=0.9",
+                "sec-ch-ua": '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"macOS"',
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+                "x-newrelic-id": "Vg4FUF9WCxABVlVbAgIFUFAG",
+                "x-requested-with": "XMLHttpRequest",
+                "referer": "https://paddlersvillage.checkfront.com/reserve/?inline=1&category_id=8%2C15%2C14%2C13%2C16%2C20&options=tabs&provider=droplet&ssl=1&src=https%3A%2F%2Fwww.paddlingmichigan.com"
+            }
 
-        # Use a session to handle cookies automatically
-        session = requests.Session()
-        response = session.get(url, headers=headers, params=params, timeout=30)
+            # Use a session to handle cookies automatically
+            session = requests.Session()
+            response = session.get(url, headers=headers, params=params, timeout=30)
 
-        # Raise an HTTPError for unsuccessful status codes
-        response.raise_for_status()
+            # Raise an HTTPError for unsuccessful status codes
+            response.raise_for_status()
 
-        # Parse JSON and HTML
-        data = response.json()
-        inventory = data.get('inventory')
-        if not inventory:
-            return {"available": False, "price": None, "message": "No inventory data found."}
+            # Parse JSON and HTML
+            data = response.json()
+            inventory = data.get('inventory')
+            if not inventory:
+                return {"available": False, "price": None, "message": f"No {category_name} data found."}
 
-        soup = BeautifulSoup(inventory, 'html.parser')
-        all_stay_containers = soup.find_all("div", class_="cf-item-data")
+            soup = BeautifulSoup(inventory, 'html.parser')
+            
+            # Check for "Nothing available" message
+            unavailable = soup.find_all(string="Nothing available for the dates selected.")
+            if unavailable:
+                return {"available": False, "price": None, "message": f"No {category_name} options available."}
+                
+            all_stay_containers = soup.find_all("div", class_="cf-item-data")
+            
+            if not all_stay_containers:
+                return {"available": False, "price": None, "message": f"No {category_name} options found."}
+
+            best_option = None
+            best_price = float('inf')
+            
+            for container in all_stay_containers:
+                # Find the item title and summary section
+                title_summary = container.find(class_="cf-item-title-summary")
+                if not title_summary:
+                    continue
+                
+                # Extract item name from cf-title > h2
+                title_div = title_summary.find(class_="cf-title")
+                if not title_div:
+                    continue
+                    
+                # Find the h2 tag with the item name
+                h2_tag = title_div.find('h2')
+                if not h2_tag:
+                    continue
+                    
+                # Extract the full item name and clean it up
+                item_name_raw = h2_tag.text
+                # Remove multiple spaces, tabs, newlines, and trailing periods
+                item_name = re.sub(r'\s+', ' ', item_name_raw).strip().rstrip('.')
+                
+                # Find price element
+                price_div = title_div.find(class_="cf-price")
+                if not price_div or not price_div.find("strong") or not price_div.find("strong").find("span"):
+                    continue
+                    
+                try:
+                    price_span = price_div.find("strong").find("span")
+                    price_text = price_span.text.replace('$', '').strip()
+                    
+                    # Handle range of prices if present
+                    if ' - ' in price_text:
+                        low_price, high_price = map(float, price_text.split(' - '))
+                        price = (low_price + high_price) / 2
+                    else:
+                        price = float(price_text)
+                        
+                    # Keep track of the lowest price option
+                    if price < best_price:
+                        best_price = price
+                        best_option = item_name
+                except (ValueError, AttributeError) as e:
+                    print(f"Error parsing {category_name} price: {e}")
+                    continue
+
+            if best_option and best_price != float('inf'):
+                return {
+                    "available": True, 
+                    "price": best_price, 
+                    "message": f"${best_price:.2f} per night - {best_option}"
+                }
+            else:
+                return {
+                    "available": False, 
+                    "price": None, 
+                    "message": f"No {category_name} options available."
+                }
         
-        if not all_stay_containers:
-            return {"available": False, "price": None, "message": "No options available."}
+        except requests.exceptions.RequestException as e:
+            print(f"Network error for {category_name}: {e}")
+            return {"available": False, "price": None, "message": f"Network error occurred for {category_name}."}
+        except ValueError as ve:
+            print(f"JSON parsing error for {category_name}: {ve}")
+            return {"available": False, "price": None, "message": f"Data parsing error for {category_name}."}
+        except Exception as e:
+            print(f"Error processing {category_name}: {str(e)}")
+            traceback.print_exc()
+            return {"available": False, "price": None, "message": f"Error processing {category_name}: {str(e)}"}
+        
+    # If group size exceeds 5, yurts are not available
+    if num_travelers > 5:
+        results["yurt"]["message"] = "Yurts can only accommodate up to 5 people"
+    else:
+        results["yurt"] = process_category("16", "yurt", num_travelers)
 
-        min_price = float('inf')
-        for container in all_stay_containers:
-            price_div = container.find("div", class_="cf-price")
-            if price_div:
-                price_span = price_div.find("strong").find("span")
-                if price_span:
-                    try:
-                        price_text = price_span.text.replace('$', '').strip()
-                        if ' - ' in price_text:
-                            # Handle range of prices
-                            low_price, high_price = map(float, price_text.split(' - '))
-                            price = (low_price + high_price) / 2
-                        else:
-                            # Handle single price
-                            price = float(price_text)
-                        min_price = min(min_price, price)
-                    except ValueError:
-                        print(f"Failed to parse price: {price_span.text}")
-
-        if min_price == float('inf'):
-            return {"available": False, "price": None, "message": "No options available."}
-        else:
-            return {"available": True, "price": min_price, "message": f"${min_price:.2f} per night"}
+    # Process tent and platform tent categories
+    results["tent"] = process_category("14", "tent", num_travelers)
+    results["platform_tent"] = process_category("15", "platform tent", num_travelers)
     
-    except requests.exceptions.RequestException as e:
-        print(f"Network error: {e}")
-        return {"available": False, "price": None, "message": "Network error occurred."}
-    except ValueError as ve:
-        print(f"JSON parsing error: {ve}")
-        return {"available": False, "price": None, "message": "Data parsing error."}
-
-
+    return results
 
 def lambda_handler(event, context):
     """
@@ -180,6 +255,7 @@ def lambda_handler(event, context):
     except Exception as e:
         error_traceback = traceback.format_exc()
         print(f"Error in Uncleduckysautrain Lambda: {str(e)}")
+        print(f"Traceback: {error_traceback}")
         
         # Get current time for timestamp
         from datetime import datetime
@@ -207,7 +283,7 @@ if __name__ == '__main__':
         'body': json.dumps({
             'startDate': '06/29/25',
             'endDate': '07/02/25',
-            'numAdults': 2,
+            'numAdults': 6,
             'numKids': 0
         })
     }

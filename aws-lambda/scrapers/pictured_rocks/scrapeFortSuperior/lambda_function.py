@@ -8,9 +8,14 @@ from datetime import datetime
 import requests
 
 def scrape_fortSuperior(start_date, end_date, num_adults, num_kids):
+    # Initialize results dictionary
+    results = {}
+    
     start_month, start_day, start_year = map(int, start_date.split('/'))
     if start_year < 25 or (start_year == 25 and (start_month < 5 or (start_month == 5 and start_day < 16))):
-        return {"available": False, "price": None, "message": "Not available before May 16, 2025"}
+        results["tent"] = {"available": False, "price": None, "message": "Not available before May 16, 2025"}
+        return results
+        
     # Convert dates to timestamps in milliseconds
     start_timestamp = int(datetime.strptime(start_date, '%m/%d/%y').timestamp() * 1000)
     end_timestamp = int(datetime.strptime(end_date, '%m/%d/%y').timestamp() * 1000)
@@ -58,13 +63,29 @@ def scrape_fortSuperior(start_date, end_date, num_adults, num_kids):
 
             if "Canvas Tent Barrack" not in room['room']['name']:
                 price = room['offer']['perNight']
-                return {"available": True, "price": price, "message": f"${price:.2f} per night"}
+                room_name = room['room']['name']
+                results["tent"] = {
+                    "available": True, 
+                    "price": price, 
+                    "message": f"${price:.2f} per night - {room_name}"
+                }
+                return results
         
-        return {"available": False, "price": None, "message": "No options available."}
+        results["tent"] = {
+            "available": False, 
+            "price": None, 
+            "message": "No tent options available."
+        }
+        return results
             
     else:
         print("Failed to retrieve data:", response)
-        return {"available": False, "price": None, "message": "Failed to retrieve data"}
+        results["tent"] = {
+            "available": False, 
+            "price": None, 
+            "message": "Failed to retrieve data"
+        }
+        return results
             
 
 

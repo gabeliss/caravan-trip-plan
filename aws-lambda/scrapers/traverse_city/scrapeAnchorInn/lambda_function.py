@@ -19,10 +19,11 @@ def scrape_anchorInn(start_date_str, end_date_str, num_adults, num_kids=0):
         "2 Bedrooms with Full Kitchen": "Unavailable",
         "King Room": "Unavailable",
         "King w/ Fireplace & Sofa-Bed": "Unavailable",
+        "Innkeeper's Cottage": "Unavailable"
     }
  
     stays_ordered = ["Single Queen Room", "Cozy Queen Room", "King Room", "1 Bedroom with Kitchenette", 
-                    "King w/ Fireplace & Sofa-Bed", "2 Bedrooms with Full Kitchen", "Lake House"]
+                    "King w/ Fireplace & Sofa-Bed", "2 Bedrooms with Full Kitchen", "Lake House", "Innkeeper's Cottage"]
     # Convert date strings to required format
     start_date = datetime.strptime(start_date_str, '%m/%d/%y').strftime('%Y-%m-%d')
     end_date = datetime.strptime(end_date_str, '%m/%d/%y').strftime('%Y-%m-%d')
@@ -37,6 +38,7 @@ def scrape_anchorInn(start_date_str, end_date_str, num_adults, num_kids=0):
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)"
     }
  
+    results = {}
      
     # Send the request
     response = requests.post(url, headers=headers, data={})  # Sending an empty JSON object as payload
@@ -45,26 +47,39 @@ def scrape_anchorInn(start_date_str, end_date_str, num_adults, num_kids=0):
         units = response.json()
         for unit in units:
             name = unit["unit"]["name"]
-            valid = (len(unit["validRateTypeAvailabilities"]) > 0 or len(unit["rateTypeAvailabilities"]) > 0)
-            price = unit["rateTypeAvailabilities"][0]["averagePricePerDay"]
+            valid = (len(unit["validRateTypeAvailabilities"]) > 0)
             if valid:
+                price = unit["validRateTypeAvailabilities"][0]["averagePricePerDay"]
                 stays[name] = price
  
         for stay in stays_ordered:
             if stays[stay] != "Unavailable":
                 price = stays[stay]
-                return {"available": True, "price": price, "message": "Available: $" + str(price) + " per night"}
+                results["cabin"] = {
+                    "available": True, 
+                    "price": price, 
+                    "message": f"${price:.2f} per night - {stay}"
+                }
+                break
+        
+        # If no available stays were found
+        if "cabin" not in results:
+            results["cabin"] = {
+                "available": False, 
+                "price": None, 
+                "message": "No cabins available for selected dates."
+            }
              
-        return {"available": False, "price": None, "message": "Not available for selected dates."}
- 
- 
+        return results
     else:
         print(f"Failed to fetch data: {response.status_code}, {response.text}")
-        return {"error": "Failed to retrieve data", "code": response.status_code}
- 
- 
-
-
+        return {
+            "cabin": {
+                "available": False,
+                "price": None,
+                "message": f"Failed to retrieve data: {response.status_code}"
+            }
+        }
 
 def lambda_handler(event, context):
     """
@@ -158,9 +173,9 @@ if __name__ == '__main__':
     # Test the function with sample event
     test_event = {
         'body': json.dumps({
-            'startDate': '06/29/25',
-            'endDate': '07/02/25',
-            'numAdults': 2,
+            'startDate': '06/04/25',
+            'endDate': '06/06/25',
+            'numAdults': 4,
             'numKids': 0
         })
     }

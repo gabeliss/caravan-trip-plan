@@ -9,9 +9,16 @@ import requests
 import json
 
 def scrape_touristPark(start_date, end_date, num_adults, num_kids):
+    # Initialize results dictionary
+    results = {}
+    
     start_month, start_day, start_year = map(int, start_date.split('/'))
     if start_year < 25 or (start_year == 25 and (start_month < 5 or (start_month == 5 and start_day < 15))):
-        return {"available": False, "price": None, "message": "Not available before May 15, 2025"}
+        error_message = "Not available before May 15, 2025"
+        results["tent"] = {"available": False, "price": None, "message": error_message}
+        results["rv"] = {"available": False, "price": None, "message": error_message}
+        return results
+        
     # Convert dates to the required format (YYYY-MM-DD)
     start_date_formatted = datetime.strptime(start_date, "%m/%d/%y").strftime("%Y-%m-%d")
     end_date_formatted = datetime.strptime(end_date, "%m/%d/%y").strftime("%Y-%m-%d")
@@ -51,30 +58,68 @@ def scrape_touristPark(start_date, end_date, num_adults, num_kids):
     if response.status_code == 200:
         data = response.json()
         if data == []:
-            return {"available": False, "price": None, "message": "No options available."}
+            results["tent"] = {"available": False, "price": None, "message": "No options available."}
+            results["rv"] = {"available": False, "price": None, "message": "No options available."}
+            return results
         
-        # First, check for Waterfront Rustic Tent Site
+        # Define site types for each category with priority order
+        tent_sites = ["Waterfront Rustic Tent Site", "Rustic Tent Site", "W/E Campsite"]
+        rv_sites = ["W/E Campsite", "Full Hookup Campsite", "Waterfront Full Hookup Campsite", 
+                   "W/E Campsite - Pull Through", "Waterfront W/E Campsite", "W/E Campsite Lakeview"]
+        
+        # Create dictionaries of available sites with their prices
+        available_tent_sites = {}
+        available_rv_sites = {}
+        
+        # Process all available sites
         for site in data:
-            if site['name'] == 'Waterfront Rustic Tent Site' and site['availability'] == 'AVAILABLE':
-                return {
-                    "available": True,
-                    "price": site['averagePricePerNight'],
-                    "message": f"${site['averagePricePerNight']:.2f} per night"
-                }
+            if site['availability'] == 'AVAILABLE':
+                site_name = site['name']
+                price = site['averagePricePerNight']
+                
+                # Check if it's a tent site
+                if site_name in tent_sites:
+                    available_tent_sites[site_name] = price
+                
+                # Check if it's an RV site
+                if site_name in rv_sites:
+                    available_rv_sites[site_name] = price
         
-        # If waterfront not available, check for regular Rustic Tent Site
-        for site in data:
-            if site['name'] == 'Rustic Tent Site' and site['availability'] == 'AVAILABLE':
-                return {
+        # Process tent sites according to priority
+        tent_result = {"available": False, "price": None, "message": "No tent sites available."}
+        for site_name in tent_sites:
+            if site_name in available_tent_sites:
+                price = available_tent_sites[site_name]
+                tent_result = {
                     "available": True,
-                    "price": site['averagePricePerNight'],
-                    "message": f"${site['averagePricePerNight']:.2f} per night"
+                    "price": price,
+                    "message": f"${price:.2f} per night - {site_name}"
                 }
+                break
         
-        return {"available": False, "price": None, "message": "No tent sites available"}
+        # Process RV sites according to priority (cheapest preferred)
+        rv_result = {"available": False, "price": None, "message": "No RV sites available."}
+        
+        if available_rv_sites:
+            # Find the cheapest RV site
+            cheapest_site = min(available_rv_sites.items(), key=lambda x: x[1])
+            site_name = cheapest_site[0]
+            price = cheapest_site[1]
+            rv_result = {
+                "available": True,
+                "price": price,
+                "message": f"${price:.2f} per night - {site_name}"
+            }
+        
+        results["tent"] = tent_result
+        results["rv"] = rv_result
+        return results
     else:
         print("Failed to retrieve data:", response)
-        return {"available": False, "price": None, "message": "Failed to retrieve data"}
+        error_message = "Failed to retrieve data"
+        results["tent"] = {"available": False, "price": None, "message": error_message}
+        results["rv"] = {"available": False, "price": None, "message": error_message}
+        return results
 
 
 
@@ -170,8 +215,8 @@ if __name__ == '__main__':
     # Test the function with sample event
     test_event = {
         'body': json.dumps({
-            'startDate': '06/29/25',
-            'endDate': '07/02/25',
+            'startDate': '06/08/25',
+            'endDate': '06/10/25',
             'numAdults': 2,
             'numKids': 0
         })

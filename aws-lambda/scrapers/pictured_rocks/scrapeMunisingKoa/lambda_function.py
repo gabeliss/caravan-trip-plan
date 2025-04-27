@@ -98,36 +98,102 @@ def scrape_munisingKoa(start_date, end_date, num_adults, num_kids=0, retry_count
                     return scrape_munisingKoa(start_date, end_date, num_adults, num_kids, 
                                                  retry_count=retry_count+1, max_retries=max_retries)
                 else:
-                    return {"available": False, "price": None, "message": "Rate limited after retries."}
+                    error_message = "Rate limited after retries."
+                    return {
+                        "rv": {"available": False, "price": None, "message": error_message},
+                        "tent": {"available": False, "price": None, "message": error_message},
+                        "cabin": {"available": False, "price": None, "message": error_message}
+                    }
             
             containers = soup.find_all('div', class_='reserve-sitetype-main-row')
-            available = False
-            cheapest_price = 1000000
-            cheapest_name = "placeholder"
+            available_rv = False
+            available_tent = False
+            available_cabin = False
+            cheapest_rv_price = 1000000
+            cheapest_tent_price = 1000000
+            cheapest_cabin_price = 1000000
+            cheapest_rv_name = None
+            cheapest_tent_name = None
+            cheapest_cabin_name = None
             
             for container in containers:
-                name = container.find('h4', class_='reserve-sitetype-title').text
+                name_element = container.find('h4', class_='reserve-sitetype-title')
+                if not name_element:
+                    continue
+                
+                name = name_element.text.strip()
                 price_container = container.find('div', class_='reserve-quote-per-night')
-                if price_container:
-                    price = float(price_container.find('strong').find('span').text.lstrip('$').split(' ')[0])
-                    if price < cheapest_price:
-                        cheapest_price = price
-                        available = True
-                        cheapest_name = name
-                else:
-                    break
+                
+                if not price_container or not price_container.find('strong') or not price_container.find('strong').find('span'):
+                    continue
+                
+                try:
+                    price_text = price_container.find('strong').find('span').text.lstrip('$').split(' ')[0]
+                    price = float(price_text)
+                    
+                    # Categorize based on name (simplified logic - can be refined later)
+                    name_lower = name.lower()
+                    if 'rv' in name_lower or 'full hook' in name_lower or 'pull-thru' in name_lower or 'hook-up' in name_lower:
+                        if price < cheapest_rv_price:
+                            cheapest_rv_price = price
+                            available_rv = True
+                            cheapest_rv_name = name
+                    elif 'tent' in name_lower or 'primitive' in name_lower:
+                        if price < cheapest_tent_price:
+                            cheapest_tent_price = price
+                            available_tent = True
+                            cheapest_tent_name = name
+                    elif 'cabin' in name_lower or 'lodge' in name_lower or 'cottage' in name_lower:
+                        if price < cheapest_cabin_price:
+                            cheapest_cabin_price = price
+                            available_cabin = True
+                            cheapest_cabin_name = name
+                except (ValueError, AttributeError) as e:
+                    logger.warning(f"Error parsing price: {e}")
+                    continue
             
-            if available:
-                return {"available": True, "price": cheapest_price, "message": "Available: $" + str(cheapest_price) + " per night"}
-            else:
-                return {"available": False, "price": None, "message": "Not available for selected dates."}
+            # Initialize the results dictionary with all accommodation types
+            results = {
+                "rv": {"available": False, "price": None, "message": "No RV sites available."},
+                "tent": {"available": False, "price": None, "message": "No tent sites available."},
+                "cabin": {"available": False, "price": None, "message": "No cabins available."}
+            }
+            
+            # Update with available options
+            if available_rv:
+                results["rv"] = {
+                    "available": True, 
+                    "price": cheapest_rv_price, 
+                    "message": f"${cheapest_rv_price:.2f} per night - {cheapest_rv_name}"
+                }
+                
+            if available_tent:
+                results["tent"] = {
+                    "available": True, 
+                    "price": cheapest_tent_price, 
+                    "message": f"${cheapest_tent_price:.2f} per night - {cheapest_tent_name}"
+                }
+                
+            if available_cabin:
+                results["cabin"] = {
+                    "available": True, 
+                    "price": cheapest_cabin_price, 
+                    "message": f"${cheapest_cabin_price:.2f} per night - {cheapest_cabin_name}"
+                }
+                
+            return results
         else:
             logger.warning(f"Unexpected status code: {post_response.status_code}")
             if retry_count < max_retries:
                 return scrape_munisingKoa(start_date, end_date, num_adults, num_kids, 
                                              retry_count=retry_count+1, max_retries=max_retries)
             else:
-                return {"available": False, "price": None, "message": f"Error: Status code {post_response.status_code}"}
+                error_message = f"Error: Status code {post_response.status_code}"
+                return {
+                    "rv": {"available": False, "price": None, "message": error_message},
+                    "tent": {"available": False, "price": None, "message": error_message},
+                    "cabin": {"available": False, "price": None, "message": error_message}
+                }
     
     except (RequestException, ValueError, Exception) as e:
         logger.error(f"Error during scraping: {str(e)}")
@@ -136,17 +202,12 @@ def scrape_munisingKoa(start_date, end_date, num_adults, num_kids=0, retry_count
             return scrape_munisingKoa(start_date, end_date, num_adults, num_kids, 
                                          retry_count=retry_count+1, max_retries=max_retries)
         else:
-            return {"available": False, "price": None, "message": f"Error after retries: {str(e)}"}
-
-    # Multiple requests with proper delays
-    for i in range(1, 5):  # Reduced from 100 to 5 for testing
-        logger.info(f"Making request {i}")
-        munisingKoaData = scrape_munisingKoa('06/08/25', '06/10/25', 2)
-        print(munisingKoaData)
-        
-        # Additional delay between batches of requests
-        time.sleep(random.uniform(10, 15))
-
+            error_message = f"Error after retries: {str(e)}"
+            return {
+                "rv": {"available": False, "price": None, "message": error_message},
+                "tent": {"available": False, "price": None, "message": error_message},
+                "cabin": {"available": False, "price": None, "message": error_message}
+            }
 
 
 def lambda_handler(event, context):
@@ -216,6 +277,7 @@ def lambda_handler(event, context):
     except Exception as e:
         error_traceback = traceback.format_exc()
         print(f"Error in Munisingkoa Lambda: {str(e)}")
+        print(f"Traceback: {error_traceback}")
         
         # Get current time for timestamp
         from datetime import datetime
