@@ -47,7 +47,7 @@ export interface Campground {
   siteTypes: {
     tent: boolean;
     rv: boolean;
-    glamping: boolean;
+    lodging: boolean;
   };
   lodging?: LodgingOptions;
   bookingUrl?: string;

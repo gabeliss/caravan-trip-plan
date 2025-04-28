@@ -91,7 +91,7 @@ export const fetchCityAvailability = async (
  * @param numKids Number of kids
  * @returns Promise with trip plan structure
  */
-export const generateTripWithAvailability = async (
+export const generateTripWithoutAvailability = async (
   destinationId: string,
   nights: number,
   startDate: Date,
@@ -144,8 +144,7 @@ export const generateTripWithAvailability = async (
     // Return the plan and the raw data
     // Availability data is no longer pre-fetched by the backend
     return {
-      plan,
-      availability: tripPlanData.stops
+      plan
     };
   } catch (error) {
     console.error('Error generating trip with availability:', error);
@@ -302,5 +301,5 @@ export const tripService = {
 
 export default {
   fetchCityAvailability,
-  generateTripWithAvailability
+  generateTripWithoutAvailability
 }; 

@@ -51,16 +51,16 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
       console.log(`Generating plan for destination: ${destinationId}, nights: ${nights} (type: ${typeof nights})`);
       
       // Generate trip plan - availability will be fetched lazily by individual components
-      const result = await tripService.generateTripWithAvailability(
+      const result = await tripService.generateTripWithoutAvailability(
         destinationId,
         nights,
         startDate,
         numAdults,
         numKids
       );
-      
+
+      console.log('generatePlan() result', result);
       setTripPlan(result.plan);
-      setAvailabilityData(result.availability);
       
       console.log('Trip plan generated successfully - availability will be fetched by campground cards as needed');
     } catch (err: any) {

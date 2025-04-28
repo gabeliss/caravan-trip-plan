@@ -17,7 +17,7 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
-import { Destination, TripDuration, DailyItinerary, Campground, ItineraryPlan } from '../types';
+import { Destination, TripDuration, DailyItinerary, Campground, ItineraryPlan, LodgingOptions } from '../types';
 import { Map } from './Map';
 import { WeatherForecast } from './WeatherForecast';
 import { CampgroundList } from './CampgroundList';
@@ -62,6 +62,7 @@ interface CampgroundInfoData {
       checkOutTime: string;
       guidelines: string;
       cancellationPolicy: string;
+      accomodationType?: string[];
     }
   }
 }
@@ -105,7 +106,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     // Convert from display name to camelCase region key used in JSON data
     const cityMappings: Record<string, string> = {
       'Traverse City': 'traverseCity',
-      'Mackinac': 'mackinacCity',
+      'Mackinac City': 'mackinacCity',
       'Pictured Rocks': 'picturedRocks'
     };
     
@@ -126,32 +127,70 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     }
     
     return campgroundList.map(campground => {
-      // Try to find matching campground data
-      // First convert campground ID to a key suitable for our JSON structure
-      const campIdParts = campground.id.split('-');
-      const campIdKey = campIdParts[campIdParts.length - 1].charAt(0).toLowerCase() + 
-                        campIdParts[campIdParts.length - 1].slice(1);
+      // Create a more comprehensive set of possible keys to match between API and JSON data
+      const campgroundId = campground.id;
       
-      // Try some common transformations of the ID to find a match
+      // Extract the base name without the region prefix
+      const baseNameParts = campgroundId.split('-');
+      const baseName = baseNameParts.slice(Math.max(0, baseNameParts.length - 2)).join('');
+      
+      // Create different variations of the ID to try matching
       const possibleKeys = [
-        campIdKey,
-        campground.id.replace(/-/g, ''),
-        campground.name.toLowerCase().replace(/\s+/g, ''),
+        // Direct transformations
+        campgroundId.replace(/-/g, ''),                         // Remove all hyphens
+        baseNameParts[baseNameParts.length - 1],                // Just the last part
+        
+        // CamelCase variations 
+        // Convert kebab-case to camelCase (e.g., "traverse-city-state-park" to "traverseCityStatePark")
+        campgroundId.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()),
+        
+        // Specific case for single-word campgrounds with region prefixes
+        baseNameParts[baseNameParts.length - 1].toLowerCase(),  // Last part lowercase
+        
+        // Try more aggressive transformations for complex cases
+        campgroundId.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() // Remove all non-alphanumeric
       ];
       
-      // Find the first matching key in our data
+      console.log(`Trying to match ${campgroundId} with possible keys:`, possibleKeys);
+      
+      // Find the matching key in our JSON data
       let matchingKey = '';
+      
+      // First try exact matches
       for (const key of Object.keys(regionData)) {
-        if (possibleKeys.some(possibleKey => key.toLowerCase().includes(possibleKey.toLowerCase()))) {
+        if (possibleKeys.includes(key)) {
           matchingKey = key;
           break;
         }
       }
       
+      // If no exact match, try partial matches
+      if (!matchingKey) {
+        for (const key of Object.keys(regionData)) {
+          for (const possibleKey of possibleKeys) {
+            // Check if the key contains the possible key or vice versa
+            if (key.toLowerCase().includes(possibleKey.toLowerCase()) || 
+                possibleKey.toLowerCase().includes(key.toLowerCase())) {
+              matchingKey = key;
+              break;
+            }
+          }
+          if (matchingKey) break;
+        }
+      }
+      
       // If we found matching detailed data, enhance the campground with it
       if (matchingKey && regionData[matchingKey]) {
+        console.log(`Found matching data for ${campgroundId}: ${matchingKey}`);
         const detailedData = regionData[matchingKey];
         
+        // Create site types based on the accommodationType array in the JSON data
+        const siteTypes = {
+          tent: detailedData.accomodationType?.includes('tent') || false,
+          rv: detailedData.accomodationType?.includes('rv') || false,
+          lodging: detailedData.accomodationType?.includes('lodging') || false
+        };
+        console.log('campground', campground);
         return {
           ...campground,
           name: detailedData.title || campground.name,
@@ -188,62 +227,12 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
             details: detailedData.cancellationPolicy
           },
           maxGuests: parseInt(detailedData.guidelines?.match(/(\d+)\s+Guests/i)?.[1] || '6'),
-          taxRate: detailedData.taxRate || campground.taxRate || 0.06
+          taxRate: detailedData.taxRate || campground.taxRate || 0.06,
+          siteTypes: siteTypes,
         };
       }
-      
-      // Otherwise, return the original campground with default enhancements
-      return {
-        ...campground,
-        rating: campground.rating || 4 + Math.random(),
-        amenities: campground.amenities || ['WiFi', 'Showers', 'Toilets', 'Fire pit'],
-        images: campground.images || [
-          { url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4', alt: 'Campsite' },
-          { url: 'https://images.unsplash.com/photo-1532339142463-fd0a8979791a', alt: 'Campsite view' }
-        ],
-        imageUrl: campground.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4',
-        address: campground.address || `${cityName}, MI`,
-        distanceToTown: campground.distanceToTown || `5 miles to ${cityName}`,
-        season: campground.season || {
-          start: 'April',
-          end: 'October'
-        },
-        checkIn: campground.checkIn || {
-          time: '3:00 PM',
-          lateArrival: 'Call ahead',
-          checkout: '11:00 AM',
-          lateFees: '$10 per hour'
-        },
-        siteGuidelines: campground.siteGuidelines || {
-          maxGuests: 6,
-          maxVehicles: 2,
-          quietHours: '10:00 PM - 7:00 AM',
-          petRules: 'Dogs allowed on leash',
-          ageRestrictions: 'None'
-        },
-        cancellationPolicy: campground.cancellationPolicy || {
-          fullRefund: '7+ days before arrival',
-          partialRefund: '3-6 days before arrival',
-          noRefund: 'Less than 3 days before arrival',
-          modifications: 'Subject to availability',
-          weatherPolicy: 'No refunds for weather'
-        },
-        maxGuests: campground.maxGuests || 6,
-        taxRate: campground.taxRate || 0.06,
-        providers: campground.providers || [
-          {
-            id: 'direct',
-            name: 'Direct Booking',
-            type: 'direct' as 'direct' | 'external'
-          }
-        ],
-        nearbyAttractions: campground.nearbyAttractions || ['Downtown', 'Beach', 'Hiking trails'],
-        siteTypes: campground.siteTypes || {
-          tent: true,
-          rv: true,
-          glamping: false
-        }
-      };
+      console.log('no matching data found for', campgroundId);
+      return campground;
     });
   };
 
@@ -299,7 +288,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
             siteTypes: campground.siteTypes || {
               tent: true,
               rv: true,
-              glamping: false
+              lodging: false
             }
           };
 
@@ -651,7 +640,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
                   console.log("Trip plan:", tripPlan);
                   
                   const tripStop = tripPlan.stops.find(stop => 
-                    stop.city.toLowerCase().replace(/\s+/g, '-') === currentStay.location.toLowerCase()
+                    stop.city.toLowerCase().replace(/\s+/g, '-') === currentStay.location.toLowerCase().replace(/\s+/g, '-')
                   );
                   
                   if (tripStop) {

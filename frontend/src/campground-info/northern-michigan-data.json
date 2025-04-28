@@ -66,7 +66,7 @@
         },
         "anchorInn": {
             "title": "Anchor Inn",
-            "accomodationType": ["cabin"],
+            "accomodationType": ["lodging"],
             "address": "3746 N US-31, Traverse City, MI 49686",
             "cityAndState": "Traverse City, MI",
             "content": "Comfortable lodging near the water with various accommodation options. Anchor Inn offers a mix of camping sites and cabins with easy access to Grand Traverse Bay.",

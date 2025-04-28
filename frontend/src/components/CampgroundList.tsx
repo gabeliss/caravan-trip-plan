@@ -34,7 +34,7 @@ export const CampgroundList: React.FC<CampgroundListProps> = ({
   const siteTypes = [
     { id: 'tent', label: 'Tent Sites', icon: Tent },
     { id: 'rv', label: 'RV Sites', icon: Home },
-    { id: 'glamping', label: 'Glamping', icon: Sparkles },
+    { id: 'lodging', label: 'Lodging', icon: Sparkles },
   ];
 
   const toggleAmenity = (amenity: string) => {

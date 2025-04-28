@@ -123,11 +123,12 @@ export const apiService = {
     numKids: number = 0,
     accommodationType: string = 'tent'
   ): Promise<{
-    available: boolean;
-    price: number | null;
-    message: string;
-    timestamp: string;
+    available?: boolean;
+    price?: number | null;
+    message?: string;
+    timestamp?: string;
     error?: string;
+    [accommodationKey: string]: any; // Allow for accommodation-specific data in the response
   }> {
     // Define the actual request function
     const makeRequest = async () => {
@@ -143,14 +144,25 @@ export const apiService = {
         });
         console.log(`Received availability for ${campgroundId}`);
         return response.data;
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Failed to check availability for campground ${campgroundId}:`, error);
+        
+        // Extract the error message from the response if available
+        let errorMessage = 'Failed to check availability';
+        let errorData = null;
+        
+        if (error.response && error.response.data) {
+          errorData = error.response.data;
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
         return {
-          available: false,
-          price: null,
-          message: 'Failed to check availability',
-          timestamp: new Date().toISOString(),
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: errorMessage,
+          timestamp: new Date().toISOString()
         };
       }
     };

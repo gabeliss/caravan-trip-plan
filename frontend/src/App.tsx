@@ -138,15 +138,15 @@ function HomePage() {
   const navigate = useNavigate();
   const [duration, setDuration] = React.useState<TripDuration>({ nights: 3 });
 
-  const handleDateSelect = (date: Date) => {
+  const handleDateSelect = (date: Date, guestCount: number) => {
     // Navigate to destination selection page with trip parameters
     navigate('/select-destination', {
       state: {
         startDate: date,
         nights: duration.nights,
         guests: {
-          adults: 2, // Default, could be made dynamic
-          children: 0 // Default, could be made dynamic
+          adults: guestCount, // Now uses the selected guest count
+          children: 0 // Could be made dynamic in a future enhancement
         }
       }
     });

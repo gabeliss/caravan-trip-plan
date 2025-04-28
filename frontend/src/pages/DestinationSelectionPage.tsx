@@ -29,6 +29,13 @@ export const DestinationSelectionPage: React.FC = () => {
     setSelectedDestination(destinationId);
     
     // Generate trip plan with availability data
+    console.log('Generating trip plan with params:', {
+      destinationId,
+      numNights,
+      startDate,
+      numAdults,
+      numKids
+    });
     generatePlan(
       destinationId,
       numNights,
@@ -40,20 +47,6 @@ export const DestinationSelectionPage: React.FC = () => {
 
   const handleClose = () => {
     setSelectedDestination(null);
-  };
-
-  const handleContinue = () => {
-    if (selectedDestination) {
-      navigate('/booking', { 
-        state: { 
-          destinationId: selectedDestination,
-          startDate,
-          nights: numNights,
-          numAdults,
-          numKids
-        } 
-      });
-    }
   };
 
   // Find the selected destination object

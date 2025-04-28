@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 interface HeroProps {
   duration: TripDuration;
   setDuration: React.Dispatch<React.SetStateAction<TripDuration>>;
-  onDateSelect: (date: Date) => void;
+  onDateSelect: (date: Date, guestCount: number) => void;
 }
 
 interface Step {

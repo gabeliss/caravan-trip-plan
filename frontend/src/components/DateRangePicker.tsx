@@ -7,7 +7,7 @@ import 'react-day-picker/dist/style.css';
 import { TripDuration } from '../types';
 
 interface DateRangePickerProps {
-  onSelect: (date: Date) => void;
+  onSelect: (date: Date, guestCount: number) => void;
   duration: TripDuration;
   setDuration: React.Dispatch<React.SetStateAction<TripDuration>>;
 }
@@ -81,7 +81,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
       }
       setError(null);
       setSelected(date);
-      onSelect(date);
+      onSelect(date, guestCount);
       setShowCalendar(false);
     }
   };
@@ -89,6 +89,11 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
   const handleGuestSelect = (count: number) => {
     setGuestCount(count);
     setShowGuestDropdown(false);
+    
+    // If a date has already been selected, update the parent component with the new guest count
+    if (selected) {
+      onSelect(selected, count);
+    }
   };
 
   const handleNightsSelect = (nights: number) => {

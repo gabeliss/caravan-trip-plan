@@ -6,35 +6,35 @@ const northernMichiganStops: Record<number, TripStop[]> = {
   2: [{ city: 'Traverse City', nights: 2 }],
   3: [
     { city: 'Traverse City', nights: 2 },
-    { city: 'Mackinac', nights: 1 }
+    { city: 'Mackinac City', nights: 1 }
   ],
   4: [
     { city: 'Traverse City', nights: 2 },
-    { city: 'Mackinac', nights: 2 }
+    { city: 'Mackinac City', nights: 2 }
   ],
   5: [
     { city: 'Traverse City', nights: 2 },
-    { city: 'Mackinac', nights: 1 },
+    { city: 'Mackinac City', nights: 1 },
     { city: 'Pictured Rocks', nights: 2 }
   ],
   6: [
     { city: 'Traverse City', nights: 2 },
-    { city: 'Mackinac', nights: 2 },
+    { city: 'Mackinac City', nights: 2 },
     { city: 'Pictured Rocks', nights: 2 }
   ],
   7: [
     { city: 'Traverse City', nights: 2 },
-    { city: 'Mackinac', nights: 2 },
+    { city: 'Mackinac City', nights: 2 },
     { city: 'Pictured Rocks', nights: 3 }
   ],
   8: [
     { city: 'Traverse City', nights: 3 },
-    { city: 'Mackinac', nights: 2 },
+    { city: 'Mackinac City', nights: 2 },
     { city: 'Pictured Rocks', nights: 3 }
   ],
   9: [
     { city: 'Traverse City', nights: 3 },
-    { city: 'Mackinac', nights: 3 },
+    { city: 'Mackinac City', nights: 3 },
     { city: 'Pictured Rocks', nights: 3 }
   ]
 };
@@ -48,7 +48,7 @@ export const tripItineraries: Record<string, TripItinerary> = {
     stops: northernMichiganStops,
     cityScraperIds: {
       'Traverse City': 'traverse-city',
-      'Mackinac': 'mackinac-city',
+      'Mackinac City': 'mackinac-city',
       'Pictured Rocks': 'pictured-rocks'
     }
   },

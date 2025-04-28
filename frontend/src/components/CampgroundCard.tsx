@@ -92,6 +92,23 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
       
       console.log(`Fetching availability for ${campground.name} from ${startDate} to ${endDate}`);
       
+      // If the campground already has availability data and it's for the selected accommodation type,
+      // use that instead of making an API call
+      if (campground.availability && campground.availability.timestamp) {
+        const availabilityTimestamp = new Date(campground.availability.timestamp);
+        const now = new Date();
+        const timeDiff = now.getTime() - availabilityTimestamp.getTime();
+        const minutesDiff = Math.floor(timeDiff / 1000 / 60);
+        
+        // Only use cached availability if it's less than 5 minutes old
+        if (minutesDiff < 5) {
+          console.log(`Using cached availability for ${campground.name}`);
+          setAvailability(campground.availability);
+          setIsLoading(false);
+          return;
+        }
+      }
+      
       const result = await apiService.checkAvailability(
         campground.id,
         startDate,
@@ -101,21 +118,47 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
         selectedAccommodationType // Pass the selected accommodation type
       );
       
+      // Check for error response from the backend
       if (result.error) {
         throw new Error(result.error);
       }
       
       console.log(`Received availability result for ${campground.name}:`, result);
-      setAvailability(result);
+      
+      // For multi-accommodation responses, extract the data for the selected type
+      // First, properly type the result to handle various return formats
+      interface AvailabilityResult {
+        available: boolean;
+        price: number | null;
+        message: string;
+        timestamp: string;
+        error?: string;
+        [key: string]: any; // Allow for dynamic accommodation type keys
+      }
+      
+      const typedResult = result as AvailabilityResult;
+      let specificAvailability = typedResult;
+      
+      if (typedResult[selectedAccommodationType] && 
+          typeof typedResult[selectedAccommodationType] === 'object') {
+        // This is a multi-accommodation response, extract the specific type
+        specificAvailability = typedResult[selectedAccommodationType] as AvailabilityResult;
+        console.log(`Using ${selectedAccommodationType} specific availability:`, specificAvailability);
+      }
+      
+      setAvailability(specificAvailability);
     } catch (error) {
       console.error(`Error checking availability for ${campground.name}:`, error);
-      setError('Failed to check availability');
       
-      // Instead of using default pricing, use a more informative message
+      // Set the error message
+      const errorMessage = error instanceof Error ? error.message : 'Failed to check availability';
+      setError(errorMessage);
+      
+      // Create a default unavailable state
       setAvailability({
-        available: true,
-        price: campground.price,
-        message: 'Estimated price - availability unconfirmed'
+        available: false,
+        price: null,
+        message: errorMessage
       });
     } finally {
       setIsLoading(false);
@@ -147,9 +190,7 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
         return <Tent size={16} />;
       case 'rv':
         return <Home size={16} />;
-      case 'glamping':
-        return <Sparkles size={16} />;
-      case 'cabins':
+      case 'lodging':
         return <Hotel size={16} />;
       default:
         return <Tent size={16} />;
@@ -169,8 +210,8 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
     if (campground.siteTypes.rv) {
       types.push({ type: 'rv', label: 'RV' });
     }
-    if (campground.siteTypes.glamping) {
-      types.push({ type: 'glamping', label: 'Glamping' });
+    if (campground.siteTypes.lodging) {
+      types.push({ type: 'lodging', label: 'Lodging' });
     }
 
     return types.length > 0 ? types : [{ type: 'tent', label: 'Tent' }];
