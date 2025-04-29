@@ -1,168 +1,87 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Star, 
-  Wifi, 
-  ShowerHead, 
-  Power, 
-  Car, 
-  Utensils, 
-  Tent, 
-  Home, 
-  Sparkles, 
-  Hotel, 
-  MapPin, 
-  Clock, 
-  DollarSign, 
-  Calendar, 
-  ChevronDown, 
-  ChevronUp, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Flame, 
-  Dog,
-  Droplets,
-  Waves,
-  ShieldAlert,
-  SunIcon,
-  ThermometerSun,
-  RefreshCw
-} from 'lucide-react';
 import { Campground } from '../types';
+import { FullAvailability, AccommodationAvailability } from '../types/campground';
 import apiService from '../services/apiService';
-import { format, addDays } from 'date-fns';
+import { format } from 'date-fns';
+import {
+  Tent, Home, Hotel, Wifi, ShowerHead, Power, Car, Utensils, Flame, Dog, Droplets, Waves, CheckCircle2, AlertTriangle, Clock, Calendar, ShieldAlert, RefreshCw, MapPin, Star, ChevronUp, ChevronDown
+} from 'lucide-react';
 
 interface CampgroundCardProps {
   campground: Campground;
   onSelect: (campground: Campground, accommodationType: string) => void;
-  tripStartDate?: Date;  // Add trip start date
-  tripEndDate?: Date;    // Add trip end date
+  tripStartDate: Date;  // Required trip start date
+  tripEndDate: Date;    // Required trip end date
+  guestCount: number;   // Number of guests
 }
 
 export const CampgroundCard: React.FC<CampgroundCardProps> = ({
   campground,
   onSelect,
   tripStartDate,
-  tripEndDate
+  tripEndDate,
+  guestCount
 }) => {
-  const [selectedAccommodationType, setSelectedAccommodationType] = useState<string>('tent');
+  const [selectedAccommodationType, setSelectedAccommodationType] = useState<string>(
+    Object.entries(campground.siteTypes || {}).find(([_, isAvailable]) => isAvailable)?.[0] || 'tent'
+  );
+  const [availability, setAvailability] = useState<FullAvailability | null>(null);
+  const [displayedAvailability, setDisplayedAvailability] = useState<AccommodationAvailability | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [availability, setAvailability] = useState<{
-    available: boolean;
-    price: number | null;
-    message: string;
-  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  // Update the useEffect to make the component more eager to check availability
-  React.useEffect(() => {
-    // Always check availability when component mounts or when trip dates/campground changes
-    console.log(`Checking availability for ${campground.name} when component mounts or trip dates change`);
+  // Fetch availability on mount or when trip/campground changes
+  useEffect(() => {
     checkAvailability();
-  }, [campground.id, tripStartDate, tripEndDate]);
+  }, [campground.id, tripStartDate, tripEndDate, guestCount]);
 
-  // When accommodation type changes, re-check availability
-  React.useEffect(() => {
-    if (!isInitialLoad) { // Skip on initial load as the first useEffect will handle it
-      console.log(`Accommodation type changed to ${selectedAccommodationType}, re-checking availability`);
-      checkAvailability();
+  // Update displayed availability when selectedAccommodationType changes
+  useEffect(() => {
+    if (!availability) return;
+
+    if (availability[selectedAccommodationType]) {
+      setDisplayedAvailability(availability[selectedAccommodationType]);
+    } else {
+      setDisplayedAvailability(null); // fallback
     }
-  }, [selectedAccommodationType]);
+  }, [selectedAccommodationType, availability]);
 
   const checkAvailability = async () => {
     setIsLoading(true);
     setError(null);
-    
     try {
-      // Use trip dates if provided, otherwise use current date + 3 days
-      let startDate: string;
-      let endDate: string;
-      
-      if (tripStartDate && tripEndDate) {
-        startDate = format(tripStartDate, 'MM/dd/yy');
-        endDate = format(tripEndDate, 'MM/dd/yy');
-      } else {
-        // Fallback to default behavior
-        const today = new Date();
-        startDate = format(today, 'MM/dd/yy');
-        endDate = format(addDays(today, 3), 'MM/dd/yy');
-      }
-      
-      console.log(`Fetching availability for ${campground.name} from ${startDate} to ${endDate}`);
-      
-      // If the campground already has availability data and it's for the selected accommodation type,
-      // use that instead of making an API call
-      if (campground.availability && campground.availability.timestamp) {
-        const availabilityTimestamp = new Date(campground.availability.timestamp);
-        const now = new Date();
-        const timeDiff = now.getTime() - availabilityTimestamp.getTime();
-        const minutesDiff = Math.floor(timeDiff / 1000 / 60);
-        
-        // Only use cached availability if it's less than 5 minutes old
-        if (minutesDiff < 5) {
-          console.log(`Using cached availability for ${campground.name}`);
-          setAvailability(campground.availability);
-          setIsLoading(false);
-          return;
-        }
-      }
-      
+      const startDate = format(tripStartDate, 'MM/dd/yy');
+      const endDate = format(tripEndDate, 'MM/dd/yy');
+
       const result = await apiService.checkAvailability(
         campground.id,
         startDate,
         endDate,
-        2, // Default adults
-        0, // Default kids
-        selectedAccommodationType // Pass the selected accommodation type
+        guestCount,
+        0
       );
-      
-      // Check for error response from the backend
-      if (result.error) {
-        throw new Error(result.error);
+
+      setAvailability(result);
+      if (result[selectedAccommodationType]) {
+        setDisplayedAvailability(result[selectedAccommodationType]);
+      } else {
+        setDisplayedAvailability(null);
       }
-      
-      console.log(`Received availability result for ${campground.name}:`, result);
-      
-      // For multi-accommodation responses, extract the data for the selected type
-      // First, properly type the result to handle various return formats
-      interface AvailabilityResult {
-        available: boolean;
-        price: number | null;
-        message: string;
-        timestamp: string;
-        error?: string;
-        [key: string]: any; // Allow for dynamic accommodation type keys
-      }
-      
-      const typedResult = result as AvailabilityResult;
-      let specificAvailability = typedResult;
-      
-      if (typedResult[selectedAccommodationType] && 
-          typeof typedResult[selectedAccommodationType] === 'object') {
-        // This is a multi-accommodation response, extract the specific type
-        specificAvailability = typedResult[selectedAccommodationType] as AvailabilityResult;
-        console.log(`Using ${selectedAccommodationType} specific availability:`, specificAvailability);
-      }
-      
-      setAvailability(specificAvailability);
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Error checking availability for ${campground.name}:`, error);
-      
-      // Set the error message
-      const errorMessage = error instanceof Error ? error.message : 'Failed to check availability';
-      setError(errorMessage);
-      
-      // Create a default unavailable state
-      setAvailability({
-        available: false,
-        price: null,
-        message: errorMessage
-      });
+      setError(error.message || 'Failed to check availability');
+      setAvailability(null);
+      setDisplayedAvailability(null);
     } finally {
       setIsLoading(false);
-      setIsInitialLoad(false); // No longer the initial load after first API call
+    }
+  };
+
+  const handleSelect = () => {
+    if (displayedAvailability?.available) {
+      onSelect(campground, selectedAccommodationType);
     }
   };
 
@@ -198,46 +117,22 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
   };
 
   const getAccommodationTypes = () => {
-    if (!campground.siteTypes) {
-      return [{ type: 'tent', label: 'Tent' }];
-    }
-    
     const types = [];
-
-    if (campground.siteTypes.tent) {
-      types.push({ type: 'tent', label: 'Tent' });
-    }
-    if (campground.siteTypes.rv) {
-      types.push({ type: 'rv', label: 'RV' });
-    }
-    if (campground.siteTypes.lodging) {
-      types.push({ type: 'lodging', label: 'Lodging' });
-    }
-
+    if (campground.siteTypes?.tent) types.push({ type: 'tent', label: 'Tent' });
+    if (campground.siteTypes?.rv) types.push({ type: 'rv', label: 'RV' });
+    if (campground.siteTypes?.lodging) types.push({ type: 'lodging', label: 'Lodging' });
     return types.length > 0 ? types : [{ type: 'tent', label: 'Tent' }];
   };
 
-  const handleSelect = () => {
-    onSelect(campground, selectedAccommodationType);
-  };
-
-  // Get cancellation policy details safely
   const getCancellationPolicyText = () => {
     if (!campground.cancellationPolicy) return '';
-    
-    if (campground.cancellationPolicy.details) {
-      return campground.cancellationPolicy.details;
-    }
-    
-    return `${campground.cancellationPolicy.fullRefund} for full refund. 
-            ${campground.cancellationPolicy.partialRefund} for partial refund. 
-            ${campground.cancellationPolicy.noRefund} for no refund.`;
+    if (campground.cancellationPolicy.details) return campground.cancellationPolicy.details;
+    return `${campground.cancellationPolicy.fullRefund} for full refund. ${campground.cancellationPolicy.partialRefund} for partial refund. ${campground.cancellationPolicy.noRefund} for no refund.`;
   };
 
   const renderFooter = () => {
-    const hasAvailability = availability && (availability.available !== undefined);
-    const isUnavailable = hasAvailability && availability && availability.available === false;
-    
+    const isUnavailable = displayedAvailability && displayedAvailability.available === false;
+
     return (
       <div className="rounded-b-lg mt-4 flex flex-col gap-2">
         <div className="flex justify-between items-center">
@@ -252,10 +147,10 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
                 <AlertTriangle size={16} className="mr-1" />
                 {error}
               </div>
-            ) : hasAvailability ? (
+            ) : displayedAvailability ? (
               <>
                 <div className="flex items-center">
-                  {availability && availability.available ? (
+                  {displayedAvailability.available ? (
                     <>
                       <CheckCircle2 size={16} className="text-emerald-500 mr-1" />
                       <span className="text-sm font-medium text-emerald-600">Available</span>
@@ -268,7 +163,7 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
                   )}
                 </div>
                 <span className="text-sm text-gray-600 mt-1">
-                  {availability?.message || ''}
+                  {displayedAvailability?.message || ''}
                 </span>
               </>
             ) : (
@@ -277,11 +172,11 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
               </div>
             )}
           </div>
-          
+
           <button
             className={`py-2 px-4 rounded font-medium transition-colors duration-200 ${
-              isLoading || isUnavailable 
-                ? 'bg-gray-400 text-gray-100 cursor-not-allowed' 
+              isLoading || isUnavailable
+                ? 'bg-gray-400 text-gray-100 cursor-not-allowed'
                 : 'bg-primary hover:bg-primary-dark text-beige'
             }`}
             onClick={isLoading || isUnavailable ? undefined : handleSelect}

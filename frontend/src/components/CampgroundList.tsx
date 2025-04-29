@@ -8,8 +8,9 @@ interface CampgroundListProps {
   campgrounds: Campground[];
   onSelect: (campground: Campground, accommodationType: string) => void;
   loading: boolean;
-  tripStartDate?: Date;
-  tripEndDate?: Date;
+  tripStartDate: Date;
+  tripEndDate: Date;
+  guestCount: number;
 }
 
 export const CampgroundList: React.FC<CampgroundListProps> = ({ 
@@ -17,7 +18,8 @@ export const CampgroundList: React.FC<CampgroundListProps> = ({
   onSelect,
   loading,
   tripStartDate,
-  tripEndDate
+  tripEndDate,
+  guestCount
 }) => {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedSiteTypes, setSelectedSiteTypes] = useState<string[]>([]);
@@ -71,6 +73,13 @@ export const CampgroundList: React.FC<CampgroundListProps> = ({
       )
     );
 
+    console.log("Filtered Campgrounds", {
+      filteredCampgrounds,
+      loading,
+      tripStartDate,
+      tripEndDate,
+      guestCount
+    });
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Filter Bar */}
@@ -167,9 +176,7 @@ export const CampgroundList: React.FC<CampgroundListProps> = ({
               </p>
               <p className="text-xs text-gray-500 italic">
                 <Calendar className="inline w-3 h-3 mr-1" /> 
-                {tripStartDate && tripEndDate ? 
-                  `Checking availability for ${tripStartDate.toLocaleDateString()} - ${tripEndDate.toLocaleDateString()}` : 
-                  'Availability will be checked when dates are selected'}
+                Checking availability for {tripStartDate.toLocaleDateString()} - {tripEndDate.toLocaleDateString()}
               </p>
             </div>
             {filteredCampgrounds.map(campground => (
@@ -179,6 +186,7 @@ export const CampgroundList: React.FC<CampgroundListProps> = ({
                 onSelect={handleCampgroundSelect}
                 tripStartDate={tripStartDate}
                 tripEndDate={tripEndDate}
+                guestCount={guestCount}
               />
             ))}
           </>

@@ -17,7 +17,7 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
-import { Destination, TripDuration, DailyItinerary, Campground, ItineraryPlan, LodgingOptions } from '../types';
+import { Destination, TripDuration, DailyItinerary, Campground, ItineraryPlan } from '../types';
 import { Map } from './Map';
 import { WeatherForecast } from './WeatherForecast';
 import { CampgroundList } from './CampgroundList';
@@ -25,9 +25,11 @@ import { TripSummary } from './TripSummary';
 import { format, addDays } from 'date-fns';
 import apiService from '../services/apiService';
 import { useTripPlan } from '../context/TripPlanContext';
-import { tripItineraries } from '../data/tripItineraries';
-// Import northern Michigan campground data
-import northernMichiganData from '../campground-info/northern-michigan-data.json';
+
+// Import utility functions
+import { enhanceCampgroundsWithData } from '../utils/enhanceCampgrounds';
+import { getLocationStays, LocationStay } from '../utils/getLocationStays';
+import { SelectedCampground } from '../types/campground';
 
 interface TripPlannerProps {
   destination: Destination;
@@ -35,36 +37,6 @@ interface TripPlannerProps {
   onClose: () => void;
   tripPlan?: ItineraryPlan | null;
   loading?: boolean;
-}
-
-interface LocationStay {
-  location: string;
-  startNight: number;
-  endNight: number;
-}
-
-// Define a type for the campground data structure
-interface CampgroundInfoData {
-  [region: string]: {
-    [campgroundId: string]: {
-      title: string;
-      address: string;
-      cityAndState: string;
-      content: string;
-      taxRate: number;
-      fixedFee: number;
-      message: string;
-      imageUrls: string[];
-      offerings: string;
-      distanceToTown: string;
-      amenities: string[];
-      checkInTime: string;
-      checkOutTime: string;
-      guidelines: string;
-      cancellationPolicy: string;
-      accomodationType?: string[];
-    }
-  }
 }
 
 const TripPlanner: React.FC<TripPlannerProps> = ({ 
@@ -79,9 +51,21 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
   // Use external props if provided, otherwise use the context values
   const tripPlan = externalTripPlan !== undefined ? externalTripPlan : contextTripPlan;
   const isLoading = externalLoading !== undefined ? externalLoading : contextLoading;
+
+  if (!tripPlan) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex items-center justify-center min-h-screen text-gray-600 text-lg"
+      >
+        Loading your trip...
+      </motion.div>
+    );
+  }
   
   const [selectedDay, setSelectedDay] = useState(1);
-  const [selectedCampgrounds, setSelectedCampgrounds] = useState<Array<{ campground: Campground; accommodationType: string }>>([]);
+  const [selectedCampgrounds, setSelectedCampgrounds] = useState<SelectedCampground[]>([]);
   const [showSummary, setShowSummary] = useState(false);
   const [guestCount, setGuestCount] = useState(2);
   const [duration, setDuration] = useState<TripDuration>(initialDuration);
@@ -92,149 +76,18 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [campgrounds, setCampgrounds] = useState<Campground[]>([]);
   const [loading, setLoading] = useState(isLoading);
-  const [itinerary, setItinerary] = useState<DailyItinerary[]>(
-    Array.from({ length: duration.nights }, (_, i) => ({
-      day: i + 1,
-      date: duration.startDate ? addDays(duration.startDate, i) : new Date(),
-      activities: [],
-      route: []
-    }))
-  );
-
-  // Helper function to get region key from city name
-  const getRegionKey = (cityName: string): string => {
-    // Convert from display name to camelCase region key used in JSON data
-    const cityMappings: Record<string, string> = {
-      'Traverse City': 'traverseCity',
-      'Mackinac City': 'mackinacCity',
-      'Pictured Rocks': 'picturedRocks'
-    };
-    
-    return cityMappings[cityName] || cityName.toLowerCase().replace(/\s+/g, '');
-  };
-
-  // Function to enhance campgrounds with data from the JSON file
-  const enhanceCampgroundsWithData = (campgroundList: Campground[], cityName: string): Campground[] => {
-    if (!cityName) return campgroundList;
-    
-    // Get the region data from our JSON
-    const regionKey = getRegionKey(cityName);
-    const regionData = (northernMichiganData as CampgroundInfoData)[regionKey];
-    
-    if (!regionData) {
-      console.warn(`No data found for region: ${regionKey}`);
-      return campgroundList;
+  const [itinerary, setItinerary] = useState<DailyItinerary[]>(() => {
+    if (!initialDuration.startDate) {
+      throw new Error("Start date is required for trip duration");
     }
     
-    return campgroundList.map(campground => {
-      // Create a more comprehensive set of possible keys to match between API and JSON data
-      const campgroundId = campground.id;
-      
-      // Extract the base name without the region prefix
-      const baseNameParts = campgroundId.split('-');
-      const baseName = baseNameParts.slice(Math.max(0, baseNameParts.length - 2)).join('');
-      
-      // Create different variations of the ID to try matching
-      const possibleKeys = [
-        // Direct transformations
-        campgroundId.replace(/-/g, ''),                         // Remove all hyphens
-        baseNameParts[baseNameParts.length - 1],                // Just the last part
-        
-        // CamelCase variations 
-        // Convert kebab-case to camelCase (e.g., "traverse-city-state-park" to "traverseCityStatePark")
-        campgroundId.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()),
-        
-        // Specific case for single-word campgrounds with region prefixes
-        baseNameParts[baseNameParts.length - 1].toLowerCase(),  // Last part lowercase
-        
-        // Try more aggressive transformations for complex cases
-        campgroundId.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() // Remove all non-alphanumeric
-      ];
-      
-      console.log(`Trying to match ${campgroundId} with possible keys:`, possibleKeys);
-      
-      // Find the matching key in our JSON data
-      let matchingKey = '';
-      
-      // First try exact matches
-      for (const key of Object.keys(regionData)) {
-        if (possibleKeys.includes(key)) {
-          matchingKey = key;
-          break;
-        }
-      }
-      
-      // If no exact match, try partial matches
-      if (!matchingKey) {
-        for (const key of Object.keys(regionData)) {
-          for (const possibleKey of possibleKeys) {
-            // Check if the key contains the possible key or vice versa
-            if (key.toLowerCase().includes(possibleKey.toLowerCase()) || 
-                possibleKey.toLowerCase().includes(key.toLowerCase())) {
-              matchingKey = key;
-              break;
-            }
-          }
-          if (matchingKey) break;
-        }
-      }
-      
-      // If we found matching detailed data, enhance the campground with it
-      if (matchingKey && regionData[matchingKey]) {
-        console.log(`Found matching data for ${campgroundId}: ${matchingKey}`);
-        const detailedData = regionData[matchingKey];
-        
-        // Create site types based on the accommodationType array in the JSON data
-        const siteTypes = {
-          tent: detailedData.accomodationType?.includes('tent') || false,
-          rv: detailedData.accomodationType?.includes('rv') || false,
-          lodging: detailedData.accomodationType?.includes('lodging') || false
-        };
-        console.log('campground', campground);
-        return {
-          ...campground,
-          name: detailedData.title || campground.name,
-          description: detailedData.content || campground.description,
-          address: detailedData.address || campground.address,
-          rating: campground.rating || 4 + Math.random(),
-          amenities: detailedData.amenities || campground.amenities || ['WiFi', 'Showers', 'Toilets', 'Fire pit'],
-          images: detailedData.imageUrls?.map(url => ({ url, alt: detailedData.title })) || campground.images || [
-            { url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4', alt: 'Campsite' },
-            { url: 'https://images.unsplash.com/photo-1532339142463-fd0a8979791a', alt: 'Campsite view' }
-          ],
-          imageUrl: detailedData.imageUrls?.[0] || campground.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4',
-          distanceToTown: detailedData.distanceToTown || campground.distanceToTown || `5 miles to ${cityName}`,
-          checkIn: {
-            time: detailedData.checkInTime || '3:00 PM',
-            lateArrival: 'Call ahead',
-            checkout: detailedData.checkOutTime || '11:00 AM',
-            lateFees: 'Varies by campground'
-          },
-          siteGuidelines: {
-            maxGuests: parseInt(detailedData.guidelines?.match(/(\d+)\s+Guests/i)?.[1] || '6'),
-            maxVehicles: 2,
-            quietHours: '10:00 PM - 7:00 AM',
-            petRules: detailedData.amenities?.some(a => a.toLowerCase().includes('pet')) 
-              ? 'Pets allowed' : 'No pets allowed',
-            ageRestrictions: 'None'
-          },
-          cancellationPolicy: {
-            fullRefund: 'See policy details',
-            partialRefund: 'See policy details',
-            noRefund: 'See policy details',
-            modifications: 'Subject to availability',
-            weatherPolicy: 'No refunds for weather',
-            details: detailedData.cancellationPolicy
-          },
-          maxGuests: parseInt(detailedData.guidelines?.match(/(\d+)\s+Guests/i)?.[1] || '6'),
-          taxRate: detailedData.taxRate || campground.taxRate || 0.06,
-          siteTypes: siteTypes,
-        };
-      }
-      console.log('no matching data found for', campgroundId);
-      return campground;
-    });
-  };
+    return Array.from({ length: initialDuration.nights }, (_, i) => ({
+      day: i + 1,
+      date: addDays(initialDuration.startDate as Date, i),
+      activities: [],
+      route: []
+    }));
+  });
 
   // Update loading state when the external loading state changes
   useEffect(() => {
@@ -245,7 +98,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
   useEffect(() => {
     if (availabilityData && availabilityData.length > 0) {
       // Use the first stop's campgrounds to initialize the campgrounds list
-      const currentStay = getLocationStays().find(stay => 
+      const currentStay = getLocationStays(tripPlan, destination, duration).find(stay => 
         selectedDay >= stay.startNight && selectedDay <= stay.endNight
       );
       
@@ -313,9 +166,9 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       // Fallback to the API if no availability data is available
       fetchCampgrounds();
     }
-  }, [availabilityData, selectedDay]);
+  }, [availabilityData, selectedDay, tripPlan, destination, duration]);
 
-  // Update the fetchCampgrounds function - no initial availability checks are needed
+  // Update the fetchCampgrounds function
   const fetchCampgrounds = async () => {
     if (!tripPlan) return;
     
@@ -335,7 +188,9 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       
       if (stopData && stopData.campgrounds && stopData.campgrounds.length > 0) {
         // Use the campgrounds from the trip plan
-        console.log(`Using ${stopData.campgrounds.length} campgrounds from trip plan for ${cityId}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`Using ${stopData.campgrounds.length} campgrounds from trip plan for ${cityId}`);
+        }
         
         // Enhance campgrounds with additional data
         const enhancedCampgrounds = enhanceCampgroundsWithData(
@@ -346,7 +201,9 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
         setCampgrounds(enhancedCampgrounds);
       } else {
         // Fetch campgrounds if not available in the trip plan
-        console.log(`Fetching campgrounds for ${cityId}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`Fetching campgrounds for ${cityId}`);
+        }
         const fetchedCampgrounds = await apiService.getCampgrounds(cityId);
         
         // Enhance campgrounds with additional data
@@ -365,59 +222,8 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     }
   };
 
-  // Use the trip plan data to generate location stays if available
-  const getLocationStays = (): LocationStay[] => {
-    // If we have a trip plan with stops, use that to create the location stays
-    if (tripPlan && tripPlan.stops && tripPlan.stops.length > 0) {
-      return tripPlan.stops.map((stop, index) => {
-        const startNight = index === 0 ? 1 : 
-          tripPlan.stops.slice(0, index).reduce((total, prev) => total + prev.nights, 1);
-        const endNight = startNight + stop.nights - 1;
-        
-        return {
-          location: stop.city,
-          startNight,
-          endNight
-        };
-      });
-    }
-
-    // Otherwise, use the trip itineraries data for this destination
-    const destinationId = destination.id;
-    const nights = duration.nights;
-    const itinerary = tripItineraries[destinationId];
-    
-    if (itinerary && itinerary.stops[nights]) {
-      // Convert the trip stops from the itinerary data to location stays
-      const stays: LocationStay[] = [];
-      let currentNight = 1;
-      
-      itinerary.stops[nights].forEach(stop => {
-        const startNight = currentNight;
-        const endNight = currentNight + stop.nights - 1;
-        
-        stays.push({
-          location: stop.city,
-          startNight,
-          endNight
-        });
-        
-        currentNight = endNight + 1;
-      });
-      
-      return stays;
-    }
-    
-    // Fallback for any other case
-    return [{ 
-      location: 'Default Location',
-      startNight: 1, 
-      endNight: duration.nights 
-    }];
-  };
-
   const handleCampgroundSelect = (campground: Campground, accommodationType: string) => {
-    const currentStay = getLocationStays().find(stay => 
+    const currentStay = getLocationStays(tripPlan, destination, duration).find(stay => 
       selectedDay >= stay.startNight && selectedDay <= stay.endNight
     );
 
@@ -432,7 +238,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
         return updated.slice(0, duration.nights);
       });
 
-      const nextStay = getLocationStays().find(stay => stay.startNight > currentStay.endNight);
+      const nextStay = getLocationStays(tripPlan, destination, duration).find(stay => stay.startNight > currentStay.endNight);
       if (nextStay && nextStay.startNight <= duration.nights) {
         setSelectedDay(nextStay.startNight);
       } else {
@@ -454,16 +260,24 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
   };
 
   const handleDurationChange = (newDuration: TripDuration) => {
+    if (!newDuration.startDate) {
+      throw new Error("Start date is required for trip duration");
+    }
+    
     setDuration(newDuration);
     if (newDuration.nights !== duration.nights) {
       // Reset selected campgrounds to match new duration
       setSelectedCampgrounds(prev => prev.slice(0, newDuration.nights));
       setSelectedDay(1);
     }
+    
+    // We've validated that startDate exists above
+    const startDate = newDuration.startDate as Date;
+    
     setItinerary(
       Array.from({ length: newDuration.nights }, (_, i) => ({
         day: i + 1,
-        date: newDuration.startDate ? addDays(newDuration.startDate, i) : new Date(),
+        date: addDays(startDate, i),
         activities: [],
         route: []
       }))
@@ -477,6 +291,9 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
+
+  // Effects
+  // =======
 
   // Add scroll event listener to show/hide scroll arrows
   useEffect(() => {
@@ -501,6 +318,9 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       container.removeEventListener('scroll', handleScrollEvent);
     };
   }, []);
+
+  // Render
+  // ======
 
   if (showSummary) {
     return (
@@ -541,8 +361,8 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-500 hidden md:inline">
-                {duration.startDate && format(duration.startDate, 'MMM d')} - {' '}
-                {duration.startDate && format(addDays(duration.startDate, duration.nights), 'MMM d, yyyy')}
+                {format(duration.startDate as Date, 'MMM d')} - {' '}
+                {format(addDays(duration.startDate as Date, duration.nights), 'MMM d, yyyy')}
               </span>
               {selectedCampgrounds.length > 0 && (
                 <button
@@ -590,7 +410,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
               className="hide-scrollbar overflow-x-auto -mx-4 px-4"
             >
               <div className="flex gap-2 min-w-min pb-4">
-                {getLocationStays().map((stay) => {
+                {getLocationStays(tripPlan, destination, duration).map((stay) => {
                   const isSelected = selectedDay >= stay.startNight && selectedDay <= stay.endNight;
                   const hasCampground = selectedCampgrounds[stay.startNight - 1]?.campground;
                   const nightsText = stay.startNight === stay.endNight
@@ -627,41 +447,46 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
             <div>
               {/* Get the current stay based on selected day */}
               {(() => {
-                const currentStay = getLocationStays().find(stay => 
+                const currentStay = getLocationStays(tripPlan, destination, duration).find(stay => 
                   selectedDay >= stay.startNight && selectedDay <= stay.endNight
                 );
                 
                 // Calculate the start and end dates for this stay
-                let stayStartDate = undefined;
-                let stayEndDate = undefined;
+                let stayStartDate: Date;
+                let stayEndDate: Date;
                 
-                if (currentStay && tripPlan) {
+                if (!currentStay) {
+                  throw new Error("Current stay is missing for selected day");
+                }
+                if (process.env.NODE_ENV !== 'production') {
                   console.log("Current stay:", currentStay);
                   console.log("Trip plan:", tripPlan);
-                  
-                  const tripStop = tripPlan.stops.find(stop => 
-                    stop.city.toLowerCase().replace(/\s+/g, '-') === currentStay.location.toLowerCase().replace(/\s+/g, '-')
-                  );
-                  
-                  if (tripStop) {
-                    console.log("Found matching trip stop:", tripStop);
-                    stayStartDate = tripStop.startDate;
-                    stayEndDate = tripStop.endDate;
-                    console.log("Using dates from trip stop:", stayStartDate, stayEndDate);
-                  } else if (duration.startDate) {
-                    // Fallback if we can't find the exact trip stop
-                    console.log("No matching trip stop found, using fallback date calculation");
-                    stayStartDate = new Date(duration.startDate);
-                    stayStartDate.setDate(stayStartDate.getDate() + currentStay.startNight - 1);
-                    
-                    stayEndDate = new Date(stayStartDate);
-                    stayEndDate.setDate(stayEndDate.getDate() + (currentStay.endNight - currentStay.startNight + 1));
-                    console.log("Calculated fallback dates:", stayStartDate, stayEndDate);
-                  }
-                } else {
-                  console.log("No current stay or trip plan found");
-                  console.log("Current day:", selectedDay);
-                  console.log("Location stays:", getLocationStays());
+                }
+                
+                const tripStop = tripPlan.stops.find(stop => 
+                  stop.city.toLowerCase().replace(/\s+/g, '-') === currentStay.location.toLowerCase().replace(/\s+/g, '-')
+                );
+                
+                if (!tripStop || !tripStop.startDate || !tripStop.endDate) {
+                  throw new Error(`Trip stop or dates are missing for ${currentStay.location}`);
+                }
+                
+                if (process.env.NODE_ENV !== 'production') {
+                  console.log("Found matching trip stop:", tripStop);
+                }
+                
+                stayStartDate = tripStop.startDate;
+                stayEndDate = tripStop.endDate;
+                
+                if (process.env.NODE_ENV !== 'production') {
+                  console.log("Using dates from trip stop:", stayStartDate, stayEndDate);
+                  console.log("Calling CampgroundList", {
+                    campgrounds,
+                    loading,
+                    tripStartDate: stayStartDate,
+                    tripEndDate: stayEndDate,
+                    guestCount
+                  });
                 }
                 
                 return (
@@ -671,6 +496,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
                     loading={loading}
                     tripStartDate={stayStartDate}
                     tripEndDate={stayEndDate}
+                    guestCount={guestCount}
                   />
                 );
               })()}
