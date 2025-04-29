@@ -11,16 +11,16 @@ def get_campgrounds_data():
     """
     return {
         "traverse-city": [
-            {
-                "id": "traverse-city-state-park",
-                "name": "Traverse City State Park",
-                "scraperFunction": "scrape_traverseCityStatePark"
-            },
-            {
-                "id": "traverse-city-koa",
-                "name": "Traverse City KOA",
-                "scraperFunction": "scrape_traverseCityKoa"
-            },
+            # {
+            #     "id": "traverse-city-state-park",
+            #     "name": "Traverse City State Park",
+            #     "scraperFunction": "scrape_traverseCityStatePark"
+            # },
+            # {
+            #     "id": "traverse-city-koa",
+            #     "name": "Traverse City KOA",
+            #     "scraperFunction": "scrape_traverseCityKoa"
+            # },
             {
                 "id": "anchor-inn",
                 "name": "Anchor Inn",
@@ -38,21 +38,21 @@ def get_campgrounds_data():
             }
         ],
         "mackinac-city": [
-            {
-                "id": "st-ignace-koa",
-                "name": "St. Ignace KOA",
-                "scraperFunction": "scrape_stIgnaceKoa"
-            },
+            # {
+            #     "id": "st-ignace-koa",
+            #     "name": "St. Ignace KOA",
+            #     "scraperFunction": "scrape_stIgnaceKoa"
+            # },
             {
                 "id": "indian-river",
                 "name": "Indian River",
                 "scraperFunction": "scrape_indianRiver"
             },
-            {
-                "id": "straits-state-park",
-                "name": "Straights State Park",
-                "scraperFunction": "scrape_straitsStatePark"
-            },
+            # {
+            #     "id": "straits-state-park",
+            #     "name": "Straights State Park",
+            #     "scraperFunction": "scrape_straitsStatePark"
+            # },
             {
                 "id": "cabins-of-mackinaw",
                 "name": "Cabins of Mackinaw",
@@ -65,11 +65,11 @@ def get_campgrounds_data():
             }
         ],
         "pictured-rocks": [
-            {
-                "id": "munising-koa",
-                "name": "Munising KOA",
-                "scraperFunction": "scrape_munisingKoa"
-            },
+            # {
+            #     "id": "munising-koa",
+            #     "name": "Munising KOA",
+            #     "scraperFunction": "scrape_munisingKoa"
+            # },
             {
                 "id": "tourist-park",
                 "name": "Tourist Park",

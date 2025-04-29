@@ -175,7 +175,22 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     setLoading(true);
     
     try {
-      const currentStop = tripPlan.stops[selectedDay - 1];
+      // Find the current stay based on selected day (instead of using selectedDay - 1 as an index)
+      const currentStay = getLocationStays(tripPlan, destination, duration).find(stay => 
+        selectedDay >= stay.startNight && selectedDay <= stay.endNight
+      );
+      
+      if (!currentStay) {
+        setCampgrounds([]);
+        setLoading(false);
+        return;
+      }
+      
+      // Find the matching trip stop for the current stay location
+      const currentStop = tripPlan.stops.find(stop => 
+        stop.city.toLowerCase().replace(/\s+/g, '-') === currentStay.location.toLowerCase().replace(/\s+/g, '-')
+      );
+      
       if (!currentStop) {
         setCampgrounds([]);
         setLoading(false);
@@ -184,17 +199,16 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       
       // Get campgrounds from the tripPlan if available
       const cityId = currentStop.scraperId || currentStop.city.toLowerCase().replace(/\s+/g, '-');
-      const stopData = tripPlan.stops[selectedDay - 1];
       
-      if (stopData && stopData.campgrounds && stopData.campgrounds.length > 0) {
+      if (currentStop.campgrounds && currentStop.campgrounds.length > 0) {
         // Use the campgrounds from the trip plan
         if (process.env.NODE_ENV !== 'production') {
-          console.log(`Using ${stopData.campgrounds.length} campgrounds from trip plan for ${cityId}`);
+          console.log(`Using ${currentStop.campgrounds.length} campgrounds from trip plan for ${cityId}`);
         }
         
         // Enhance campgrounds with additional data
         const enhancedCampgrounds = enhanceCampgroundsWithData(
-          stopData.campgrounds,
+          currentStop.campgrounds,
           currentStop.city
         );
         

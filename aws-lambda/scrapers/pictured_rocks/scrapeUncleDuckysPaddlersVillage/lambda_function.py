@@ -3,6 +3,7 @@ import json
 import sys
 import os
 import traceback
+import re
 
 import requests
 from datetime import datetime
@@ -14,12 +15,18 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
 
     # Initialize results dictionary for the accommodations
     results = {
-        "tent": {"available": False, "price": None, "message": "Not available"},
         "lodging": {"available": False, "price": None, "message": "Not available"}
     }
 
+    # Convert dates to the format required by the website
     start_date = datetime.strptime(start_date_str, '%m/%d/%y').strftime('%Y-%m-%d')
     end_date = datetime.strptime(end_date_str, '%m/%d/%y').strftime('%Y-%m-%d')
+    
+    # Get current date in YYYYMMDD format for original_start_date and original_end_date
+    current_date = datetime.now().strftime('%Y%m%d')
+    
+    # Get month for cf-month parameter (YYYYMM01)
+    cf_month = start_date[:7].replace('-', '') + '01'
 
     url = 'https://paddlersvillage.checkfront.com/reserve/inventory/'
 
@@ -33,7 +40,7 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Safari/605.1.15',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest'
     }
 
@@ -48,8 +55,8 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
             'provider': 'droplet',
             'filter_item_id': '',
             'customer_id': '',
-            'original_start_date': '',
-            'original_end_date': '',
+            'original_start_date': current_date,
+            'original_end_date': current_date,
             'date': '',
             'language': '',
             'cacheable': '1',
@@ -58,7 +65,7 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
             'start_date': start_date,
             'end_date': end_date,
             'keyword': '',
-            'cf-month': start_date[:7].replace('-', '') + '01'
+            'cf-month': cf_month
         }
 
         try:
@@ -101,6 +108,8 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
                             
                         # Extract the full item name and remove any trailing/leading whitespace
                         item_name_candidate = h2_tag.text.strip()
+                        # Clean up the item name by removing tabs and extra whitespace
+                        item_name_candidate = re.sub(r'\s+', ' ', item_name_candidate).strip()
                         
                         # Find the item summary for checking sleeps capacity
                         item_summary = title_summary.find(class_="cf-item-summary")
@@ -139,7 +148,9 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
                             continue
                     
                     if price is not None and item_name:
-                        return {"available": True, "price": price, "message": f"${price:.2f} per night - {item_name}"}
+                        # Make sure the item name is clean before returning
+                        clean_item_name = re.sub(r'\s+', ' ', item_name).strip()
+                        return {"available": True, "price": price, "message": f"${price:.2f} per night - {clean_item_name}"}
                     else:
                         return {"available": False, "price": None, "message": f"No suitable {category_name} found for your group size."}
             else:
@@ -151,31 +162,29 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
             return {"available": False, "price": None, "message": f"Error processing {category_name}: {str(e)}"}
 
     # Check if start date is before May 23, 2025
-    start_month, start_day, start_year = map(int, start_date.split('/'))
-    if start_year < 25 or (start_year == 25 and (start_month < 5 or (start_month == 5 and start_day < 23))):
+    start_date_obj = datetime.strptime(start_date_str, '%m/%d/%y')
+    may_23_2025 = datetime.strptime('05/23/25', '%m/%d/%y')
+    
+    if start_date_obj < may_23_2025:
         error_message = "Not available before May 23, 2025"
-        results["tent"]["message"] = error_message
         results["lodging"]["message"] = error_message
         return results
-
-    # Process tent category
-    results["tent"] = process_category("14", "tent", num_travelers)
     
     # For lodging, check yurts first (if group size <= 5), then platform tents
     if num_travelers > 5:
         # Skip yurts and only check platform tents for large groups
-        platform_tent_result = process_category("15", "platform tent", num_travelers)
+        platform_tent_result = process_category("2", "yurt", num_travelers)
         if platform_tent_result["available"]:
             results["lodging"] = platform_tent_result
     else:
         # For smaller groups, check yurts first
-        yurt_result = process_category("16", "yurt", num_travelers)
+        yurt_result = process_category("2", "yurt", num_travelers)
         if yurt_result["available"]:
             # If yurts are available, use them for lodging
             results["lodging"] = yurt_result
         else:
             # If no yurts, check platform tents as fallback
-            platform_tent_result = process_category("15", "platform tent", num_travelers)
+            platform_tent_result = process_category("4", "platform tent", num_travelers)
             if platform_tent_result["available"]:
                 results["lodging"] = platform_tent_result
     
@@ -276,9 +285,9 @@ if __name__ == '__main__':
     # Test the function with sample event
     test_event = {
         'body': json.dumps({
-            'startDate': '06/29/25',
-            'endDate': '07/02/25',
-            'numAdults': 6,
+            'startDate': '06/15/25',
+            'endDate': '06/17/25',
+            'numAdults': 3,
             'numKids': 0
         })
     }
