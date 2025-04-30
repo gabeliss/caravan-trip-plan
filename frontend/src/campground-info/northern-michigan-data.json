@@ -67,32 +67,38 @@
         "anchorInn": {
             "title": "Anchor Inn",
             "accomodationType": ["lodging"],
-            "address": "3746 N US-31, Traverse City, MI 49686",
+            "address": "12068 S W Bay Shore Dr, Traverse City, MI 49684",
             "cityAndState": "Traverse City, MI",
-            "content": "Comfortable lodging near the water with various accommodation options. Anchor Inn offers a mix of camping sites and cabins with easy access to Grand Traverse Bay.",
-            "taxRate": 0.06,
-            "fixedFee": 0,
+            "content": "Comfortable lodging near the water with various accommodation options. Anchor Inn offers a mix of unique cabins with easy access to Grand Traverse Bay and downtown.",
             "message": "Unavailable",
             "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/anchor1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/anchor2.png"
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn1.jpeg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn2.jpeg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn3.jpeg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn4.jpeg"
             ],
             "offerings": "Tent and Cabins, 35 Sites",
-            "distanceToTown": "10 minutes from downtown Traverse City",
+            "distanceToTown": "7 minutes from downtown Traverse City",
             "amenities": [
-                "Water Access",
-                "Modern Restrooms",
-                "Hot Showers",
+                "Restrooms",
+                "Picnic area",
+                "Showers",
+                "Lake access",
+                "Playground",
+                "Pet-friendly",
+                "Fire-pit",
                 "WiFi",
-                "Fire Rings",
-                "Picnic Tables",
-                "BBQ Grills",
-                "Cabin Options"
+                "Kitchenette",
+                "Fridge",
+                "Microwave (room dependent)",
+                "Air Conditioning"
             ],
             "checkInTime": "3:00 PM",
-            "checkOutTime": "12:00 PM",
+            "checkOutTime": "10:00 AM",
             "guidelines": "4 Guests Maximum Per Site, 6 for Cabins",
-            "cancellationPolicy": "Full refund with 14-day notice. 75% refund with 7-13 day notice. 50% refund with 3-6 day notice. No refund with less than 3 days notice."
+            "maxGuests": 6,
+            "petRules": "Pet Friendly for a fee ($30 for one night, $55 for two or more nights)",
+            "cancellationPolicy": "For nightly reservations, cancellations within 7 days of arrival are non-refundable, 8-30 days incur a 15% fee, and cancellations more than 30 days out are fully refundable; rescheduling within 7 days also carries a 15% fee and voids future refunds. For weekly reservations (7+ nights), cancellations within 30 days are non-refundable, while cancellations 30 days or more before arrival incur a 15% fee."
         },
         "leelanauPines": {
             "title": "Leelanau Pines Campground",
@@ -104,10 +110,10 @@
             "fixedFee": -0.01,
             "message": "Unavailable",
             "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/leelanauPines1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/leelanauPines2.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/leelanauPines3.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/leelanauPines4.png"
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines1.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines2.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines3.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines4.png"
             ],
             "offerings": "Tent, x Sites",
             "distanceToTown": "15 minutes from Suttons Bay, 20 minutes from downtown Leland, and 25 minutes from Traverse City",
@@ -140,11 +146,11 @@
             "fixedFee": 0,
             "message": "Unavailable",
             "imageUrls": [
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/timberRidge1.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/timberRidge2.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/timberRidge3.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/timberRidge4.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/timberRidge5.png"
+            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge1.png",
+            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge2.png",
+            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge3.png",
+            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge4.png",
+            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge5.png"
             ],
             "offerings": "Tent, Amenities, x Sites",
             "distanceToTown": "8 minutes from downtown Traverse City",
@@ -212,9 +218,13 @@
             "fixedFee": 0,
             "message": "Unavailable",
             "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/indianRiver1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/indianRiver2.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/indianRiver3.png"
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver1.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver2.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver3.jpeg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver4.jpeg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver5.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver6.jpg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver7.png"
             ],
             "offerings": "Tent, RV, Cabin, x Sites",
             "distanceToTown": "5 minutes from downtown Indian River, 20 minutes from Cheboygan, 28 minutes from Mackinaw City (Port to head to Mackinac Island)",
@@ -345,10 +355,10 @@
             "offerings": "Tent, RV, Cabin, 100 Sites",
             "message": "Unavailable",
             "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/teePee1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/teePee2.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/teePee3.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/teePee4.jpg"
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee1.jpg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee2.jpg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee3.jpg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee4.jpg"
             ],
             "amenities": [
                 "Water & electric on all sites",
@@ -420,8 +430,9 @@
             "fixedFee": 0,
             "message": "Unavailable",
             "imageUrls": [
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/touristPark1.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/touristPark2.png"
+            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark1.png",
+            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark2.png",
+            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark3NEW.png"
             ],
             "offerings": "Tent, x Sites",
             "distanceToTown": "5 minutes from downtown Munising, offering shops, restaurants, and access to Pictured Rocks.",
@@ -453,7 +464,8 @@
             "fixedFee": 0,
             "message": "Unavailable",
             "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/uncleDuckys1.png"
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/PaddlersVillageAuTrain1.jpg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/PaddlersVillageAuTrain2.jpg"
             ],
             "offerings": "Tent, 40 Sites",
             "distanceToTown": "15 minutes from Munising, 5 minutes from Au Train Beach",
@@ -484,8 +496,7 @@
             "fixedFee": 0,
             "message": "Unavailable",
             "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/udpv1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/udpv2.png"
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/uncleDuckys1.png"
             ],
             "offerings": "Tent, 40 Sites",
             "distanceToTown": "5 minutes from downtown Traverse City",
@@ -514,10 +525,10 @@
             "fixedFee": 0,
             "message": "Unavailable",
             "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/fortSuperior1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/fortSuperior2.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/fortSuperior3.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/fortSuperior4.png"
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior1.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior2.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior3.png",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior4.png"
             ],
             "offerings": "Tent, x Sites",
             "distanceToTown": "10 minutes from downtown Munising, where you can find shops, restaurants, and access to Pictured Rocks.",
@@ -543,8 +554,9 @@
             "fixedFee": 0,
             "message": "Unavailable",
             "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/autrainlake1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/autrainlake2.jpg"
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground1.jpg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground2.jpg",
+                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground3.jpg"
             ],
             "offerings": "Tent, 35 Sites",
             "distanceToTown": "20 minutes from Munising, 10 minutes from Au Train",

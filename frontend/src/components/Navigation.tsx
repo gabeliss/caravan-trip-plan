@@ -118,7 +118,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
                     >
                       <span className="flex items-center gap-2">
                         <Home className="w-4 h-4" />
-                        <span>Home</span>
+                        <span>Book</span>
                       </span>
                     </button>
 
@@ -232,7 +232,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
               onClick={() => handleNavigation('/')}
               className="text-primary-dark hover:text-primary-dark/80 font-display transition-colors"
             >
-              Home
+              Book
             </button>
             
             {/* Desktop Destinations Dropdown */}

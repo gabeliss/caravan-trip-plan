@@ -5,7 +5,7 @@ import { FullAvailability, AccommodationAvailability } from '../types/campground
 import apiService from '../services/apiService';
 import { format } from 'date-fns';
 import {
-  Tent, Home, Hotel, Wifi, ShowerHead, Power, Car, Utensils, Flame, Dog, Droplets, Waves, CheckCircle2, AlertTriangle, Clock, Calendar, ShieldAlert, RefreshCw, MapPin, Star, ChevronUp, ChevronDown
+  Tent, Home, Hotel, Wifi, ShowerHead, Power, Car, Utensils, Flame, Dog, Droplets, Waves, CheckCircle2, AlertTriangle, Clock, Calendar, ShieldAlert, RefreshCw, MapPin, Star, ChevronUp, ChevronDown, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 interface CampgroundCardProps {
@@ -31,6 +31,7 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Fetch availability on mount or when trip/campground changes
   useEffect(() => {
@@ -130,6 +131,30 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
     return `${campground.cancellationPolicy.fullRefund} for full refund. ${campground.cancellationPolicy.partialRefund} for partial refund. ${campground.cancellationPolicy.noRefund} for no refund.`;
   };
 
+  const handlePrevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (campground.images && campground.images.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === 0 ? campground.images.length - 1 : prev - 1
+      );
+    }
+  };
+
+  const handleNextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (campground.images && campground.images.length > 0) {
+      setCurrentImageIndex((prev) => 
+        prev === campground.images.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const goToImage = (index: number) => {
+    if (campground.images && index >= 0 && index < campground.images.length) {
+      setCurrentImageIndex(index);
+    }
+  };
+
   const renderFooter = () => {
     const isUnavailable = displayedAvailability && displayedAvailability.available === false;
 
@@ -201,19 +226,51 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
           {campground.images && campground.images.length > 0 ? (
             <div className="h-full overflow-hidden">
               <img 
-                src={campground.images[0].url} 
-                alt={campground.images[0].alt || campground.name} 
-                className="w-full h-full object-cover"
+                src={campground.images[currentImageIndex].url} 
+                alt={campground.images[currentImageIndex].alt || campground.name} 
+                className="w-full h-full object-cover transition-opacity duration-300"
               />
+              
+              {/* Navigation buttons for image gallery */}
               {campground.images.length > 1 && (
-                <div className="absolute bottom-2 right-2 flex gap-1">
-                  {campground.images.slice(0, 5).map((_, index) => (
-                    <div 
-                      key={index} 
-                      className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/60'}`} 
-                    />
-                  ))}
-                </div>
+                <>
+                  {/* Left navigation button */}
+                  <button 
+                    onClick={handlePrevImage}
+                    className="absolute top-1/2 left-2 -mt-5 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full text-white flex items-center justify-center transition-colors duration-200 focus:outline-none"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  
+                  {/* Right navigation button */}
+                  <button 
+                    onClick={handleNextImage}
+                    className="absolute top-1/2 right-2 -mt-5 w-10 h-10 bg-black/30 hover:bg-black/50 rounded-full text-white flex items-center justify-center transition-colors duration-200 focus:outline-none"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                  
+                  {/* Image indicators/dots */}
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
+                    {campground.images.slice(0, 5).map((_, index) => (
+                      <button 
+                        key={index} 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          goToImage(index);
+                        }}
+                        className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                          index === currentImageIndex 
+                            ? 'bg-white w-3' 
+                            : 'bg-white/60 hover:bg-white/80'
+                        }`} 
+                        aria-label={`Go to image ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           ) : campground.imageUrl ? (
