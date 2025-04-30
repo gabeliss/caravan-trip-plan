@@ -1,181 +1,124 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   MapPin, Calendar, Clock, Home, Mountain, Coffee, 
   Utensils, Camera, ArrowLeft, ArrowRight, Wine, 
   Bike, Ship, Tent, Sun, Trees as Tree, Palmtree, 
-  Waves, CloudSun, ChevronLeft, ChevronRight 
+  Waves, CloudSun, ChevronLeft, ChevronRight,
+  LucideIcon
 } from 'lucide-react';
 import { destinations } from '../data/destinations';
-import { MapView } from '../components/Map';
-import { Navigation } from '../components/Navigation';
+// Import the trip overviews data
+import tripOverviewsData from '../info/trip-overviews.json';
 
-const locationContent = {
-  'northern-michigan': {
-    subtitle: 'Great Lakes Getaway',
-    description: 'Experience the pristine beauty of Northern Michigan, from the crystal-clear waters of Lake Michigan to the charming coastal towns and dense forests that dot the landscape. This carefully crafted journey takes you through some of the most scenic parts of the Great Lakes State.',
-    bestTimeToVisit: 'May-October',
-    suggestedDuration: '6 Nights',
-    activities: ['Hiking', 'Kayaking', 'Wine Tasting', 'Beach Activities'],
-    accommodation: 'Tent & RV Camping',
-    highlights: [
-      {
-        type: 'Restaurant',
-        name: 'Farm Club',
-        description: 'Farm Club seamlessly blends farming, dining, and community. Nestled just outside Traverse City, it offers a unique experience where visitors can enjoy fresh, seasonal meals sourced directly from its own farm, sip on house-brewed beer and cider, and shop a thoughtfully curated market.',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80',
-        icon: Utensils
-      },
-      {
-        type: 'Activity',
-        name: 'Pictured Rocks Kayaking',
-        description: 'Experience the majestic Pictured Rocks National Lakeshore from a unique perspective as you paddle along towering cliffs, through natural stone arches, and past stunning mineral-stained rock formations.',
-        image: 'https://images.unsplash.com/photo-1576012998140-969b99564c1a?auto=format&fit=crop&q=80',
-        icon: Ship
-      },
-      {
-        type: 'Trail',
-        name: 'Chapel Rock Trail',
-        description: 'This iconic 6.2-mile loop trail offers the perfect blend of forest hiking and Lake Superior shoreline views. The trail leads to Chapel Rock, a unique geological formation topped by a lone pine tree.',
-        image: 'https://images.unsplash.com/photo-1533240332313-0db49b459ad6?auto=format&fit=crop&q=80',
-        icon: Mountain
-      }
-    ]
-  },
-  'arizona': {
-    subtitle: 'Desert Southwest Adventure',
-    description: 'Discover the dramatic landscapes and rich cultural heritage of Arizona. From the majestic Grand Canyon to the red rocks of Sedona, this journey showcases the diverse beauty of the American Southwest.',
-    bestTimeToVisit: 'October-April',
-    suggestedDuration: '7 Nights',
-    activities: ['Hiking', 'Photography', 'Rock Climbing', 'Cultural Tours'],
-    accommodation: 'Desert Camping',
-    highlights: [
-      {
-        type: 'Natural Wonder',
-        name: 'Grand Canyon Sunrise',
-        description: 'Experience the breathtaking transformation of the Grand Canyon as dawn breaks over the horizon, painting the ancient rock layers in brilliant hues of red, orange, and gold.',
-        image: 'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&q=80',
-        icon: Sun
-      },
-      {
-        type: 'Trail',
-        name: 'Cathedral Rock',
-        description: 'One of Sedona\'s most iconic formations, Cathedral Rock trail offers a challenging but rewarding climb with stunning panoramic views of the red rock landscape.',
-        image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80',
-        icon: Mountain
-      },
-      {
-        type: 'Activity',
-        name: 'Antelope Canyon Tour',
-        description: 'Explore the mesmerizing slot canyons carved by wind and water, where sunbeams create spectacular light shows in the narrow, twisting passages.',
-        image: 'https://images.unsplash.com/photo-1602785674419-a3295d0d9828?auto=format&fit=crop&q=80',
-        icon: Camera
-      }
-    ]
-  },
-  'washington': {
-    subtitle: 'Pacific Northwest Explorer',
-    description: 'Journey through Washington\'s diverse landscapes, from rainforests to volcanic peaks. Experience the raw beauty of the Pacific Northwest with its ancient forests, rugged coastline, and alpine meadows.',
-    bestTimeToVisit: 'July-September',
-    suggestedDuration: '8 Nights',
-    activities: ['Hiking', 'Wildlife Watching', 'Photography', 'Kayaking'],
-    accommodation: 'Forest Camping',
-    highlights: [
-      {
-        type: 'National Park',
-        name: 'Olympic Rainforest',
-        description: 'Immerse yourself in one of the largest temperate rainforests in the U.S., where ancient trees draped in moss create an otherworldly atmosphere.',
-        image: 'https://images.unsplash.com/photo-1508693926297-1d61ee3df82a?auto=format&fit=crop&q=80',
-        icon: Tree
-      },
-      {
-        type: 'Activity',
-        name: 'Whale Watching',
-        description: 'Set sail from the San Juan Islands to spot orcas, humpback whales, and other marine wildlife in their natural habitat.',
-        image: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&q=80',
-        icon: Waves
-      },
-      {
-        type: 'Trail',
-        name: 'Mount Rainier Skyline',
-        description: 'Hike through subalpine meadows with stunning views of Mount Rainier, especially beautiful during wildflower season.',
-        image: 'https://images.unsplash.com/photo-1467890947394-8171244e5410?auto=format&fit=crop&q=80',
-        icon: Mountain
-      }
-    ]
-  },
-  'smoky-mountains': {
-    subtitle: 'Appalachian Adventure',
-    description: 'Explore America\'s most visited national park, where misty mountains, diverse wildlife, and rich cultural heritage create an unforgettable experience.',
-    bestTimeToVisit: 'March-November',
-    suggestedDuration: '5 Nights',
-    activities: ['Hiking', 'Wildlife Viewing', 'Scenic Drives', 'Historical Sites'],
-    accommodation: 'Mountain Camping',
-    highlights: [
-      {
-        type: 'Trail',
-        name: 'Alum Cave Trail',
-        description: 'A dramatic trail featuring unique geological formations, mountain views, and historic sites, leading to Mount LeConte.',
-        image: 'https://images.unsplash.com/photo-1508091073125-ced32109d0ee?auto=format&fit=crop&q=80',
-        icon: Mountain
-      },
-      {
-        type: 'Activity',
-        name: 'Cades Cove Loop',
-        description: 'Cycle or drive through this scenic valley, rich in wildlife and historic buildings from early European settlements.',
-        image: 'https://images.unsplash.com/photo-1508018149381-4a6aa2c0e0c3?auto=format&fit=crop&q=80',
-        icon: Bike
-      },
-      {
-        type: 'Experience',
-        name: 'Firefly Viewing',
-        description: 'Witness the magical synchronous fireflies during their annual mating display, a rare natural phenomenon.',
-        image: 'https://images.unsplash.com/photo-1502581827181-9cf3c3ee0106?auto=format&fit=crop&q=80',
-        icon: CloudSun
-      }
-    ]
-  },
-  'southern-california': {
-    subtitle: 'Pacific Coast Paradise',
-    description: 'Experience the diverse landscapes of Southern California, from coastal highways to desert national parks, combining urban excitement with natural wonders.',
-    bestTimeToVisit: 'Year-round',
-    suggestedDuration: '7 Nights',
-    activities: ['Beach Activities', 'Desert Hiking', 'Surfing', 'National Parks'],
-    accommodation: 'Beach & Desert Camping',
-    highlights: [
-      {
-        type: 'National Park',
-        name: 'Joshua Tree',
-        description: 'Explore the unique desert landscape where two distinct desert ecosystems meet, featuring the iconic Joshua trees and dramatic rock formations.',
-        image: 'https://images.unsplash.com/photo-1506146332389-18140dc7b2fb?auto=format&fit=crop&q=80',
-        icon: Palmtree
-      },
-      {
-        type: 'Activity',
-        name: 'Pacific Coast Highway',
-        description: 'Drive along one of America\'s most scenic routes, stopping at pristine beaches and coastal viewpoints.',
-        image: 'https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?auto=format&fit=crop&q=80',
-        icon: Waves
-      },
-      {
-        type: 'Experience',
-        name: 'Channel Islands',
-        description: 'Kayak through sea caves and spot unique wildlife on these remote and pristine islands off the coast.',
-        image: 'https://images.unsplash.com/photo-1505245208761-ba872912fac0?auto=format&fit=crop&q=80',
-        icon: Ship
-      }
-    ]
-  }
+// Define types for highlights to fix type errors
+type HighlightIcon = typeof Mountain | typeof Utensils | typeof Ship | typeof Sun | 
+                     typeof Tree | typeof Waves | typeof Bike | typeof Camera |
+                     typeof Wine | typeof Palmtree | typeof CloudSun;
+
+// Interface for JSON data
+interface HighlightData {
+  type: string;
+  name: string;
+  description: string;
+  iconName: string;
+  image?: string;
+  images?: string[];
+}
+
+interface LocationContentData {
+  subtitle: string;
+  description: string;
+  bestTimeToVisit: string;
+  suggestedDuration: string;
+  activities: string[];
+  accommodation: string;
+  highlights: HighlightData[];
+}
+
+// Runtime interface with icon components
+interface Highlight {
+  type: string;
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  image?: string;
+  images?: string[];
+}
+
+interface LocationContent {
+  subtitle: string;
+  description: string;
+  bestTimeToVisit: string;
+  suggestedDuration: string;
+  activities: string[];
+  accommodation: string;
+  highlights: Highlight[];
+}
+
+// Map icon names to actual icon components
+const iconMap: Record<string, LucideIcon> = {
+  Mountain,
+  Utensils,
+  Ship,
+  Sun,
+  Tree,
+  Waves,
+  Bike,
+  Camera,
+  Wine,
+  Palmtree,
+  CloudSun
 };
 
 export const TripOverviewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const destination = destinations.find(d => d.id === id);
-  const content = locationContent[id || ''];
   const [currentImageIndex, setCurrentImageIndex] = useState<Record<string, number>>({});
   const [isHovering, setIsHovering] = useState<Record<string, boolean>>({});
+  
+  // Prevent infinite loops with refs
+  const initialized = useRef(false);
+  const loggedImages = useRef(false);
+
+  // Get content data from JSON
+  const rawContent = id ? (tripOverviewsData as Record<string, LocationContentData>)[id] : undefined;
+  
+  // Process content to add icon components
+  const content: LocationContent | undefined = rawContent ? {
+    ...rawContent,
+    highlights: rawContent.highlights.map(highlight => ({
+      ...highlight,
+      icon: iconMap[highlight.iconName] || Mountain // Default to Mountain if icon not found
+    }))
+  } : undefined;
+
+  // Initialize image indices once on component mount only
+  useEffect(() => {
+    if (content && !initialized.current) {
+      const initialIndices: Record<string, number> = {};
+      content.highlights.forEach((_, index) => {
+        initialIndices[index] = 0;
+      });
+      setCurrentImageIndex(initialIndices);
+      initialized.current = true;
+    }
+  }, [content]);
+
+  // Log image counts only once (for debugging)
+  useEffect(() => {
+    if (content && !loggedImages.current) {
+      content.highlights.forEach((highlight, index) => {
+        const images = getHighlightImages(highlight);
+        if (images.length > 1) {
+          console.log(`Highlight ${index} (${highlight.name}) has ${images.length} images`);
+        }
+      });
+      loggedImages.current = true;
+    }
+  }, [content]);
 
   if (!destination || !content) {
     return (
@@ -193,42 +136,42 @@ export const TripOverviewPage: React.FC = () => {
     );
   }
 
-  const getHighlightImages = (highlight: typeof content.highlights[0]) => {
-    switch (highlight.type) {
-      case 'Restaurant':
-        return [
-          highlight.image,
-          'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80'
-        ];
-      case 'Activity':
-        return [
-          highlight.image,
-          'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1530870110042-98b2cb110834?auto=format&fit=crop&q=80'
-        ];
-      case 'Trail':
-        return [
-          highlight.image,
-          'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&q=80',
-          'https://images.unsplash.com/photo-1542224566-6e85f2e6772f?auto=format&fit=crop&q=80'
-        ];
-      default:
-        return [highlight.image];
+  const getHighlightImages = (highlight: Highlight): string[] => {
+    // First check for images array (like in Farm Club case)
+    if (highlight.images && highlight.images.length > 0) {
+      return highlight.images;
     }
+    
+    // Then check for a single image property
+    if (highlight.image) {
+      return [highlight.image];
+    }
+    
+    // Fallback to a default image
+    return ['https://images.unsplash.com/photo-1496545672447-f699b503d270?auto=format&fit=crop&q=80'];
   };
 
+  // Fixed navigation handlers 
   const handlePrevImage = (highlightIndex: number) => {
+    const imageArray = getHighlightImages(content.highlights[highlightIndex]);
     setCurrentImageIndex(prev => ({
       ...prev,
-      [highlightIndex]: prev[highlightIndex] > 0 ? prev[highlightIndex] - 1 : getHighlightImages(content.highlights[highlightIndex]).length - 1
+      [highlightIndex]: prev[highlightIndex] > 0 ? prev[highlightIndex] - 1 : imageArray.length - 1
     }));
   };
 
   const handleNextImage = (highlightIndex: number) => {
+    const imageArray = getHighlightImages(content.highlights[highlightIndex]);
     setCurrentImageIndex(prev => ({
       ...prev,
-      [highlightIndex]: (prev[highlightIndex] + 1) % getHighlightImages(content.highlights[highlightIndex]).length
+      [highlightIndex]: (prev[highlightIndex] + 1) % imageArray.length
+    }));
+  };
+
+  const handleDotClick = (highlightIndex: number, imageIndex: number) => {
+    setCurrentImageIndex(prev => ({
+      ...prev,
+      [highlightIndex]: imageIndex
     }));
   };
 
@@ -333,88 +276,109 @@ export const TripOverviewPage: React.FC = () => {
             </div>
 
             <div className="space-y-32">
-              {content.highlights.map((highlight, index) => (
-                <div key={highlight.type} className="relative">
-                  <div className="grid md:grid-cols-2 gap-16 items-center">
-                    <div className={index % 2 === 0 ? 'order-1' : 'order-2'}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <highlight.icon className="w-6 h-6 text-[#DC7644]" />
-                        <h3 className="font-display text-2xl">{highlight.type}</h3>
-                      </div>
-                      <h2 className="font-display text-5xl text-[#DC7644] mb-6">
-                        {highlight.name}
-                      </h2>
-                      <p className="text-lg text-gray-600 leading-relaxed">
-                        {highlight.description}
-                      </p>
-                    </div>
-
-                    <div 
-                      className={index % 2 === 0 ? 'order-2' : 'order-1'}
-                      onMouseEnter={() => setIsHovering(prev => ({ ...prev, [index]: true }))}
-                      onMouseLeave={() => setIsHovering(prev => ({ ...prev, [index]: false }))}
-                    >
-                      <div className="relative group">
-                        <div className="aspect-[4/3] rounded-xl overflow-hidden">
-                          <div className="relative w-full h-full">
-                            {getHighlightImages(highlight).map((image, imageIndex) => (
-                              <motion.img
-                                key={imageIndex}
-                                src={image}
-                                alt={`${highlight.name} - View ${imageIndex + 1}`}
-                                className="absolute w-full h-full object-cover transition-opacity duration-300"
-                                initial={{ opacity: 0 }}
-                                animate={{ 
-                                  opacity: currentImageIndex[index] === imageIndex ? 1 : 0,
-                                  zIndex: currentImageIndex[index] === imageIndex ? 1 : 0
-                                }}
-                              />
-                            ))}
-                          </div>
+              {content.highlights.map((highlight, index) => {
+                // Get images for this highlight
+                const highlightImages = getHighlightImages(highlight);
+                const currentIndex = currentImageIndex[index] !== undefined ? currentImageIndex[index] : 0;
+                
+                return (
+                  <div key={highlight.type + index} className="relative">
+                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                      <div className={index % 2 === 0 ? 'order-1' : 'order-2'}>
+                        <div className="flex items-center gap-3 mb-4">
+                          <highlight.icon className="w-6 h-6 text-[#DC7644]" />
+                          <h3 className="font-display text-2xl">{highlight.type}</h3>
                         </div>
+                        <h2 className="font-display text-5xl text-[#DC7644] mb-6">
+                          {highlight.name}
+                        </h2>
+                        <p className="text-lg text-gray-600 leading-relaxed">
+                          {highlight.description}
+                        </p>
+                      </div>
 
-                        {getHighlightImages(highlight).length > 1 && (
-                          <>
-                            <button
-                              onClick={() => handlePrevImage(index)}
-                              className={`absolute left-4 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full p-1.5 transition-all md:opacity-0 md:group-hover:opacity-100 ${
-                                isHovering[index] ? 'opacity-100' : 'opacity-50'
-                              }`}
-                              aria-label="Previous image"
-                            >
-                              <ChevronLeft className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleNextImage(index)}
-                              className={`absolute right-4 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full p-1.5 transition-all md:opacity-0 md:group-hover:opacity-100 ${
-                                isHovering[index] ? 'opacity-100' : 'opacity-50'
-                              }`}
-                              aria-label="Next image"
-                            >
-                              <ChevronRight className="w-4 h-4" />
-                            </button>
-                          </>
-                        )}
+                      <div 
+                        className={index % 2 === 0 ? 'order-2' : 'order-1'}
+                        onMouseEnter={() => setIsHovering(prev => ({ ...prev, [index]: true }))}
+                        onMouseLeave={() => setIsHovering(prev => ({ ...prev, [index]: false }))}
+                      >
+                        <div className="relative group">
+                          <div className="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200">
+                            <div className="relative w-full h-full">
+                              {highlightImages.map((image, imageIndex) => (
+                                <motion.img
+                                  key={imageIndex}
+                                  src={image}
+                                  alt={`${highlight.name} - View ${imageIndex + 1}`}
+                                  className="absolute w-full h-full object-cover transition-opacity duration-300"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ 
+                                    opacity: currentIndex === imageIndex ? 1 : 0,
+                                    zIndex: currentIndex === imageIndex ? 1 : 0
+                                  }}
+                                  onError={(e) => {
+                                    console.error(`Failed to load image: ${image}`);
+                                    // Replace broken images with a placeholder
+                                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80";
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </div>
 
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-                          {getHighlightImages(highlight).map((_, imageIndex) => (
-                            <button
-                              key={imageIndex}
-                              onClick={() => setCurrentImageIndex(prev => ({ ...prev, [index]: imageIndex }))}
-                              className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                                currentImageIndex[index] === imageIndex 
-                                  ? 'bg-white' 
-                                  : 'bg-white/40 hover:bg-white/60'
-                              }`}
-                              aria-label={`Go to image ${imageIndex + 1}`}
-                            />
-                          ))}
+                          {/* Navigation */}
+                          {highlightImages.length > 1 && (
+                            <>
+                              {/* Image count indicator */}
+                              <div className="absolute top-4 right-4 bg-[#194027] text-white px-3 py-2 rounded-md text-sm font-medium z-10">
+                                {currentIndex + 1} / {highlightImages.length}
+                              </div>
+                            
+                              {/* Navigation buttons */}
+                              <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20">
+                                <button
+                                  type="button"
+                                  onClick={() => handlePrevImage(index)}
+                                  className="h-12 w-12 flex items-center justify-center bg-white border-2 border-[#194027] rounded-full shadow-lg hover:bg-[#f0f0f0] transition-colors"
+                                >
+                                  <ChevronLeft className="w-8 h-8 text-[#194027]" />
+                                </button>
+                              </div>
+                              
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 z-20">
+                                <button
+                                  type="button"
+                                  onClick={() => handleNextImage(index)}
+                                  className="h-12 w-12 flex items-center justify-center bg-white border-2 border-[#194027] rounded-full shadow-lg hover:bg-[#f0f0f0] transition-colors"
+                                >
+                                  <ChevronRight className="w-8 h-8 text-[#194027]" />
+                                </button>
+                              </div>
+
+                              {/* Pagination dots */}
+                              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/30 px-3 py-2 rounded-full z-10">
+                                {highlightImages.map((_, imageIndex) => (
+                                  <button
+                                    key={imageIndex}
+                                    type="button"
+                                    onClick={() => handleDotClick(index, imageIndex)}
+                                    className={`w-3 h-3 rounded-full transition-colors ${
+                                      currentIndex === imageIndex 
+                                        ? 'bg-white' 
+                                        : 'bg-white/40 hover:bg-white/60'
+                                    }`}
+                                    aria-label={`Go to image ${imageIndex + 1}`}
+                                  />
+                                ))}
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

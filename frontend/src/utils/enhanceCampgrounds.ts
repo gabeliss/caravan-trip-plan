@@ -1,5 +1,5 @@
 import { Campground } from '../types';
-import northernMichiganData from '../campground-info/northern-michigan-data.json';
+import northernMichiganData from '../info/campgrounds/northern-michigan-data.json';
 
 // Define a type for the campground data structure from JSON
 interface CampgroundInfoData {

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { DateRangePicker } from './DateRangePicker';
 import { TripDuration } from '../types';
@@ -24,6 +24,7 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
   const stepsContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   
   const handleLearnMore = (destinationId: string) => {
     navigate(`/destinations/${destinationId}`);
@@ -80,7 +81,32 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
     setShowRightArrow(
       container.scrollLeft < container.scrollWidth - container.clientWidth - 10
     );
+    
+    // Update current step index based on scroll position
+    // Calculate more accurately for responsive layouts
+    const stepWidth = container.clientWidth;
+    const newIndex = Math.round(container.scrollLeft / stepWidth);
+    // Ensure we don't go out of bounds
+    const safeIndex = Math.min(newIndex, steps.length - 1);
+    setCurrentStepIndex(safeIndex);
   };
+
+  // Ensure scroll event is handled on component mount and screen size changes
+  useEffect(() => {
+    const container = stepsContainerRef.current;
+    if (container) {
+      // Initial scroll position check
+      handleScroll();
+      
+      // Add resize listener to update arrows when window size changes
+      const handleResize = () => {
+        handleScroll();
+      };
+      
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   return (
     <div>
@@ -167,7 +193,7 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
             {showLeftArrow && (
               <button
                 onClick={() => scroll('left')}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 transition-opacity opacity-0 group-hover:opacity-100"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 shadow-md transition-colors duration-200"
                 aria-label="Previous step"
               >
                 <ChevronLeft className="w-6 h-6" />
@@ -177,21 +203,12 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
             {showRightArrow && (
               <button
                 onClick={() => scroll('right')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 transition-opacity opacity-0 group-hover:opacity-100"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 shadow-md transition-colors duration-200"
                 aria-label="Next step"
               >
                 <ChevronRight className="w-6 h-6" />
               </button>
             )}
-
-            {/* Mobile Swipe Indicator */}
-            {/* <div className="md:hidden flex items-center justify-center mb-4">
-              <div className="flex space-x-1 items-center bg-[#22342B]/10 px-4 py-2 rounded-full">
-                <ChevronLeft className="w-4 h-4 text-[#22342B]/60" />
-                <span className="text-sm text-[#22342B]/80">Swipe to explore</span>
-                <ChevronRight className="w-4 h-4 text-[#22342B]/60" />
-              </div>
-            </div> */}
 
             <div
               ref={stepsContainerRef}
@@ -228,15 +245,28 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
               ))}
             </div>
 
-            {/* Mobile Swipe Indicator */}
-            <div className="md:hidden flex items-center justify-center mb-0">
-              <div className="flex space-x-1 items-center bg-[#22342B]/10 px-4 py-2 rounded-full">
-                <ChevronLeft className="w-4 h-4 text-[#22342B]/60" />
-                <span className="text-sm text-[#22342B]/80">Swipe to explore</span>
-                <ChevronRight className="w-4 h-4 text-[#22342B]/60" />
-              </div>
+            {/* Dots indicator for navigation - only show on mobile */}
+            <div className="md:hidden flex justify-center gap-2 mt-6">
+              {steps.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    index === currentStepIndex ? 'bg-primary w-6' : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                  onClick={() => {
+                    if (stepsContainerRef.current) {
+                      const position = index * stepsContainerRef.current.clientWidth;
+                      stepsContainerRef.current.scrollTo({
+                        left: position,
+                        behavior: 'smooth'
+                      });
+                      setCurrentStepIndex(index);
+                    }
+                  }}
+                  aria-label={`Go to step ${index + 1}`}
+                />
+              ))}
             </div>
-
           </div>
         </div>
       </section>

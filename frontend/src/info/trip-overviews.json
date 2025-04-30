@@ -1,0 +1,167 @@
+{
+  "northern-michigan": {
+    "subtitle": "Great Lakes Getaway",
+    "description": "Explore Northern Michigan's clear waters, coastal towns, and dense forests. This trip highlights some of the most scenic parts of the Great Lakes region with a focus on simple, memorable experiences.",
+    "bestTimeToVisit": "May-October",
+    "suggestedDuration": "6 Nights",
+    "activities": ["Hiking", "Kayaking", "Wine Tasting", "Beach Activities"],
+    "accommodation": "Tent & RV Camping, & Lodging",
+    "highlights": [
+      {
+        "type": "Restaurant",
+        "name": "Farm Club",
+        "description": "Farm Club seamlessly blends farming, dining, and community. Nestled just outside Traverse City, it offers a unique experience where visitors can enjoy fresh, seasonal meals sourced directly from its own farm, sip on house-brewed beer and cider, and shop a thoughtfully curated market.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub2.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub3.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub4.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub5.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub6.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub7.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub8.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub9.jpeg"
+        ],
+        "iconName": "Utensils"
+      },
+      {
+        "type": "Activity",
+        "name": "Pictured Rocks Kayaking",
+        "description": "Experience the majestic Pictured Rocks National Lakeshore from a unique perspective as you paddle along towering cliffs, through natural stone arches, and past stunning mineral-stained rock formations.",
+        "image": "https://images.unsplash.com/photo-1576012998140-969b99564c1a?auto=format&fit=crop&q=80",
+        "iconName": "Ship"
+      },
+      {
+        "type": "Trail",
+        "name": "Chapel Rock Trail",
+        "description": "This iconic 6.2-mile loop trail offers the perfect blend of forest hiking and Lake Superior shoreline views. The trail leads to Chapel Rock, a unique geological formation topped by a lone pine tree.",
+        "image": "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?auto=format&fit=crop&q=80",
+        "iconName": "Mountain"
+      }
+    ]
+  },
+  "arizona": {
+    "subtitle": "Desert Southwest Adventure",
+    "description": "Discover the dramatic landscapes and rich cultural heritage of Arizona. From the majestic Grand Canyon to the red rocks of Sedona, this journey showcases the diverse beauty of the American Southwest.",
+    "bestTimeToVisit": "October-April",
+    "suggestedDuration": "7 Nights",
+    "activities": ["Hiking", "Photography", "Rock Climbing", "Cultural Tours"],
+    "accommodation": "Desert Camping",
+    "highlights": [
+      {
+        "type": "Natural Wonder",
+        "name": "Grand Canyon Sunrise",
+        "description": "Experience the breathtaking transformation of the Grand Canyon as dawn breaks over the horizon, painting the ancient rock layers in brilliant hues of red, orange, and gold.",
+        "image": "https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&q=80",
+        "iconName": "Sun"
+      },
+      {
+        "type": "Trail",
+        "name": "Cathedral Rock",
+        "description": "One of Sedona's most iconic formations, Cathedral Rock trail offers a challenging but rewarding climb with stunning panoramic views of the red rock landscape.",
+        "image": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80",
+        "iconName": "Mountain"
+      },
+      {
+        "type": "Activity",
+        "name": "Antelope Canyon Tour",
+        "description": "Explore the mesmerizing slot canyons carved by wind and water, where sunbeams create spectacular light shows in the narrow, twisting passages.",
+        "image": "https://images.unsplash.com/photo-1602785674419-a3295d0d9828?auto=format&fit=crop&q=80",
+        "iconName": "Camera"
+      }
+    ]
+  },
+  "washington": {
+    "subtitle": "Pacific Northwest Explorer",
+    "description": "Journey through Washington's diverse landscapes, from rainforests to volcanic peaks. Experience the raw beauty of the Pacific Northwest with its ancient forests, rugged coastline, and alpine meadows.",
+    "bestTimeToVisit": "July-September",
+    "suggestedDuration": "8 Nights",
+    "activities": ["Hiking", "Wildlife Watching", "Photography", "Kayaking"],
+    "accommodation": "Forest Camping",
+    "highlights": [
+      {
+        "type": "National Park",
+        "name": "Olympic Rainforest",
+        "description": "Immerse yourself in one of the largest temperate rainforests in the U.S., where ancient trees draped in moss create an otherworldly atmosphere.",
+        "image": "https://images.unsplash.com/photo-1508693926297-1d61ee3df82a?auto=format&fit=crop&q=80",
+        "iconName": "Tree"
+      },
+      {
+        "type": "Activity",
+        "name": "Whale Watching",
+        "description": "Set sail from the San Juan Islands to spot orcas, humpback whales, and other marine wildlife in their natural habitat.",
+        "image": "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&q=80",
+        "iconName": "Waves"
+      },
+      {
+        "type": "Trail",
+        "name": "Mount Rainier Skyline",
+        "description": "Hike through subalpine meadows with stunning views of Mount Rainier, especially beautiful during wildflower season.",
+        "image": "https://images.unsplash.com/photo-1467890947394-8171244e5410?auto=format&fit=crop&q=80",
+        "iconName": "Mountain"
+      }
+    ]
+  },
+  "smoky-mountains": {
+    "subtitle": "Appalachian Adventure",
+    "description": "Explore America's most visited national park, where misty mountains, diverse wildlife, and rich cultural heritage create an unforgettable experience.",
+    "bestTimeToVisit": "March-November",
+    "suggestedDuration": "5 Nights",
+    "activities": ["Hiking", "Wildlife Viewing", "Scenic Drives", "Historical Sites"],
+    "accommodation": "Mountain Camping",
+    "highlights": [
+      {
+        "type": "Trail",
+        "name": "Alum Cave Trail",
+        "description": "A dramatic trail featuring unique geological formations, mountain views, and historic sites, leading to Mount LeConte.",
+        "image": "https://images.unsplash.com/photo-1508091073125-ced32109d0ee?auto=format&fit=crop&q=80",
+        "iconName": "Mountain"
+      },
+      {
+        "type": "Activity",
+        "name": "Cades Cove Loop",
+        "description": "Cycle or drive through this scenic valley, rich in wildlife and historic buildings from early European settlements.",
+        "image": "https://images.unsplash.com/photo-1508018149381-4a6aa2c0e0c3?auto=format&fit=crop&q=80",
+        "iconName": "Bike"
+      },
+      {
+        "type": "Experience",
+        "name": "Firefly Viewing",
+        "description": "Witness the magical synchronous fireflies during their annual mating display, a rare natural phenomenon.",
+        "image": "https://images.unsplash.com/photo-1502581827181-9cf3c3ee0106?auto=format&fit=crop&q=80",
+        "iconName": "CloudSun"
+      }
+    ]
+  },
+  "southern-california": {
+    "subtitle": "Pacific Coast Paradise",
+    "description": "Experience the diverse landscapes of Southern California, from coastal highways to desert national parks, combining urban excitement with natural wonders.",
+    "bestTimeToVisit": "Year-round",
+    "suggestedDuration": "7 Nights",
+    "activities": ["Beach Activities", "Desert Hiking", "Surfing", "National Parks"],
+    "accommodation": "Beach & Desert Camping",
+    "highlights": [
+      {
+        "type": "National Park",
+        "name": "Joshua Tree",
+        "description": "Explore the unique desert landscape where two distinct desert ecosystems meet, featuring the iconic Joshua trees and dramatic rock formations.",
+        "image": "https://images.unsplash.com/photo-1506146332389-18140dc7b2fb?auto=format&fit=crop&q=80",
+        "iconName": "Palmtree"
+      },
+      {
+        "type": "Activity",
+        "name": "Pacific Coast Highway",
+        "description": "Drive along one of America's most scenic routes, stopping at pristine beaches and coastal viewpoints.",
+        "image": "https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?auto=format&fit=crop&q=80",
+        "iconName": "Waves"
+      },
+      {
+        "type": "Experience",
+        "name": "Channel Islands",
+        "description": "Kayak through sea caves and spot unique wildlife on these remote and pristine islands off the coast.",
+        "image": "https://images.unsplash.com/photo-1505245208761-ba872912fac0?auto=format&fit=crop&q=80",
+        "iconName": "Ship"
+      }
+    ]
+  }
+}
