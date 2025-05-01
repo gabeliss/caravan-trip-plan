@@ -9,7 +9,7 @@
     "highlights": [
       {
         "type": "Restaurant",
-        "name": "Farm Club",
+        "name": "Dining at Farm Club",
         "description": "Farm Club seamlessly blends farming, dining, and community. Nestled just outside Traverse City, it offers a unique experience where visitors can enjoy fresh, seasonal meals sourced directly from its own farm, sip on house-brewed beer and cider, and shop a thoughtfully curated market.",
         "images": [
           "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/FarmClub/FarmClub1.jpg",
@@ -26,141 +26,202 @@
       },
       {
         "type": "Activity",
-        "name": "Pictured Rocks Kayaking",
-        "description": "Experience the majestic Pictured Rocks National Lakeshore from a unique perspective as you paddle along towering cliffs, through natural stone arches, and past stunning mineral-stained rock formations.",
-        "image": "https://images.unsplash.com/photo-1576012998140-969b99564c1a?auto=format&fit=crop&q=80",
+        "name": "Cruising on Traverse Bay",
+        "description": "Spend time on Grand Traverse Bay with a scenic boat cruise. It's a relaxed way to see the coastline and enjoy the water without getting too hands-on.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/CruisingonTraverseBay/Cruising1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/CruisingonTraverseBay/Cruising2.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/CruisingonTraverseBay/Cruising3.JPG"
+        ],
         "iconName": "Ship"
       },
       {
         "type": "Trail",
-        "name": "Chapel Rock Trail",
-        "description": "This iconic 6.2-mile loop trail offers the perfect blend of forest hiking and Lake Superior shoreline views. The trail leads to Chapel Rock, a unique geological formation topped by a lone pine tree.",
-        "image": "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?auto=format&fit=crop&q=80",
+        "name": "Hiking Empire Bluffs",
+        "description": "This 1.5-mile out-and-back trail near Sleeping Bear Dunes leads through the woods to an overlook with wide views of Lake Michigan. It's a short, rewarding hike that's easy to fit into the day.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/HikingEmpireBluffs/Hike1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/HikingEmpireBluffs/Hike2.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/NorthernMichigan+/HikingEmpireBluffs/Hike3.jpg"
+        ],
         "iconName": "Mountain"
       }
     ]
   },
   "arizona": {
-    "subtitle": "Desert Southwest Adventure",
-    "description": "Discover the dramatic landscapes and rich cultural heritage of Arizona. From the majestic Grand Canyon to the red rocks of Sedona, this journey showcases the diverse beauty of the American Southwest.",
-    "bestTimeToVisit": "October-April",
-    "suggestedDuration": "7 Nights",
+    "subtitle": "Red Rock Road Trip",
+    "description": "Arizona's landscapes are as varied as they are striking — from the vast depths of the Grand Canyon to the towering red rocks of Sedona. This road trip weaves through national parks, desert towns, and wide-open spaces, offering a glimpse into the natural beauty and cultural history of the American Southwest.",
+    "bestTimeToVisit": "September-May",
+    "suggestedDuration": "6 Nights",
     "activities": ["Hiking", "Photography", "Rock Climbing", "Cultural Tours"],
-    "accommodation": "Desert Camping",
+    "accommodation": "Tent & RV Camping, & Lodging",
     "highlights": [
       {
-        "type": "Natural Wonder",
-        "name": "Grand Canyon Sunrise",
-        "description": "Experience the breathtaking transformation of the Grand Canyon as dawn breaks over the horizon, painting the ancient rock layers in brilliant hues of red, orange, and gold.",
-        "image": "https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&q=80",
-        "iconName": "Sun"
-      },
-      {
-        "type": "Trail",
-        "name": "Cathedral Rock",
-        "description": "One of Sedona's most iconic formations, Cathedral Rock trail offers a challenging but rewarding climb with stunning panoramic views of the red rock landscape.",
-        "image": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80",
-        "iconName": "Mountain"
+        "type": "Restaurant",
+        "name": "Brunch at Indian Gardens Cafe",
+        "description": "Indian Gardens Café & Market is a relaxed spot just outside Sedona, offering fresh, seasonal breakfasts and lunches in a historic setting. Guests can grab a coffee or fresh juice, shop local goods in the market, and unwind on the shaded outdoor patio surrounded by trees and canyon views.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/BrunchatIndianGarden/Brunch1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/BrunchatIndianGarden/Brunch2.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/BrunchatIndianGarden/Brunch3.jpeg"
+        ],
+        "iconName": "Utensils"
       },
       {
         "type": "Activity",
-        "name": "Antelope Canyon Tour",
-        "description": "Explore the mesmerizing slot canyons carved by wind and water, where sunbeams create spectacular light shows in the narrow, twisting passages.",
-        "image": "https://images.unsplash.com/photo-1602785674419-a3295d0d9828?auto=format&fit=crop&q=80",
-        "iconName": "Camera"
+        "name": "Paddling on Lake Powell",
+        "description": "Paddle through the stunning waters of Lake Powell, navigating between dramatic red rock formations and hidden coves. Along the way, you can hike Antelope Canyon, exploring its narrow passageways and unique, flowing shapes before continuing your journey on the water.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/PaddleOnPowell/Paddle1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/PaddleOnPowell/Paddle2.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/PaddleOnPowell/Paddle3.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/PaddleOnPowell/Paddle4.jpg"
+        ],
+        "iconName": "Ship"
+      },
+      {
+        "type": "Trail",
+        "name": "Hiking Cathedral Rock",
+        "description": "This 1.5-mile out-and-back trail near Sedona winds through desert terrain, leading to a stunning viewpoint atop Cathedral Rock. It's a great spot to catch the sunset, with panoramic views of the red rock formations and Verde Valley.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/HikeCathedral/CathedralRock1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/HikeCathedral/CathedralRock2.JPG",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/HikeCathedral/CathedralRock3.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Arizona/HikeCathedral/CathedralRock4.jpeg"
+        ],
+        "iconName": "Mountain"
       }
     ]
   },
   "washington": {
-    "subtitle": "Pacific Northwest Explorer",
-    "description": "Journey through Washington's diverse landscapes, from rainforests to volcanic peaks. Experience the raw beauty of the Pacific Northwest with its ancient forests, rugged coastline, and alpine meadows.",
-    "bestTimeToVisit": "July-September",
-    "suggestedDuration": "8 Nights",
-    "activities": ["Hiking", "Wildlife Watching", "Photography", "Kayaking"],
-    "accommodation": "Forest Camping",
+    "subtitle": "Coasts & Cascade Road Trip",
+    "description": "Washington offers a striking mix of coastal beauty, dense rainforests, and towering mountain ranges. From the rugged coastline of Olympic National Park to the sweeping views of the Northern Cascades, this road trip weaves through diverse landscapes, showcasing the best of the Pacific Northwest.",
+    "bestTimeToVisit": "June-October",
+    "suggestedDuration": "9 Nights",
+    "activities": ["Hiking", "Sailing", "Kayaking", "Wildlife", "Cultural Tours"],
+    "accommodation": "Tent & RV Camping, & Lodging",
     "highlights": [
       {
-        "type": "National Park",
-        "name": "Olympic Rainforest",
-        "description": "Immerse yourself in one of the largest temperate rainforests in the U.S., where ancient trees draped in moss create an otherworldly atmosphere.",
-        "image": "https://images.unsplash.com/photo-1508693926297-1d61ee3df82a?auto=format&fit=crop&q=80",
-        "iconName": "Tree"
+        "type": "Restaurant",
+        "name": "Dinner at Granny's Café",
+        "description": "Granny's Café, a staple since 1956, offers classic comfort food with a local twist. Nestled in the heart of the Olympic National Park, it's the perfect stop after a day of adventure. Known for their hearty, home-cooked meals, they serve up fresh seafood, locally sourced ingredients, and homemade desserts. Don't miss their famous ice cream, made right in-house and served in a variety of flavors that change with the seasons.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/DinneratGrannys/Grannys1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/DinneratGrannys/Grannys2.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/DinneratGrannys/Grannys3.jpeg"
+        ],
+        "iconName": "Utensils"
       },
       {
         "type": "Activity",
-        "name": "Whale Watching",
-        "description": "Set sail from the San Juan Islands to spot orcas, humpback whales, and other marine wildlife in their natural habitat.",
-        "image": "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&q=80",
-        "iconName": "Waves"
+        "name": "Sailing the San Juan Islands",
+        "description": "Set sail through the waters of the San Juan Islands, navigating between islands and rocky shores. This peaceful sailing adventure offers stunning views of the coastline and the chance to spot local wildlife, including seals, otters, and even orcas in the distance.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/SailingSanJaun/Sailing1.JPG",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/SailingSanJaun/Sailing2.JPG",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/SailingSanJaun/Sailing3.JPG",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/SailingSanJaun/Sailing4.JPG",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/SailingSanJaun/Sailing5.JPG"
+        ],
+        "iconName": "Ship"
       },
       {
         "type": "Trail",
-        "name": "Mount Rainier Skyline",
-        "description": "Hike through subalpine meadows with stunning views of Mount Rainier, especially beautiful during wildflower season.",
-        "image": "https://images.unsplash.com/photo-1467890947394-8171244e5410?auto=format&fit=crop&q=80",
+        "name": "Hiking Cascade Pass",
+        "description": "Cascade Pass is a 7.4-mile round-trip trail in North Cascades National Park, known for its stunning beauty and diverse wildlife. It's not the easiest trail, but the effort is worth it for the breathtaking views of peaks, snow-capped mountains, and meadows. You'll likely encounter snow and, if you're lucky, spot wildlife such as marmots and mountain goats along the way. It's one of the most beautiful hikes in Washington.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/HikingCascadePass/CascadePass1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/HikingCascadePass/CascadePass2.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/HikingCascadePass/CascadePass3.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/HikingCascadePass/CascadePass4.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/HikingCascadePass/CascadePass5.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/Washington/HikingCascadePass/CascadePass6.jpg"
+        ],
         "iconName": "Mountain"
       }
     ]
   },
   "smoky-mountains": {
     "subtitle": "Appalachian Adventure",
-    "description": "Explore America's most visited national park, where misty mountains, diverse wildlife, and rich cultural heritage create an unforgettable experience.",
+    "description": "The Great Smoky Mountains National Park offers a mix of diverse landscapes, wildlife, and striking fall colors. This road trip will take you through dense forests, past mountain peaks, and into some of the best views of the Smokies.",
     "bestTimeToVisit": "March-November",
-    "suggestedDuration": "5 Nights",
+    "suggestedDuration": "3 Nights",
     "activities": ["Hiking", "Wildlife Viewing", "Scenic Drives", "Historical Sites"],
-    "accommodation": "Mountain Camping",
+    "accommodation": "Tent & RV Camping, & Lodging",
     "highlights": [
       {
-        "type": "Trail",
-        "name": "Alum Cave Trail",
-        "description": "A dramatic trail featuring unique geological formations, mountain views, and historic sites, leading to Mount LeConte.",
-        "image": "https://images.unsplash.com/photo-1508091073125-ced32109d0ee?auto=format&fit=crop&q=80",
-        "iconName": "Mountain"
+        "type": "Restaurant",
+        "name": "Dinner at The Woodshed",
+        "description": "The Woodshed in Gatlinburg is a reliable stop after a day outdoors. Known for its woodsy, casual setting and authentic Southern comfort food, the restaurant serves everything from smoked meats to onion rings, along with homemade sides. It's a great spot to relax and enjoy a hearty meal, especially after a full day of exploring.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/DinneratWoodshed/Woodshed1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/DinneratWoodshed/Woodshed2.mov"
+        ],
+        "iconName": "Utensils"
       },
       {
         "type": "Activity",
-        "name": "Cades Cove Loop",
-        "description": "Cycle or drive through this scenic valley, rich in wildlife and historic buildings from early European settlements.",
-        "image": "https://images.unsplash.com/photo-1508018149381-4a6aa2c0e0c3?auto=format&fit=crop&q=80",
-        "iconName": "Bike"
+        "name": "Fall Foliage Viewing on Newfound Gap Road",
+        "description": "Newfound Gap Road offers one of the best ways to see the Smokies' fall colors. The drive through the park takes you from lower elevations up to higher ridges, with each step bringing more views. The ride provides plenty of opportunities to stop and take in the colors, especially as the leaves start to change in the fall.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/DrivingNewfound/Drivinig1.mov"
+        ],
+        "iconName": "CloudSun"
       },
       {
-        "type": "Experience",
-        "name": "Firefly Viewing",
-        "description": "Witness the magical synchronous fireflies during their annual mating display, a rare natural phenomenon.",
-        "image": "https://images.unsplash.com/photo-1502581827181-9cf3c3ee0106?auto=format&fit=crop&q=80",
-        "iconName": "CloudSun"
+        "type": "Trail",
+        "name": "Hiking Chimney Tops Trail",
+        "description": "The Chimney Tops Trail is a 4-mile round-trip hike that leads to one of the best views in the park. The trail climbs steadily through thick forests and rocky sections, rewarding you with panoramic views from the top. It's a strenuous hike, but the effort is worth it, especially with the fall foliage in full display along the route and from the summit.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/HikingChimneyTops/Hiking1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/HikingChimneyTops/Hiking2.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/HikingChimneyTops/Hiking3.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/HikingChimneyTops/Hiking4.jpeg"
+        ],
+        "iconName": "Mountain"
       }
     ]
   },
   "southern-california": {
-    "subtitle": "Pacific Coast Paradise",
-    "description": "Experience the diverse landscapes of Southern California, from coastal highways to desert national parks, combining urban excitement with natural wonders.",
-    "bestTimeToVisit": "Year-round",
-    "suggestedDuration": "7 Nights",
-    "activities": ["Beach Activities", "Desert Hiking", "Surfing", "National Parks"],
-    "accommodation": "Beach & Desert Camping",
+    "subtitle": "Coastline Cruise",
+    "description": "Southern California offers a mix of coastlines, desert landscapes, and vibrant cities — all within a few hours of each other. This road trip takes you from rugged beaches to palm-lined streets, across national parks and up into mountain towns, showing the full range of what SoCal has to offer beyond just the postcards.",
+    "bestTimeToVisit": "March-May, September-November",
+    "suggestedDuration": "5 Nights",
+    "activities": ["Hiking", "Beach", "Surfing", "City Exploring", "Scenic Drives"],
+    "accommodation": "Tent, RV, Lodging, & Boutique Inns",
     "highlights": [
       {
-        "type": "National Park",
-        "name": "Joshua Tree",
-        "description": "Explore the unique desert landscape where two distinct desert ecosystems meet, featuring the iconic Joshua trees and dramatic rock formations.",
-        "image": "https://images.unsplash.com/photo-1506146332389-18140dc7b2fb?auto=format&fit=crop&q=80",
-        "iconName": "Palmtree"
+        "type": "Restaurant",
+        "name": "Dinner at Brockton Villa Restaurant",
+        "description": "Brockton Villa is set inside one of La Jolla's original beach cottages, built in 1894 and rich with local history. Once a private retreat and later a quirky residence, the building was carefully restored into a restaurant in the early '90s. Today, it serves fresh coastal food with front-row views of La Jolla Cove. Known for their signature \"Coast Toast\" and seafood dishes, it's the perfect spot to unwind after a day in the sun. The setting is casual but historic, and the outdoor patio is one of the best places in town to catch sunset over the water.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/DinneratBrocktonVilla/BrocktonVilla1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/DinneratBrocktonVilla/BrocktonVilla2.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/DinneratBrocktonVilla/BrocktonVilla3.jpg"
+        ],
+        "iconName": "Utensils"
       },
       {
         "type": "Activity",
-        "name": "Pacific Coast Highway",
-        "description": "Drive along one of America's most scenic routes, stopping at pristine beaches and coastal viewpoints.",
-        "image": "https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?auto=format&fit=crop&q=80",
-        "iconName": "Waves"
+        "name": "Exploring Balboa Park",
+        "description": "Balboa Park is the cultural heart of San Diego — a huge urban park packed with museums, gardens, trails, and historic architecture. Spend a day wandering through Spanish Colonial Revival buildings, checking out art exhibits, or relaxing under the massive fig trees. Whether you're into history, science, or just looking for a laid-back afternoon, it's easy to spend a full day here without running out of things to see.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/BalboaPark/Balboa1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/BalboaPark/Balboa2.jpeg"
+        ],
+        "iconName": "Palmtree"
       },
       {
-        "type": "Experience",
-        "name": "Channel Islands",
-        "description": "Kayak through sea caves and spot unique wildlife on these remote and pristine islands off the coast.",
-        "image": "https://images.unsplash.com/photo-1505245208761-ba872912fac0?auto=format&fit=crop&q=80",
-        "iconName": "Ship"
+        "type": "Trail",
+        "name": "Hiking Ryan Mountain in Joshua Tree",
+        "description": "Ryan Mountain is a 3-mile out-and-back hike that delivers some of the best panoramic views in Joshua Tree National Park. It's a steep climb, gaining about 1,000 feet in elevation, but the wide-open desert views from the summit are worth the effort. You'll see everything from boulder piles to distant mountain ranges.",
+        "images": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountain1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountain2.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountain3.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountain4.jpeg"
+        ],
+        "iconName": "Mountain"
       }
     ]
   }

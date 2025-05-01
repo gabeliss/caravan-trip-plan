@@ -284,7 +284,7 @@ export const TripOverviewPage: React.FC = () => {
                 return (
                   <div key={highlight.type + index} className="relative">
                     <div className="grid md:grid-cols-2 gap-16 items-center">
-                      <div className={index % 2 === 0 ? 'order-1' : 'order-2'}>
+                      <div className={`order-1 md:${index % 2 === 0 ? 'order-1' : 'order-2'}`}>
                         <div className="flex items-center gap-3 mb-4">
                           <highlight.icon className="w-6 h-6 text-[#DC7644]" />
                           <h3 className="font-display text-2xl">{highlight.type}</h3>

@@ -10,40 +10,19 @@ const timelineEvents = [
     year: '2021',
     title: 'The Great American Road Trip',
     description: "In the summer of 2021, a cross-country adventure set everything in motion. Cara set out on a 25-day road trip across the United States. From Arizona to Utah to Colorado, each stop brought unforgettable moments. But behind every perfect view was hours of research, multiple booking platforms, and the constant stress of wondering if the next destination would live up to expectations. It became clear that while the open road offered freedom, planning the journey felt anything but free.",
-    image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80'
+    image: 'https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/about-us/AboutUs1.JPG'
   },
   {
     year: '2023',
     title: 'From Frustration to Innovation',
-    description: 'That road trip wasn&apos;t just a personal milestone—it uncovered a gap in the travel experience that Cara couldn&apos;t ignore. The process of piecing together campgrounds, cabins, and road trip routes from scattered sources was exhausting. There was no single place that offered a seamless way to plan, book, and trust an entire journey from start to finish. Out of this frustration, an idea began to take shape. What if there was a platform that did the heavy lifting? What if road trips could be exciting to plan, not overwhelming?',
-    image: 'https://images.unsplash.com/photo-1533575770077-052fa2c609fc?auto=format&fit=crop&q=80'
+    description: "That road trip wasn't just a personal milestone—it uncovered a gap in the travel experience that Cara couldn't ignore. The process of piecing together campgrounds, cabins, and road trip routes from scattered sources was exhausting. There was no single place that offered a seamless way to plan, book, and trust an entire journey from start to finish. Out of this frustration, an idea began to take shape. What if there was a platform that did the heavy lifting? What if road trips could be exciting to plan, not overwhelming?",
+    image: 'https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/about-us/AboutUs2.JPG'
   },
   {
     year: '2025',
     title: 'Caravan Trip Plan is Born',
-    description: 'With that vision, Caravan Trip Plan was created—a trip planning platform built to make road trips easy and reliable. Designed for travelers who want to explore the outdoors without getting lost in the logistics, Caravan curates full itineraries that are ready to book and tailored to each traveler. It&apos;s a new way to experience the freedom of the road, with the confidence that every stop has been thoughtfully chosen.',
-    image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80'
-  }
-];
-
-const popularRoutes = [
-  {
-    name: 'Northern Michigan Explorer',
-    duration: '6 nights',
-    highlights: ['Traverse City', 'Mackinac Island', 'Pictured Rocks'],
-    coordinates: [-85.6206, 44.7631]
-  },
-  {
-    name: 'Pacific Northwest Adventure',
-    duration: '8 nights',
-    highlights: ['Olympic National Park', 'Mount Rainier', 'San Juan Islands'],
-    coordinates: [-121.5708, 47.7511]
-  },
-  {
-    name: 'Desert Southwest Journey',
-    duration: '7 nights',
-    highlights: ['Grand Canyon', 'Sedona', 'Monument Valley'],
-    coordinates: [-111.0937, 34.0489]
+    description: "With that vision, Caravan Trip Plan was created—a trip planning platform built to make road trips easy and reliable. Designed for travelers who want to explore the outdoors without getting lost in the logistics, Caravan curates full itineraries that are ready to book and tailored to each traveler. It's a new way to experience the freedom of the road, with the confidence that every stop has been thoughtfully chosen.",
+    image: 'https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/about-us/AboutUs3.JPG'
   }
 ];
 
@@ -95,7 +74,7 @@ export const AboutPage: React.FC = () => {
                       alt={event.title}
                       className="w-full h-full object-cover transform-gpu"
                       style={{
-                        imageRendering: 'high-quality',
+                        imageRendering: 'auto',
                         backfaceVisibility: 'hidden'
                       }}
                     />
