@@ -13,7 +13,8 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [showMenu, setShowMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDestinations, setShowDestinations] = useState(false);
   const [showDesktopDestinations, setShowDesktopDestinations] = useState(false);
 
@@ -44,14 +45,16 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
     
     // Then close menus (to avoid any state update issues during navigation)
     setTimeout(() => {
-      setShowMenu(false);
+      setShowMobileMenu(false);
+      setShowUserMenu(false);
       setShowDestinations(false);
       setShowDesktopDestinations(false);
     }, 0);
   };
 
   const handleLogout = async () => {
-    setShowMenu(false);
+    setShowMobileMenu(false);
+    setShowUserMenu(false);
     setShowDestinations(false);
     setShowDesktopDestinations(false);
     
@@ -73,7 +76,8 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
   };
 
   const handleLogoClick = () => {
-    setShowMenu(false);
+    setShowMobileMenu(false);
+    setShowUserMenu(false);
     setShowDestinations(false);
     setShowDesktopDestinations(false);
     navigate('/');
@@ -86,7 +90,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
           {/* Mobile Menu Button - Only visible on small screens */}
           <div className="md:hidden relative">
             <button
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="text-primary-dark p-2 hover:bg-beige-dark/10 rounded-lg transition-colors"
               aria-label="Toggle menu"
             >
@@ -94,7 +98,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
             </button>
 
             <AnimatePresence>
-              {showMenu && (
+              {showMobileMenu && (
                 <motion.div
                   initial="hidden"
                   animate="visible"
@@ -309,7 +313,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
             {isAuthenticated ? (
               <div className="relative">
                 <button
-                  onClick={() => setShowMenu(!showMenu)}
+                  onClick={() => setShowUserMenu(!showUserMenu)}
                   className="text-primary-dark hover:text-primary-dark/80 flex items-center gap-2"
                 >
                   <span className="hidden md:block font-display">{user?.name}</span>
@@ -317,7 +321,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
                 </button>
                 
                 <AnimatePresence>
-                  {showMenu && (
+                  {showUserMenu && (
                     <motion.div
                       initial="hidden"
                       animate="visible"

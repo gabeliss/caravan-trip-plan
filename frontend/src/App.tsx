@@ -12,6 +12,7 @@ import { DestinationSelectionPage } from './pages/DestinationSelectionPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { TripDuration } from './types';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { ScrollToTop } from './components/ScrollToTop';
 
 // Higher-order component to handle authentication state
 function AuthenticatedApp() {
@@ -165,6 +166,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToTop />
         <AuthenticatedApp />
       </Router>
     </AuthProvider>

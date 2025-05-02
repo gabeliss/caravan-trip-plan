@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { 
   Map, Heart, Compass, Calendar, Users, 
   ChevronLeft, ChevronRight, ArrowRight 
@@ -33,7 +34,7 @@ export const AboutPage: React.FC = () => {
     offset: ["start end", "end start"]
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 1]);
   const y = useTransform(scrollYProgress, [0, 0.5], [100, 0]);
 
   return (
@@ -63,7 +64,7 @@ export const AboutPage: React.FC = () => {
             {timelineEvents.map((event, index) => (
               <div key={event.year} className="relative">
                 <div className="grid md:grid-cols-2 gap-16 items-center will-change-transform backface-visible">
-                  <div className={index % 2 === 0 ? 'order-1' : 'order-2'}>
+                  <div className={`order-1 md:${index % 2 === 0 ? 'order-1' : 'order-2'}`}>
                     <span className="text-[#DC7644] font-display text-xl">{event.year}</span>
                     <h2 className="text-4xl font-display text-[#22342B] mt-2 mb-6">{event.title}</h2>
                     <p className="text-lg text-gray-600 leading-relaxed">{event.description}</p>
@@ -142,10 +143,13 @@ export const AboutPage: React.FC = () => {
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Join thousands of happy travelers who have discovered their perfect outdoor getaway with Caravan.
           </p>
-          <button className="inline-flex items-center gap-2 bg-[#22342B] text-beige px-8 py-4 rounded-full hover:bg-[#22342B]/90 transition-colors text-lg">
+          <Link 
+            to="/"
+            className="inline-flex items-center gap-2 bg-[#22342B] text-beige px-8 py-4 rounded-full hover:bg-[#22342B]/90 transition-colors text-lg"
+          >
             Plan Your Trip
             <ArrowRight className="w-5 h-5" />
-          </button>
+          </Link>
         </div>
       </div>
     </div>
