@@ -193,7 +193,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
                     className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-xl border border-[#22342B]/10 z-50 w-full"
                   >
                     <div className="py-1">
-                      {Array.from({ length: 8 }, (_, i) => i + 1).map(nights => (
+                      {Array.from({ length: 7 }, (_, i) => i + 1).map(nights => (
                         <button
                           key={nights}
                           onClick={() => handleNightsSelect(nights)}

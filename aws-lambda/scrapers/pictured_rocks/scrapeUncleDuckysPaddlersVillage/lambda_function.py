@@ -133,14 +133,30 @@ def scrape_uncleDuckysPaddlersVillage(start_date_str, end_date_str, num_adults, 
                                 if "Sleeps 8" in p_tag_text:
                                     price_text = price_element.strong.span.text.strip("$")
                                     if price_text:
-                                        price = float(price_text)
+                                        # Handle price ranges (e.g., "188.30 - $215.20")
+                                        if " - $" in price_text:
+                                            # Extract the two prices and calculate the average
+                                            price_parts = price_text.split(" - $")
+                                            min_price = float(price_parts[0])
+                                            max_price = float(price_parts[1])
+                                            price = (min_price + max_price) / 2
+                                        else:
+                                            price = float(price_text)
                                         item_name = item_name_candidate
                                         break
                             else:
                                 if "Sleeps 5" in p_tag_text:
                                     price_text = price_element.strong.span.text.strip("$")
                                     if price_text:
-                                        price = float(price_text)
+                                        # Handle price ranges (e.g., "188.30 - $215.20")
+                                        if " - $" in price_text:
+                                            # Extract the two prices and calculate the average
+                                            price_parts = price_text.split(" - $")
+                                            min_price = float(price_parts[0])
+                                            max_price = float(price_parts[1])
+                                            price = (min_price + max_price) / 2
+                                        else:
+                                            price = float(price_text)
                                         item_name = item_name_candidate
                                         break
                         except (ValueError, AttributeError) as e:
@@ -285,8 +301,8 @@ if __name__ == '__main__':
     # Test the function with sample event
     test_event = {
         'body': json.dumps({
-            'startDate': '06/15/25',
-            'endDate': '06/17/25',
+            'startDate': '06/14/25',
+            'endDate': '06/16/25',
             'numAdults': 3,
             'numKids': 0
         })

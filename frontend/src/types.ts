@@ -212,6 +212,7 @@ export interface ItineraryPlan {
   destination: string;
   totalNights: number;
   startDate: Date;
+  guestCount?: number;
   stops: {
     city: string;
     scraperId: string;
