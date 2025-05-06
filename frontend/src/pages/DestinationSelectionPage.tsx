@@ -137,7 +137,8 @@ export const DestinationSelectionPage: React.FC = () => {
             destination={selectedDestinationObject}
             duration={{
               startDate: new Date(startDate),
-              nights: numNights
+              nights: numNights,
+              guestCount: numAdults + numKids
             }}
             onClose={handleClose}
           />

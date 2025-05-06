@@ -20,7 +20,7 @@ import { Destination, TripDuration, Campground } from '../types';
 import { Map } from './Map';
 
 interface TripConfirmationProps {
-  confirmationId: string;
+  tripId: string;
   destination: Destination;
   duration: TripDuration;
   selectedCampgrounds: Campground[];
@@ -33,13 +33,13 @@ interface StayGroup {
   campground: {
     id: string;
     name: string;
-    imageUrl: string;
+    imageUrl?: string;
   };
   startDate?: Date;
 }
 
 export const TripConfirmation: React.FC<TripConfirmationProps> = ({
-  confirmationId,
+  tripId,
   destination,
   duration,
   selectedCampgrounds,
@@ -64,6 +64,7 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
 
     selectedCampgrounds.forEach((campground, index) => {
       // Default location value in case distanceToTown is undefined
+      console.log("destination", destination);
       let location = destination?.name || 'Unknown location';
       
       // Safely extract location from distanceToTown if it exists
@@ -219,7 +220,7 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                   Access your comprehensive guide with everything you need for your trip
                 </p>
                 <button
-                  onClick={() => navigate(`/dashboard/trip/${confirmationId}`)}
+                  onClick={() => navigate(`/dashboard/trip/${tripId}`)}
                   className="inline-flex items-center gap-2 bg-primary-dark text-beige px-6 py-3 rounded-lg hover:bg-primary-dark/90 transition-colors w-full justify-center"
                 >
                   View Trip Guide

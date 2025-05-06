@@ -1,0 +1,27 @@
+{
+  "northern-michigan": {
+    "id": "northern-michigan",
+    "name": "Northern Michigan",
+    "region": "Midwest"
+  },
+  "smoky-mountains": {
+    "id": "smoky-mountains",
+    "name": "Smoky Mountains",
+    "region": "Southeast"
+  },
+  "adirondacks": {
+    "id": "adirondacks",
+    "name": "Adirondacks",
+    "region": "Northeast"
+  },
+  "colorado-rockies": {
+    "id": "colorado-rockies",
+    "name": "Colorado Rockies",
+    "region": "West"
+  },
+  "yosemite": {
+    "id": "yosemite",
+    "name": "Yosemite",
+    "region": "West"
+  }
+} 

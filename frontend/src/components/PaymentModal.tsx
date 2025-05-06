@@ -40,25 +40,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
     try {
       const tripId = `TRIP-${Math.random().toString(36).substr(2, 9)}`;
-      const { sessionUrl } = await paymentService.initializePayment(
-        {
-          id: tripId,
-          confirmationId: tripId,
-          destination,
-          duration,
-          selectedCampgrounds,
-          createdAt: new Date().toISOString(),
-          status: 'planned'
-        },
-        {
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: ''
-        }
-      );
-
-      // Create a new trip object
+      console.log('Initializing payment for trip:', tripId);
+      console.log('Trip details:', {
+        destination: destination.id,
+        durationNights: duration.nights,
+        campgroundCount: selectedCampgrounds.length
+      });
+      
+      // Create a new trip object that we'll use whether or not Supabase succeeds
       const newTrip = {
         id: tripId,
         confirmationId: tripId,
@@ -69,11 +58,28 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         status: 'planned' as const
       };
       
+      // Try to initialize payment first
+      try {
+        const { sessionUrl } = await paymentService.initializePayment(
+          newTrip,
+          {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: ''
+          }
+        );
+      } catch (paymentErr) {
+        console.warn('Payment initialization error - continuing without payment session:', paymentErr);
+      }
+
       // Save trip to Supabase
+      let dbTripSaved = false;
+      
       if (user) {
         try {
-          console.log('Saving trip to Supabase:', tripId);
-          // Create the trip in Supabase first
+          console.log('Saving trip to Supabase with user ID:', user.id);
+          // Create the trip in Supabase
           const savedTrip = await tripService.createTrip(
             user.id,
             destination,
@@ -81,18 +87,26 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             selectedCampgrounds
           );
           
-          // Then update local state with the saved trip
-          // This will avoid triggering another create operation in updateUserTrips
-          // since the trip is already in Supabase
+          console.log('Trip saved successfully to database:', savedTrip.id);
+          dbTripSaved = true;
+          
+          // Update local state with the saved trip
           updateUserTrips([...user.trips, savedTrip]);
-        } catch (err) {
-          console.error('Error saving trip to Supabase:', err);
-          // Continue with the flow even if saving to Supabase fails
+        } catch (dbErr) {
+          console.error('Error saving trip to Supabase:', dbErr);
+          // Still update the local state with our trip object
+          if (user && user.trips) {
+            updateUserTrips([...user.trips, newTrip]);
+          }
         }
+      } else {
+        console.warn('No user found, skipping trip save to Supabase');
       }
 
-      // Simulate successful payment
+      // Simulate successful payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Always continue with success, even if DB save failed
       onSuccess(tripId);
     } catch (err) {
       setError('Payment failed. Please try again.');

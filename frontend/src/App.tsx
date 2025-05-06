@@ -137,7 +137,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 function HomePage() {
   const navigate = useNavigate();
-  const [duration, setDuration] = React.useState<TripDuration>({ nights: 3 });
+  const [duration, setDuration] = React.useState<TripDuration>({ nights: 3, guestCount: 2 });
 
   const handleDateSelect = (date: Date, guestCount: number) => {
     // Navigate to destination selection page with trip parameters

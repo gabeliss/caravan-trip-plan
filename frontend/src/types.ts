@@ -58,6 +58,7 @@ export interface Campground {
     message: string;
     timestamp?: string;
   };
+  city?: string;
 }
 
 export interface CampgroundImage {
@@ -101,16 +102,17 @@ export interface BookingProvider {
 export interface Destination {
   id: string;
   name: string;
-  description: string;
-  imageUrl: string;
   region: string;
-  highlights: string[];
-  coordinates: [number, number];
+  description?: string;
+  imageUrl?: string;
+  highlights?: string[];
+  coordinates?: [number, number];
 }
 
 export interface TripDuration {
   startDate?: Date;
   nights: number;
+  guestCount: number;
 }
 
 export interface DailyItinerary {
@@ -127,11 +129,17 @@ export interface User {
   trips: SavedTrip[];
 }
 
+export interface TripDetails {
+  destination: string;
+  nights: number;
+  startDate: Date;
+  guestCount: number;
+}
+
 export interface SavedTrip {
   id: string;
   confirmationId: string;
-  destination: Destination;
-  duration: TripDuration;
+  trip_details: TripDetails;
   selectedCampgrounds: Campground[];
   createdAt: string;
   status: 'planned' | 'active' | 'completed';
@@ -212,7 +220,7 @@ export interface ItineraryPlan {
   destination: string;
   totalNights: number;
   startDate: Date;
-  guestCount?: number;
+  guestCount: number;
   stops: {
     city: string;
     scraperId: string;

@@ -20,6 +20,14 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const useAuth = () => useContext(AuthContext);
 
+// Helper function to format destination ID to display name
+const formatDestinationName = (destinationId: string): string => {
+  return destinationId
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -127,8 +135,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.log('Creating new trip in Supabase:', trip.id);
             await tripService.createTrip(
               user.id,
-              trip.destination,
-              trip.duration,
+              {
+                id: trip.trip_details.destination,
+                name: formatDestinationName(trip.trip_details.destination),
+                region: 'Michigan'
+              },
+              {
+                nights: trip.trip_details.nights,
+                startDate: trip.trip_details.startDate,
+                guestCount: trip.trip_details.guestCount
+              },
               trip.selectedCampgrounds
             );
           } else if (JSON.stringify(existingTrip) !== JSON.stringify(trip)) {

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Calendar, MapPin, Tent, ArrowRight, Info, Clock, DollarSign } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { Destination, TripDuration, Campground } from '../types';
-import { MapView } from './Map';
+import { Map } from './Map';
 import { PaymentModal } from './PaymentModal';
 import { useNavigate } from 'react-router-dom';
 
@@ -122,7 +122,7 @@ export const TripOverview: React.FC<TripOverviewProps> = ({
         {/* Map Section */}
         <div className="bg-white rounded-xl shadow-sm border p-6">
           <h2 className="text-2xl font-bold mb-4 text-primary-dark">Your Route</h2>
-          <MapView destination={destination} selectedCampgrounds={selectedCampgrounds} />
+          <Map destination={destination} selectedCampgrounds={selectedCampgrounds} />
         </div>
 
         {/* Stays Section */}

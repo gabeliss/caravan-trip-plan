@@ -34,9 +34,17 @@ export interface Database {
           id: string
           confirmation_id: string
           user_id: string
-          destination: Json
-          duration: Json
-          campgrounds: Json
+          trip_details: {
+            destination: string
+            nights: number
+            startDate: string
+            guestCount: number
+          }
+          campgrounds: {
+            id: string
+            price: number
+            city: string
+          }[]
           created_at: string
           status: 'planned' | 'active' | 'completed'
           guide_url?: string
@@ -45,9 +53,17 @@ export interface Database {
           id: string
           confirmation_id: string
           user_id: string
-          destination: Json
-          duration: Json
-          campgrounds: Json
+          trip_details: {
+            destination: string
+            nights: number
+            startDate: string
+            guestCount: number
+          }
+          campgrounds: {
+            id: string
+            price: number
+            city: string
+          }[]
           created_at?: string
           status?: 'planned' | 'active' | 'completed'
           guide_url?: string
@@ -56,9 +72,17 @@ export interface Database {
           id?: string
           confirmation_id?: string
           user_id?: string
-          destination?: Json
-          duration?: Json
-          campgrounds?: Json
+          trip_details?: {
+            destination: string
+            nights: number
+            startDate: string
+            guestCount: number
+          }
+          campgrounds?: {
+            id: string
+            price: number
+            city: string
+          }[]
           created_at?: string
           status?: 'planned' | 'active' | 'completed'
           guide_url?: string

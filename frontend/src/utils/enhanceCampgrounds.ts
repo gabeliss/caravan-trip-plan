@@ -145,6 +145,7 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
         imageUrl: detailedData.imageUrls?.[0] || campground.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4',
         distanceToTown: detailedData.distanceToTown || campground.distanceToTown || `5 miles to ${cityName}`,
         bookingUrl: detailedData.bookingUrl || campground.bookingUrl,
+        city: campground.city || cityName,
         checkIn: {
           time: detailedData.checkInTime || '3:00 PM',
           lateArrival: 'Call ahead',

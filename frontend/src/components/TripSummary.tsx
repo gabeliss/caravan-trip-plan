@@ -46,18 +46,18 @@ const TripSummary: React.FC<TripSummaryProps> = ({
   onClose,
 }) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [confirmationId, setConfirmationId] = useState<string | null>(null);
+  const [tripId, setTripId] = useState<string | null>(null);
   const [showMap, setShowMap] = useState(false);
   const navigate = useNavigate();
 
   const handlePaymentSuccess = (id: string) => {
-    setConfirmationId(id);
+    setTripId(id);
     setShowPaymentModal(false);
   };
 
   const handleViewGuide = () => {
-    if (confirmationId) {
-      navigate(`/dashboard/trip/${confirmationId}`);
+    if (tripId) {
+      navigate(`/dashboard/trip/${tripId}`);
     }
   };
 
@@ -65,10 +65,10 @@ const TripSummary: React.FC<TripSummaryProps> = ({
     onClose();
   };
 
-  if (confirmationId) {
+  if (tripId) {
     return (
       <TripConfirmation
-        confirmationId={confirmationId}
+        tripId={tripId}
         destination={destination}
         duration={duration}
         selectedCampgrounds={selectedCampgrounds}
@@ -125,6 +125,11 @@ const TripSummary: React.FC<TripSummaryProps> = ({
     const priceInfo = priceScrapingService.getBasePrice(stay.campground, 'standard');
     return total + ((priceInfo.price ?? 0) * stay.totalNights);
   }, 0);
+
+  const formattedStartDate = duration.startDate ? format(duration.startDate, 'MMM d, yyyy') : 'Not set';
+  const formattedEndDate = duration.startDate 
+    ? format(addDays(duration.startDate, duration.nights), 'MMM d, yyyy') 
+    : 'Not set';
 
   return (
     <div className="min-h-screen bg-beige-light">
@@ -199,14 +204,14 @@ const TripSummary: React.FC<TripSummaryProps> = ({
                                 <p className="text-xs sm:text-sm text-gray-600 mt-1">Standard Site</p>
                               </div>
                               <button
-                                disabled={!confirmationId}
+                                disabled={!tripId}
                                 className={`ml-2 inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm ${
-                                  !confirmationId
+                                  !tripId
                                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                     : 'bg-primary-dark text-beige hover:bg-primary-dark/90'
                                 }`}
                               >
-                                {!confirmationId ? (
+                                {!tripId ? (
                                   <>
                                     <Lock className="w-4 h-4" />
                                     <span>Locked</span>
@@ -271,7 +276,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
                   </button>
                 )}
 
-                {!confirmationId && (
+                {!tripId && (
                   <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500">
                     <Lock className="w-4 h-4" />
                     <span>Booking links will be unlocked after payment</span>
@@ -290,14 +295,14 @@ const TripSummary: React.FC<TripSummaryProps> = ({
                 </p>
                 <button
                   onClick={handleViewGuide}
-                  disabled={!confirmationId}
+                  disabled={!tripId}
                   className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg transition-colors w-full justify-center ${
-                    !confirmationId
+                    !tripId
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                       : 'bg-primary-dark text-beige hover:bg-primary-dark/90'
                   }`}
                 >
-                  {!confirmationId ? (
+                  {!tripId ? (
                     <>
                       <Lock className="w-5 h-5" />
                       <span>View Trip Guide</span>

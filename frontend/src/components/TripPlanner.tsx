@@ -62,13 +62,15 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     if (tripPlan) {
       if (!tripPlan.guestCount) {
         console.error('Trip plan is missing guest count information');
-        // We'll use a fallback value for now to prevent app crashes
-        return 2;
+        throw new Error('Trip plan missing required guest count information');
       }
       return tripPlan.guestCount;
     }
-    // Default when no trip plan exists yet
-    return 2;
+    // When no trip plan exists yet, we have no choice but to use initialDuration.guestCount or error
+    if (!initialDuration.guestCount) {
+      throw new Error('Initial duration is missing required guest count information');
+    }
+    return initialDuration.guestCount;
   });
   const [duration, setDuration] = useState<TripDuration>(initialDuration);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -100,7 +102,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     if (tripPlan) {
       if (!tripPlan.guestCount) {
         console.error('Trip plan update missing guest count information');
-        return;
+        throw new Error('Trip plan is missing required guest count information');
       }
       setGuestCount(tripPlan.guestCount);
     }
@@ -285,12 +287,21 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       selectedDay >= stay.startNight && selectedDay <= stay.endNight
     );
 
+    // Get the current city from the stay, or fallback to a default
+    const currentCity = currentStay?.location || 'Unknown';
+    
+    // Add the city information to the campground if it doesn't have it already
+    const campgroundWithCity = {
+      ...campground,
+      city: campground.city || currentCity
+    };
+
     if (currentStay) {
       setSelectedCampgrounds(prev => {
         const updated = [...prev];
         // Only update nights within the current stay and total duration
         for (let night = currentStay.startNight; night <= Math.min(currentStay.endNight, duration.nights); night++) {
-          updated[night - 1] = { campground, accommodationType };
+          updated[night - 1] = { campground: campgroundWithCity, accommodationType };
         }
         // Ensure array length matches duration.nights
         return updated.slice(0, duration.nights);
@@ -305,7 +316,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     } else {
       setSelectedCampgrounds(prev => {
         const updated = [...prev];
-        updated[selectedDay - 1] = { campground, accommodationType };
+        updated[selectedDay - 1] = { campground: campgroundWithCity, accommodationType };
         return updated.slice(0, duration.nights);
       });
 
@@ -386,7 +397,8 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     // Update duration
     setDuration({
       nights: newDetails.nights,
-      startDate: newDetails.startDate
+      startDate: newDetails.startDate,
+      guestCount: newGuestCount
     });
   };
 

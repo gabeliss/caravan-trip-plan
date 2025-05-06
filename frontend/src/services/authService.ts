@@ -125,6 +125,7 @@ export const authService = {
             // Continue anyway with empty trips array
           } else {
             console.log('✅ authService: User trips fetched, count:', tripsData?.length || 0);
+            console.log('✅ authService: User trips:', tripsData);
           }
           
           const currentUser = {
@@ -134,14 +135,19 @@ export const authService = {
             trips: tripsData ? tripsData.map(trip => ({
               id: trip.id,
               confirmationId: trip.confirmation_id,
-              destination: trip.destination,
-              duration: trip.duration,
+              trip_details: {
+                destination: trip.trip_details.destination,
+                nights: trip.trip_details.nights,
+                startDate: new Date(trip.trip_details.startDate),
+                guestCount: trip.trip_details.guestCount
+              },
               selectedCampgrounds: trip.campgrounds,
               createdAt: trip.created_at,
               status: trip.status,
               guideUrl: trip.guide_url
             })) : []
           };
+          console.log('✅ authService: currentUser:', currentUser);
           
           console.log('✅ authService: getCurrentUser completed successfully');
           return currentUser;
@@ -233,8 +239,12 @@ export const authService = {
         trips: tripsData ? tripsData.map(trip => ({
           id: trip.id,
           confirmationId: trip.confirmation_id,
-          destination: trip.destination,
-          duration: trip.duration,
+          trip_details: {
+            destination: trip.trip_details.destination,
+            nights: trip.trip_details.nights,
+            startDate: new Date(trip.trip_details.startDate),
+            guestCount: trip.trip_details.guestCount
+          },
           selectedCampgrounds: trip.campgrounds,
           createdAt: trip.created_at,
           status: trip.status,

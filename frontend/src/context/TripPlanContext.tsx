@@ -11,8 +11,8 @@ interface TripPlanContextType {
     destinationId: string,
     nights: number,
     startDate: Date,
-    numAdults?: number,
-    numKids?: number
+    numAdults: number,
+    numKids: number
   ) => Promise<void>;
   clearPlan: () => void;
 }
@@ -41,13 +41,18 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
     destinationId: string,
     nights: number,
     startDate: Date,
-    numAdults = 2,
-    numKids = 0
+    numAdults: number,
+    numKids: number
   ) => {
     setLoading(true);
     setError(null);
     
     try {
+      // Validate required parameters
+      if (numAdults === undefined) {
+        throw new Error('Number of adults is required for trip planning');
+      }
+      
       console.log(`Generating plan for destination: ${destinationId}, nights: ${nights} (type: ${typeof nights})`);
       
       // Generate trip plan - availability will be fetched lazily by individual components
