@@ -49,6 +49,7 @@ interface ConsolidatedStay {
     name: string;
     imageUrl: string;
     location: string;
+    bookingUrl?: string;
   };
   nights: {
     start: number;
@@ -83,12 +84,15 @@ const calculateClothingQuantities = (nights: number) => {
 export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip }) => {
   const [currentPage, setCurrentPage] = useState<Page>('overview');
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
+  console.log("trip", trip);
 
   const getConsolidatedStays = (): ConsolidatedStay[] => {
     const stays: ConsolidatedStay[] = [];
     let currentStay: ConsolidatedStay | null = null;
 
     trip.selectedCampgrounds.forEach((campground, index) => {
+      console.log(`Processing campground ${index}:`, campground.id, "bookingUrl:", campground.bookingUrl);
+      
       const location = campground.distanceToTown 
         ? campground.distanceToTown.split(' to ')[1] 
         : campground.address ? campground.address.split(',')[0] : 'Unknown location';
@@ -103,7 +107,8 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip }) => {
             id: campground.id,
             name: campground.name,
             imageUrl: campground.imageUrl,
-            location: location
+            location: location,
+            bookingUrl: campground.bookingUrl
           },
           nights: {
             start: index + 1,
@@ -128,6 +133,11 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip }) => {
       stays.push(currentStay);
     }
 
+    // Add debug logging for all stays
+    stays.forEach((stay, index) => {
+      console.log(`Stay ${index}:`, stay.campground.id, "bookingUrl:", stay.campground.bookingUrl);
+    });
+
     return stays;
   };
 
@@ -135,6 +145,18 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip }) => {
     const nightsText = stay.totalNights === 1 
       ? `Night ${stay.nights.start}`
       : `Nights ${stay.nights.start}-${stay.nights.end}`;
+    
+    // Enhanced debugging
+    console.log("Rendering stay card for", stay.campground.id);
+    console.log("Direct bookingUrl from stay:", stay.campground.bookingUrl);
+    
+    // Try to find the campground in the trip data as a fallback
+    const campgroundInTrip = trip.selectedCampgrounds.find(c => c.id === stay.campground.id);
+    console.log("Campground in trip data:", campgroundInTrip?.id, "bookingUrl:", campgroundInTrip?.bookingUrl);
+    
+    // Use either the stay's bookingUrl or fallback to the one from trip data
+    const finalBookingUrl = stay.campground.bookingUrl || campgroundInTrip?.bookingUrl;
+    console.log("Final bookingUrl to use:", finalBookingUrl);
 
     return (
       <div className="bg-white rounded-lg border p-3">
@@ -168,15 +190,22 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip }) => {
             </div>
 
             <div className="mt-3">
-              <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-primary-dark hover:text-primary-dark/80 flex items-center gap-1"
-              >
-                Book Now
-                <ExternalLink className="w-4 h-4" />
-              </a>
+              {finalBookingUrl ? (
+                <a
+                  href={finalBookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary-dark hover:text-primary-dark/80 flex items-center gap-1"
+                >
+                  Book Now
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              ) : (
+                <span className="text-sm text-gray-400 flex items-center gap-1 cursor-not-allowed" title="Booking link not available">
+                  Book Now (Unavailable)
+                  <ExternalLink className="w-4 h-4" />
+                </span>
+              )}
             </div>
           </div>
         </div>

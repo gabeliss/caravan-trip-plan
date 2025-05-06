@@ -40,7 +40,7 @@ export interface Campground {
   checkIn: CheckInInfo;
   siteGuidelines: SiteGuidelines;
   cancellationPolicy: CancellationPolicy;
-  maxGuests: number;
+  maxGuests: number | string;
   taxRate: number;
   providers: BookingProvider[];
   nearbyAttractions: string[];
@@ -74,9 +74,9 @@ export interface CheckInInfo {
 }
 
 export interface SiteGuidelines {
-  maxGuests: number;
+  maxGuests: number | string;
   maxVehicles: number;
-  quietHours: string;
+  quietHours: string | null;
   petRules: string;
   ageRestrictions: string;
 }
@@ -87,7 +87,7 @@ export interface CancellationPolicy {
   noRefund: string;
   modifications: string;
   weatherPolicy: string;
-  details?: string;
+  details?: string | string[];
 }
 
 export interface BookingProvider {

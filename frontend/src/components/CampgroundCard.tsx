@@ -127,7 +127,12 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
 
   const getCancellationPolicyText = () => {
     if (!campground.cancellationPolicy) return '';
-    if (campground.cancellationPolicy.details) return campground.cancellationPolicy.details;
+    if (campground.cancellationPolicy.details) {
+      if (Array.isArray(campground.cancellationPolicy.details)) {
+        return campground.cancellationPolicy.details.join('\n');
+      }
+      return campground.cancellationPolicy.details;
+    }
     return `${campground.cancellationPolicy.fullRefund} for full refund. ${campground.cancellationPolicy.partialRefund} for partial refund. ${campground.cancellationPolicy.noRefund} for no refund.`;
   };
 
@@ -153,6 +158,21 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
     if (campground.images && index >= 0 && index < campground.images.length) {
       setCurrentImageIndex(index);
     }
+  };
+
+  const renderCheckInDetails = () => {
+    return (
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <div>
+          <p className="font-medium">Check-in:</p>
+          <p className="whitespace-pre-line">{campground.checkIn.time}</p>
+        </div>
+        <div>
+          <p className="font-medium">Check-out:</p>
+          <p className="whitespace-pre-line">{campground.checkIn.checkout}</p>
+        </div>
+      </div>
+    );
   };
 
   const renderFooter = () => {
@@ -343,16 +363,7 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
                     <Clock size={16} />
                     Check-in/Check-out
                   </h5>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                      <p className="font-medium">Check-in:</p>
-                      <p>{campground.checkIn.time}</p>
-                    </div>
-                    <div>
-                      <p className="font-medium">Check-out:</p>
-                      <p>{campground.checkIn.checkout}</p>
-                    </div>
-                  </div>
+                  {renderCheckInDetails()}
                 </div>
               )}
               
@@ -363,9 +374,17 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
                     <Calendar size={16} />
                     Cancellation Policy
                   </h5>
-                  <p className="text-xs text-gray-600">
-                    {getCancellationPolicyText()}
-                  </p>
+                  {Array.isArray(campground.cancellationPolicy.details) ? (
+                    <ul className="text-xs text-gray-600 list-disc pl-4 space-y-1">
+                      {campground.cancellationPolicy.details.map((detail, index) => (
+                        <li key={index}>{detail}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-xs text-gray-600 whitespace-pre-line">
+                      {getCancellationPolicyText()}
+                    </p>
+                  )}
                 </div>
               )}
               
@@ -379,16 +398,18 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
                       <p className="font-medium">Max Guests:</p>
-                      <p>{campground.siteGuidelines.maxGuests}</p>
+                      <p className="whitespace-pre-line">{campground.siteGuidelines.maxGuests}</p>
                     </div>
                     <div>
                       <p className="font-medium">Pets:</p>
-                      <p>{campground.siteGuidelines.petRules}</p>
+                      <p className="whitespace-pre-line">{campground.siteGuidelines.petRules}</p>
                     </div>
-                    <div>
-                      <p className="font-medium">Quiet Hours:</p>
-                      <p>{campground.siteGuidelines.quietHours}</p>
-                    </div>
+                    {campground.siteGuidelines.quietHours && (
+                      <div>
+                        <p className="font-medium">Quiet Hours:</p>
+                        <p className="whitespace-pre-line">{campground.siteGuidelines.quietHours}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

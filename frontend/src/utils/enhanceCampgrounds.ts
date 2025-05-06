@@ -9,9 +9,6 @@ interface CampgroundInfoData {
       address: string;
       cityAndState: string;
       content: string;
-      taxRate: number;
-      fixedFee: number;
-      message: string;
       imageUrls: string[];
       offerings: string;
       distanceToTown: string;
@@ -19,8 +16,12 @@ interface CampgroundInfoData {
       checkInTime: string;
       checkOutTime: string;
       guidelines: string;
-      cancellationPolicy: string;
+      cancellationPolicy: string | string[];
       accomodationType?: string[];
+      bookingUrl?: string;
+      maxGuests?: number | string;
+      petRules?: string;
+      quietHours?: string | null;
     }
   }
 }
@@ -43,16 +44,25 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
   
   // Get the region data from our JSON
   const regionKey = getRegionKey(cityName);
-  const regionData = (northernMichiganData as CampgroundInfoData)[regionKey];
+  const regionData = (northernMichiganData as unknown as CampgroundInfoData)[regionKey];
   
   if (!regionData) {
     console.warn(`No data found for region: ${regionKey}`);
     return campgroundList;
   }
   
+  // Debug: Log all campground IDs and their booking URLs in the JSON data
+  console.log("All campgrounds in JSON data for region", regionKey);
+  Object.entries(regionData).forEach(([key, data]) => {
+    console.log(`JSON data: ${key} bookingUrl:`, data.bookingUrl);
+  });
+  
   return campgroundList.map(campground => {
     // Create a more comprehensive set of possible keys to match between API and JSON data
     const campgroundId = campground.id;
+    
+    // Debug: Log the campground ID we're trying to match
+    console.log(`Enhancing campground: ${campgroundId}`);
     
     // Extract the base name without the region prefix
     const baseNameParts = campgroundId.split('-');
@@ -74,6 +84,9 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
       // Try more aggressive transformations for complex cases
       campgroundId.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() // Remove all non-alphanumeric
     ];
+    
+    // Debug: Log the possible keys we're trying
+    console.log(`Possible keys for ${campgroundId}:`, possibleKeys);
     
     // Find the matching key in our JSON data
     let matchingKey = '';
@@ -101,9 +114,15 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
       }
     }
     
+    // Debug: Log the matching key (if any)
+    console.log(`Matched ${campgroundId} to key: ${matchingKey || 'No match'}`);
+    
     // If we found matching detailed data, enhance the campground with it
     if (matchingKey && regionData[matchingKey]) {
       const detailedData = regionData[matchingKey];
+      
+      // Debug: Log the bookingUrl we found
+      console.log(`bookingUrl for ${campgroundId} from JSON:`, detailedData.bookingUrl);
       
       // Create site types based on the accommodationType array in the JSON data
       const siteTypes = {
@@ -125,6 +144,7 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
         ],
         imageUrl: detailedData.imageUrls?.[0] || campground.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4',
         distanceToTown: detailedData.distanceToTown || campground.distanceToTown || `5 miles to ${cityName}`,
+        bookingUrl: detailedData.bookingUrl || campground.bookingUrl,
         checkIn: {
           time: detailedData.checkInTime || '3:00 PM',
           lateArrival: 'Call ahead',
@@ -132,11 +152,13 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
           lateFees: 'Varies by campground'
         },
         siteGuidelines: {
-          maxGuests: parseInt(detailedData.guidelines?.match(/(\d+)\s+Guests/i)?.[1] || '6'),
+          maxGuests: detailedData.maxGuests || parseInt(detailedData.guidelines?.match(/(\d+)\s+Guests/i)?.[1] || '6'),
           maxVehicles: 2,
-          quietHours: '10:00 PM - 7:00 AM',
-          petRules: detailedData.amenities?.some(a => a.toLowerCase().includes('pet')) 
-            ? 'Pets allowed' : 'No pets allowed',
+          quietHours: detailedData.quietHours !== undefined ? detailedData.quietHours : 
+                     (detailedData.guidelines?.match(/Quiet Hours:\s*(.*?)(?:$|,)/i)?.[1] || '10:00 PM - 7:00 AM'),
+          petRules: detailedData.petRules || 
+            (detailedData.guidelines?.match(/Pet Friendly[^,]*(?:,|$)/i)?.[0] || 
+             (detailedData.amenities?.some(a => a.toLowerCase().includes('pet')) ? 'Pet friendly' : 'No pets allowed')),
           ageRestrictions: 'None'
         },
         cancellationPolicy: {
@@ -147,12 +169,14 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
           weatherPolicy: 'No refunds for weather',
           details: detailedData.cancellationPolicy
         },
-        maxGuests: parseInt(detailedData.guidelines?.match(/(\d+)\s+Guests/i)?.[1] || '6'),
-        taxRate: detailedData.taxRate || campground.taxRate || 0.06,
+        maxGuests: detailedData.maxGuests || parseInt(detailedData.guidelines?.match(/(\d+)\s+Guests/i)?.[1] || '6'),
         siteTypes: siteTypes,
       };
     }
 
+    // Debug: Log if we didn't find a match
+    console.log(`No match found for ${campgroundId} - no enhancement applied`);
+    
     return campground;
   });
 }; 

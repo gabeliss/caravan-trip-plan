@@ -49,6 +49,15 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
   const [showMap, setShowMap] = useState(false);
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
 
+  // Debug: Log all campgrounds and their booking URLs
+  console.log("TripConfirmation - All campgrounds:");
+  selectedCampgrounds.forEach((campground, index) => {
+    console.log(`Campground ${index} (${campground.id}):`, {
+      name: campground.name,
+      bookingUrl: campground.bookingUrl
+    });
+  });
+
   const getStayGroups = (): StayGroup[] => {
     const groups: StayGroup[] = [];
     let currentGroup: StayGroup | null = null;
@@ -158,12 +167,30 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                                 <h4 className="font-medium text-primary-dark truncate">{stay.campground.name}</h4>
                                 <p className="text-xs sm:text-sm text-gray-600 mt-1">Standard Site</p>
                               </div>
-                              <button
-                                className="flex-shrink-0 inline-flex items-center gap-2 bg-primary-dark text-beige px-3 py-1.5 rounded-lg hover:bg-primary-dark/90 transition-colors text-sm"
-                              >
-                                Book Now
-                                <ExternalLink className="w-4 h-4" />
-                              </button>
+                              {(() => {
+                                const campground = selectedCampgrounds.find(c => c.id === stay.campground.id);
+                                console.log(`TripConfirmation: campground ${stay.campground.id} bookingUrl:`, campground?.bookingUrl);
+                                return campground?.bookingUrl ? (
+                                  <a
+                                    href={campground.bookingUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-shrink-0 inline-flex items-center gap-2 bg-primary-dark text-beige px-3 py-1.5 rounded-lg hover:bg-primary-dark/90 transition-colors text-sm"
+                                  >
+                                    Book Now
+                                    <ExternalLink className="w-4 h-4" />
+                                  </a>
+                                ) : (
+                                  <button
+                                    className="flex-shrink-0 inline-flex items-center gap-2 bg-gray-300 text-gray-600 px-3 py-1.5 rounded-lg cursor-not-allowed text-sm"
+                                    disabled
+                                    title="Booking link not available"
+                                  >
+                                    Book Now
+                                    <ExternalLink className="w-4 h-4" />
+                                  </button>
+                                );
+                              })()}
                             </div>
                           </div>
                         </div>
