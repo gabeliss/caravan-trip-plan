@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTripPlan } from '../context/TripPlanContext';
-import { formatDateForApi } from '../utils/tripPlanGenerator';
 
 interface TripPlanSummaryProps {
   onContinue?: () => void;

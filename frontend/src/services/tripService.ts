@@ -1,5 +1,4 @@
 import { ItineraryPlan } from '../types';
-import { formatDateForApi } from '../utils/tripPlanGenerator';
 import { supabase } from './supabaseClient';
 import { SavedTrip, TripDuration, Destination, Campground, TripDetails } from '../types';
 import { enhanceCampgroundsWithData } from '../utils/enhanceCampgrounds';
@@ -37,6 +36,14 @@ interface StoredCampground {
   price: number;
   city: string;
 }
+
+const formatDateForApi = (date: Date): string => {
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const year = date.getFullYear().toString().substr(-2);
+  
+  return `${month}/${day}/${year}`;
+};
 
 // Utility function to get destination data from ID
 export const getDestinationData = (destinationId: string): Destination => {

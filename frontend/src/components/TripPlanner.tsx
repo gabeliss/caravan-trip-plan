@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { Destination, TripDuration, DailyItinerary, Campground, ItineraryPlan } from '../types';
 import { Map } from './Map';
-import { WeatherForecast } from './WeatherForecast';
 import { CampgroundList } from './CampgroundList';
 import { TripSummary } from './TripSummary';
 import { format, addDays } from 'date-fns';
@@ -599,14 +598,6 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
                   destination={destination}
                   selectedCampgrounds={selectedCampgrounds.filter(s => s?.campground).map(s => s.campground)}
                 />
-              </div>
-
-              <div>
-                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                  <Sun size={20} />
-                  Weather Forecast
-                </h3>
-                <WeatherForecast destination={destination} duration={duration} />
               </div>
             </div>
           </div>

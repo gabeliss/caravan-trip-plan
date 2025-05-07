@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { TripList } from './TripList';
-import { TripDetails } from './TripDetails';
 import { UserSettings } from './UserSettings';
 import { tripService } from '../../services/tripService';
 import { TripDetailsWrapper } from './TripDetailsWrapper';

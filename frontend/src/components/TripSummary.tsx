@@ -21,7 +21,6 @@ import { Destination, TripDuration, Campground } from '../types';
 import { Map } from './Map';
 import { PaymentModal } from './PaymentModal';
 import { TripConfirmation } from './TripConfirmation';
-import { priceScrapingService } from '../services/priceScrapingService';
 
 interface TripSummaryProps {
   destination: Destination;
@@ -122,8 +121,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
   const allNightsBooked = mergedStays.reduce((total, stay) => total + stay.totalNights, 0) === duration.nights;
 
   const totalPrice = mergedStays.reduce((total, stay) => {
-    const priceInfo = priceScrapingService.getBasePrice(stay.campground, 'standard');
-    return total + ((priceInfo.price ?? 0) * stay.totalNights);
+    return 0 * stay.totalNights;
   }, 0);
 
   const formattedStartDate = duration.startDate ? format(duration.startDate, 'MMM d, yyyy') : 'Not set';
@@ -174,7 +172,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
 
               <div className="space-y-4 sm:space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
                 {mergedStays.map((stay) => {
-                  const priceInfo = priceScrapingService.getBasePrice(stay.campground, 'standard');
+                  const priceInfo = 0;
                   const nightsText = stay.totalNights === 1 
                     ? `Night ${stay.startNight}`
                     : `Nights ${stay.startNight}-${stay.endNight}`;
@@ -226,11 +224,11 @@ const TripSummary: React.FC<TripSummaryProps> = ({
                             </div>
                             <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
                               <div className="text-xs sm:text-sm">
-                                <span className="font-medium">${priceInfo.price ?? 0}/night × {stay.totalNights}</span>
+                                <span className="font-medium">${0}/night × {stay.totalNights}</span>
                               </div>
                               <span className="text-gray-400">•</span>
                               <div className="text-xs sm:text-sm font-medium">
-                                Total: ${(priceInfo.price ?? 0) * stay.totalNights}
+                                Total: ${0 * stay.totalNights}
                               </div>
                             </div>
                           </div>
