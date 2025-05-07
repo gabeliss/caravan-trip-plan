@@ -512,7 +512,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
                 ref={staysContainerRef}
                 className="hide-scrollbar overflow-x-auto -mx-4 px-4"
               >
-                <div className="flex gap-2 min-w-min pb-4">
+                <div className="flex gap-2 min-w-min pt-2 pb-4">
                   {getLocationStays(tripPlan, destination, duration).map((stay) => {
                     const isSelected = selectedDay >= stay.startNight && selectedDay <= stay.endNight;
                     const hasCampground = selectedCampgrounds[stay.startNight - 1]?.campground;

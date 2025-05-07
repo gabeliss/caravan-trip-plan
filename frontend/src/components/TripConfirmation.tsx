@@ -20,11 +20,14 @@ import { Destination, TripDuration, Campground } from '../types';
 import { Map } from './Map';
 
 interface TripConfirmationProps {
-  tripId: string;
   destination: Destination;
   duration: TripDuration;
   selectedCampgrounds: Campground[];
   onClose: () => void;
+  tripId?: string;
+  isPaid?: boolean;
+  onBookTrip?: () => void;
+  children?: React.ReactNode;
 }
 
 interface StayGroup {
@@ -43,7 +46,10 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
   destination,
   duration,
   selectedCampgrounds,
-  onClose
+  onClose,
+  isPaid = true,
+  onBookTrip,
+  children
 }) => {
   const navigate = useNavigate();
   const [showMap, setShowMap] = useState(false);
@@ -106,6 +112,10 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
   const daysUntilTrip = duration.startDate 
     ? Math.ceil((duration.startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
     : null;
+
+  // Calculate total price for payment state
+  const totalPrice = selectedCampgrounds.length > 0 ? 0 : 0; // This would be actual camping costs
+  const allNightsBooked = selectedCampgrounds.length === duration.nights;
 
   return (
     <div className="min-h-screen bg-beige-light">
@@ -170,7 +180,19 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                               </div>
                               {(() => {
                                 const campground = selectedCampgrounds.find(c => c.id === stay.campground.id);
-                                console.log(`TripConfirmation: campground ${stay.campground.id} bookingUrl:`, campground?.bookingUrl);
+                                
+                                if (!isPaid) {
+                                  return (
+                                    <button
+                                      className="flex-shrink-0 inline-flex items-center gap-2 bg-gray-300 text-gray-600 px-3 py-1.5 rounded-lg cursor-not-allowed text-sm"
+                                      disabled
+                                    >
+                                      <Lock className="w-4 h-4" />
+                                      <span>Locked</span>
+                                    </button>
+                                  );
+                                }
+                                
                                 return campground?.bookingUrl ? (
                                   <a
                                     href={campground.bookingUrl}
@@ -201,14 +223,57 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                 })}
               </div>
 
-              <div className="border-t mt-6 pt-6 text-center">
-                <Link
-                  to="/dashboard"
-                  className="text-primary-dark hover:text-primary-dark/80 font-medium"
-                >
-                  Go to Dashboard
-                </Link>
-              </div>
+              {isPaid ? (
+                <div className="border-t mt-6 pt-6 text-center">
+                  <Link
+                    to="/dashboard"
+                    className="text-primary-dark hover:text-primary-dark/80 font-medium"
+                  >
+                    Go to Dashboard
+                  </Link>
+                </div>
+              ) : (
+                <div className="border-t mt-6 pt-6">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-base sm:text-lg font-semibold mb-1">Total Cost</h3>
+                      <p className="text-xs sm:text-sm text-gray-500">Includes trip guide and camping fees</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl sm:text-2xl font-bold">${(totalPrice + 29.99).toFixed(2)}</div>
+                      <div className="text-xs sm:text-sm text-gray-500">
+                        ${totalPrice.toFixed(2)} camping + $29.99 guide
+                      </div>
+                    </div>
+                  </div>
+
+                  {!allNightsBooked ? (
+                    <div>
+                      <p className="text-red-600 text-xs sm:text-sm mb-2">Please select all nights</p>
+                      <button
+                        disabled
+                        className="w-full flex items-center justify-center gap-2 bg-primary-dark/50 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg cursor-not-allowed text-sm sm:text-base font-medium"
+                      >
+                        Complete & Get Full Itinerary
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={onBookTrip}
+                      className="w-full flex items-center justify-center gap-2 bg-primary-dark text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg hover:bg-primary-dark/90 transition-colors text-sm sm:text-base font-medium"
+                    >
+                      Complete & Get Full Itinerary
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
+                  )}
+
+                  <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500">
+                    <Lock className="w-4 h-4" />
+                    <span>Booking links will be unlocked after payment</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -219,13 +284,24 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                 <p className="text-gray-600 mb-6">
                   Access your comprehensive guide with everything you need for your trip
                 </p>
-                <button
-                  onClick={() => navigate(`/dashboard/trip/${tripId}`)}
-                  className="inline-flex items-center gap-2 bg-primary-dark text-beige px-6 py-3 rounded-lg hover:bg-primary-dark/90 transition-colors w-full justify-center"
-                >
-                  View Trip Guide
-                  <ArrowRight className="w-5 h-5" />
-                </button>
+                {isPaid ? (
+                  <button
+                    onClick={() => navigate(`/dashboard/trip/${tripId}`)}
+                    className="inline-flex items-center gap-2 bg-primary-dark text-beige px-6 py-3 rounded-lg hover:bg-primary-dark/90 transition-colors w-full justify-center"
+                  >
+                    View Trip Guide
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="inline-flex items-center gap-2 bg-gray-100 text-gray-400 px-6 py-3 rounded-lg cursor-not-allowed w-full justify-center"
+                  >
+                    <Lock className="w-5 h-5" />
+                    <span>View Trip Guide</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                )}
               </div>
 
               <div className="mb-6">
@@ -256,6 +332,8 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
           </div>
         </div>
       </div>
+      
+      {children}
     </div>
   );
 };
