@@ -9,8 +9,7 @@ import { MapPin, AlertCircle } from 'lucide-react';
 export const DestinationSelectionPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { generatePlan, tripPlan, loading } = useTripPlan();
-  const [selectedDestination, setSelectedDestination] = useState<string | null>(null);
+  const { generatePlan, tripPlan, loading, selectedDestination, setSelectedDestination } = useTripPlan();
 
   // Get trip parameters from location state (passed from the homepage)
   const { startDate, nights, guests } = location.state || {};

@@ -7,6 +7,8 @@ interface TripPlanContextType {
   availabilityData: any[] | null;
   loading: boolean;
   error: string | null;
+  selectedDestination: string | null;
+  setSelectedDestination: (destination: string | null) => void;
   generatePlan: (
     destinationId: string,
     nights: number,
@@ -36,6 +38,7 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
   const [availabilityData, setAvailabilityData] = useState<any[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDestination, setSelectedDestination] = useState<string | null>(null);
 
   const generatePlan = async (
     destinationId: string,
@@ -88,6 +91,8 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
     availabilityData,
     loading,
     error,
+    selectedDestination,
+    setSelectedDestination,
     generatePlan,
     clearPlan
   };
