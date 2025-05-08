@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { useTripPlan } from '../context/TripPlanContext';
 
 // TikTok icon as an SVG component since it's not included in lucide-react
 const TikTokIcon = () => (
@@ -20,6 +21,29 @@ const TikTokIcon = () => (
     <path d="M15 8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h3z" />
   </svg>
 );
+
+interface NavLinkProps {
+  to: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const NavLink: React.FC<NavLinkProps> = ({ to, children, className }) => {
+  const { clearSelectedCampgrounds } = useTripPlan();
+  const navigate = useNavigate();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    clearSelectedCampgrounds();
+    navigate(to);
+  };
+
+  return (
+    <a href={to} onClick={handleClick} className={className}>
+      {children}
+    </a>
+  );
+};
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -61,29 +85,29 @@ export const Footer: React.FC = () => {
             <h3 className="font-display text-beige text-lg mb-4">Explore</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                <NavLink to="/" className="text-beige/70 hover:text-beige transition-colors text-sm">
                   Book a Trip
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link to="/about" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                <NavLink to="/about" className="text-beige/70 hover:text-beige transition-colors text-sm">
                   About Us
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link to="/destinations/northern-michigan" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                <NavLink to="/destinations/northern-michigan" className="text-beige/70 hover:text-beige transition-colors text-sm">
                   Northern Michigan
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link to="/destinations/arizona" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                <NavLink to="/destinations/arizona" className="text-beige/70 hover:text-beige transition-colors text-sm">
                   Arizona
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link to="/destinations/washington" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                <NavLink to="/destinations/washington" className="text-beige/70 hover:text-beige transition-colors text-sm">
                   Washington
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -150,15 +174,15 @@ export const Footer: React.FC = () => {
               &copy; {currentYear} Caravan Trip Plan. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <Link to="/privacy" className="text-xs text-beige/60 hover:text-beige transition-colors">
+              <NavLink to="/privacy" className="text-xs text-beige/60 hover:text-beige transition-colors">
                 Privacy Policy
-              </Link>
-              <Link to="/terms" className="text-xs text-beige/60 hover:text-beige transition-colors">
+              </NavLink>
+              <NavLink to="/terms" className="text-xs text-beige/60 hover:text-beige transition-colors">
                 Terms of Service
-              </Link>
-              <Link to="/sitemap" className="text-xs text-beige/60 hover:text-beige transition-colors">
+              </NavLink>
+              <NavLink to="/sitemap" className="text-xs text-beige/60 hover:text-beige transition-colors">
                 Sitemap
-              </Link>
+              </NavLink>
             </div>
           </div>
         </div>

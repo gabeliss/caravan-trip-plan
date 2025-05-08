@@ -54,15 +54,12 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
   const navigate = useNavigate();
   const [showMap, setShowMap] = useState(false);
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
-  const { setFlowStage } = useTripPlan();
-  // Debug: Log all campgrounds and their booking URLs
-  console.log("TripConfirmation - All campgrounds:");
-  selectedCampgrounds.forEach((campground, index) => {
-    console.log(`Campground ${index} (${campground.id}):`, {
-      name: campground.name,
-      bookingUrl: campground.bookingUrl
-    });
-  });
+  const { setFlowStage, clearSelectedCampgrounds } = useTripPlan();
+
+  const handleNavigateAway = () => {
+    clearSelectedCampgrounds();
+    onClose();
+  };
 
   const getStayGroups = (): StayGroup[] => {
     const groups: StayGroup[] = [];
@@ -70,7 +67,6 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
 
     selectedCampgrounds.forEach((campground, index) => {
       // Default location value in case distanceToTown is undefined
-      console.log("destination", destination);
       let location = destination?.name || 'Unknown location';
       
       // Safely extract location from distanceToTown if it exists
@@ -123,7 +119,7 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <button
-              onClick={onClose}
+              onClick={handleNavigateAway}
               className="text-primary-dark hover:text-primary-dark/80 flex items-center gap-2"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -260,7 +256,7 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={() => setFlowStage('completed')}
+                      onClick={onBookTrip}
                       className="w-full flex items-center justify-center gap-2 bg-primary-dark text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg hover:bg-primary-dark/90 transition-colors text-sm sm:text-base font-medium"
                     >
                       Complete & Get Full Itinerary

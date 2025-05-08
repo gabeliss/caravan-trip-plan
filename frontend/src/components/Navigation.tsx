@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Map, BookMarked, User, ChevronDown, ChevronUp, Settings, LogOut, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useTripPlan } from '../context/TripPlanContext';
 import { destinations } from '../data/destinations';
 
 interface NavigationProps {
@@ -11,6 +12,7 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
   const { isAuthenticated, user, logout } = useAuth();
+  const { clearSelectedCampgrounds } = useTripPlan();
   const navigate = useNavigate();
   const location = useLocation();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -40,10 +42,9 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
   };
 
   const handleNavigation = (path: string) => {
-    // Navigate immediately
+    clearSelectedCampgrounds();
     navigate(path);
     
-    // Then close menus (to avoid any state update issues during navigation)
     setTimeout(() => {
       setShowMobileMenu(false);
       setShowUserMenu(false);
@@ -53,6 +54,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
   };
 
   const handleLogout = async () => {
+    clearSelectedCampgrounds();
     setShowMobileMenu(false);
     setShowUserMenu(false);
     setShowDestinations(false);
@@ -76,6 +78,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
   };
 
   const handleLogoClick = () => {
+    clearSelectedCampgrounds();
     setShowMobileMenu(false);
     setShowUserMenu(false);
     setShowDestinations(false);

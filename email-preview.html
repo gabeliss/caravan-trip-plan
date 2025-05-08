@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caravan Trip Plan Email Preview</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
+        h1 { color: #2C5545; }
+        .header-img { width: 100%; }
+        .container { padding: 20px; }
+        .confirmation { color: #666; margin-bottom: 20px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        .important { background-color: #FBF7EF; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .footer { margin-top: 30px; color: #666; }
+        a { color: #2C5545; text-decoration: underline; }
+        .email-container { 
+            border: 1px solid #ddd; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .preview-controls {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .preview-controls h2 {
+            margin-top: 0;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px 0;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        button {
+            background: #2C5545;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-controls">
+        <h2>Email Preview Controls</h2>
+        <label for="first-name">First Name:</label>
+        <input type="text" id="first-name" value="Gabe" />
+        
+        <label for="confirmation-number">Confirmation Number:</label>
+        <input type="text" id="confirmation-number" value="TRIP-123abc456def" />
+        
+        <label for="trip-link">Trip Link:</label>
+        <input type="text" id="trip-link" value="http://localhost:5173/dashboard/trips/TRIP-123abc456def" style="width: 100%;" />
+        
+        <button onclick="updatePreview()">Update Preview</button>
+    </div>
+
+    <div class="email-container" id="email-preview">
+        <img class="header-img" src="https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/email/email1.png" alt="Caravan Trip Plan">
+        <div class="container">
+            <div class="confirmation">Confirmation Number: <span id="preview-confirmation">TRIP-123abc456def</span></div>
+            <h1>Hi <span id="preview-name">Gabe</span>,</h1>
+            <p>Thanks for booking your trip through Caravan Trip Plan! Your personalized trip plan is now live, and we're excited to help you hit the road.</p>
+            <p>Inside your Trip Itinerary Portal, you'll find:</p>
+            <ul>
+                <li>Booking links for all of your selected campgrounds and stays</li>
+                <li>Your full day-by-day itinerary, including routes, activity recommendations, and packing lists</li>
+                <li>Helpful tips and info to make the most of your trip</li>
+            </ul>
+            <div class="important">
+                <p><strong>Important:</strong> Your sites are not yet booked. Please use the provided links in your portal to reserve your spots directly with each campground or lodging provider.</p>
+            </div>
+            <p>To access your itinerary and booking links, just <a id="preview-link" href="http://localhost:5173/dashboard/trips/TRIP-123abc456def">click here</a>.</p>
+            <p>If you have any questions or need additional support, feel free to contact us at <a href="mailto:caravantripplan@gmail.com">caravantripplan@gmail.com</a>.</p>
+            <p>Thank you for choosing Caravan Trip Plan! We're honored to be part of your road trip.</p>
+            <div class="footer">
+                <p>Safe travels,<br>
+                The Caravan Trip Plan Team<br>
+                <a href="https://caravan-trip-plan.com">caravan-trip-plan.com</a><br>
+                <a href="https://instagram.com/caravantripplan">Instagram</a>
+            </p>
+                <img src="https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/email/email2.png" alt="Caravan Footer" style="width: 100%;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const firstName = document.getElementById('first-name').value;
+            const confirmationNumber = document.getElementById('confirmation-number').value;
+            const tripLink = document.getElementById('trip-link').value;
+            
+            document.getElementById('preview-name').textContent = firstName;
+            document.getElementById('preview-confirmation').textContent = confirmationNumber;
+            document.getElementById('preview-link').href = tripLink;
+            document.getElementById('preview-link').textContent = "click here";
+        }
+    </script>
+</body>
+</html> 

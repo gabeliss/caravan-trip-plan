@@ -14,6 +14,7 @@ from helpers.trip_itineraries import TRIP_ITINERARIES
 from helpers.cities_data import get_cities_data
 from helpers.campgrounds_data import get_campgrounds_data
 from helpers.lambda_mappings import get_lambda_mappings
+from helpers.email_service import send_confirmation_email
 
 # Load environment variables from .env file
 load_dotenv()
@@ -249,6 +250,30 @@ def generate_trip_plan():
         logger.error(f"Error generating trip plan: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/send-confirmation-email', methods=['POST'])
+def send_confirmation():
+    data = request.json
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    
+    to_email = data.get('email', os.environ.get('ADMIN_EMAIL'))
+    first_name = data.get('firstName', 'Traveler')
+    confirmation_id = data.get('confirmationId', '###')
+    trip_id = data.get('tripId')
+    
+    # If trip_id is missing, return an error
+    if not trip_id:
+        return jsonify({"error": "Missing required tripId parameter"}), 400
+    
+    # Create the trip link - in a real app, this would be a proper URL to the trip details
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+    trip_link = f"{frontend_url}/dashboard/trips/{trip_id}"
+    
+    logger.info(f"Sending confirmation email to {to_email} for trip {trip_id}")
+    
+    result = send_confirmation_email(to_email, first_name, confirmation_id, trip_link)
+    
+    return jsonify(result)
 
 if __name__ == '__main__':
     # Get port from environment variable or use default

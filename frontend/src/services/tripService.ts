@@ -470,8 +470,8 @@ export const tripService = {
         throw new Error('Guest count is required for trip creation');
       }
       
-      const tripId = `TRIP-${Math.random().toString(36).substr(2, 9)}`;
-      const confirmationId = `CONF-${Math.random().toString(36).substr(2, 9)}`;
+      const tripId = 'T' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
+      const confirmationId = 'C' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
       
       // Create trip_details object from destination and duration
       const trip_details: TripDetails = {

@@ -8,10 +8,11 @@ import {
   CheckCircle,
   X
 } from 'lucide-react';
-import { Destination, TripDuration, Campground } from '../types';
+import { Destination, TripDuration, Campground, SavedTrip, TripDetails } from '../types';
 import { paymentService } from '../services/paymentService';
 import { useAuth } from '../context/AuthContext';
 import { tripService } from '../services/tripService';
+import { emailService } from '../services/emailService';
 
 interface PaymentModalProps {
   destination: Destination;
@@ -47,15 +48,21 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         campgroundCount: selectedCampgrounds.length
       });
       
-      // Create a new trip object that we'll use whether or not Supabase succeeds
-      const newTrip = {
+      // Create a new trip object with proper types
+      const tripDetails: TripDetails = {
+        destination: destination.id,
+        nights: duration.nights,
+        startDate: duration.startDate || new Date(),
+        guestCount: duration.guestCount
+      };
+      
+      const newTrip: SavedTrip = {
         id: tripId,
         confirmationId: tripId,
-        destination,
-        duration,
+        trip_details: tripDetails,
         selectedCampgrounds,
         createdAt: new Date().toISOString(),
-        status: 'planned' as const
+        status: 'planned'
       };
       
       // Try to initialize payment first
@@ -75,12 +82,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
       // Save trip to Supabase
       let dbTripSaved = false;
+      let savedTrip: SavedTrip | null = null;
       
       if (user) {
         try {
           console.log('Saving trip to Supabase with user ID:', user.id);
           // Create the trip in Supabase
-          const savedTrip = await tripService.createTrip(
+          savedTrip = await tripService.createTrip(
             user.id,
             destination,
             duration,
@@ -106,7 +114,26 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       // Simulate successful payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Always continue with success, even if DB save failed
+      // Send confirmation email
+      try {
+        const tripToUse = savedTrip || newTrip;
+        const userEmail = user?.email || 'gabeliss17@gmail.com'; // Default fallback email
+        const firstName = user?.name?.split(' ')[0] || 'Traveler';
+        
+        console.log('Sending confirmation email to:', userEmail);
+        await emailService.sendConfirmationEmail({
+          email: userEmail,
+          firstName: firstName,
+          confirmationId: tripToUse.confirmationId,
+          tripId: tripToUse.id
+        });
+        
+        console.log('Confirmation email sent successfully');
+      } catch (emailErr) {
+        console.error('Error sending confirmation email:', emailErr);
+      }
+      
+      // Always continue with success, even if DB save or email sending failed
       onSuccess(tripId);
     } catch (err) {
       setError('Payment failed. Please try again.');
@@ -172,7 +199,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <h4 className="font-medium mb-2">Trip Summary</h4>
                 <p className="text-sm text-gray-600">{destination.name}</p>
                 <p className="text-sm text-gray-600">{duration.nights} nights</p>
-                <p className="text-sm text-gray-600">{selectedCampgrounds.length} campgrounds</p>
               </div>
             </div>
 

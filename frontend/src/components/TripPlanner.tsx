@@ -36,7 +36,8 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     generatePlan, 
     setFlowStage,
     selectedCampgrounds,
-    setSelectedCampgrounds
+    setSelectedCampgrounds,
+    clearSelectedCampgrounds
   } = useTripPlan();
   
   const tripPlan = externalTripPlan !== undefined ? externalTripPlan : contextTripPlan;
@@ -57,6 +58,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     return initialDuration.guestCount;
   });
   const [duration, setDuration] = useState<TripDuration>(initialDuration);
+
 
   const { campgrounds, loading, loadCampgroundsForDay } = useCampgroundLoader({
     availabilityData,
@@ -80,6 +82,11 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       setGuestCount(tripPlan.guestCount);
     }
   }, [tripPlan]);
+
+  const handleNavigateAway = () => {
+    clearSelectedCampgrounds();
+    onClose();
+  };
 
   if (!tripPlan) {
     return (
@@ -188,7 +195,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
         duration={duration}
         selectedCampgrounds={getFilteredSelectedCampgrounds()}
         guestCount={guestCount}
-        onClose={onClose}
+        onClose={handleNavigateAway}
       />
     );
   }
@@ -205,12 +212,12 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
         duration={duration}
         selectedCampgrounds={selectedCampgrounds}
         onReviewTrip={() => setShowSummary(true)}
-        onClose={onClose}
+        onClose={handleNavigateAway}
       />
 
       <div className="max-w-7xl mx-auto">
         <div className="px-4 py-6">
-          <BackButton onClick={onClose} />
+          <BackButton onClick={handleNavigateAway} />
         </div>
 
         <div className="px-4">

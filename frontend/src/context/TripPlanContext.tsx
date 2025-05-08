@@ -19,6 +19,7 @@ interface TripPlanContextType {
   setSelectedDestination: (destination: string | null) => void;
   selectedCampgrounds: SelectedCampground[];
   setSelectedCampgrounds: (campgrounds: SelectedCampground[]) => void;
+  clearSelectedCampgrounds: () => void;
   flowStage: FlowStage;
   setFlowStage: (stage: FlowStage) => void;
   generatePlan: (
@@ -100,6 +101,10 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
     setError(null);
   };
 
+  const clearSelectedCampgrounds = () => {
+    setSelectedCampgrounds([]);
+  };
+
   const value = {
     tripPlan,
     availabilityData,
@@ -111,6 +116,7 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
     setFlowStage,
     selectedCampgrounds,
     setSelectedCampgrounds,
+    clearSelectedCampgrounds,
     generatePlan,
     clearPlan
   };

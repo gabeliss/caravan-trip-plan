@@ -22,8 +22,12 @@ const TripSummary: React.FC<TripSummaryProps> = ({
 }) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [tripId, setTripId] = useState<string | null>(null);
-  const { setFlowStage } = useTripPlan();
+  const { setFlowStage, clearSelectedCampgrounds } = useTripPlan();
 
+  const handleNavigateAway = () => {
+    clearSelectedCampgrounds();
+    onClose();
+  };
 
   const handlePaymentSuccess = (id: string) => {
     setTripId(id);
@@ -39,7 +43,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
         destination={destination}
         duration={duration}
         selectedCampgrounds={selectedCampgrounds}
-        onClose={onClose}
+        onClose={handleNavigateAway}
         isPaid={true}
       />
     );
@@ -52,7 +56,7 @@ const TripSummary: React.FC<TripSummaryProps> = ({
       destination={destination}
       duration={duration}
       selectedCampgrounds={selectedCampgrounds}
-      onClose={onClose}
+      onClose={handleNavigateAway}
       onBookTrip={() => setShowPaymentModal(true)}
     >
       {showPaymentModal && (
