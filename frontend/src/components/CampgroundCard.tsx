@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Campground } from '../types';
 import { FullAvailability, AccommodationAvailability } from '../types/campground';
 import apiService from '../services/apiService';
+import { useTripPlan } from '../context/TripPlanContext';
 import { format } from 'date-fns';
 import {
   Tent, Home, Hotel, Wifi, ShowerHead, Power, Car, Utensils, Flame, Dog, Droplets, Waves, CheckCircle2, AlertTriangle, Clock, Calendar, ShieldAlert, RefreshCw, MapPin, Star, ChevronUp, ChevronDown, ChevronLeft, ChevronRight
@@ -10,7 +11,7 @@ import {
 
 interface CampgroundCardProps {
   campground: Campground;
-  onSelect: (campground: Campground, accommodationType: string) => void;
+  onSelect: (campground: Campground | null, accommodationType: string) => void;
   tripStartDate: Date;  // Required trip start date
   tripEndDate: Date;    // Required trip end date
   guestCount: number;   // Number of guests
@@ -23,6 +24,7 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
   tripEndDate,
   guestCount
 }) => {
+  const { selectedCampgrounds } = useTripPlan();
   const [selectedAccommodationType, setSelectedAccommodationType] = useState<string>(
     Object.entries(campground.siteTypes || {}).find(([_, isAvailable]) => isAvailable)?.[0] || 'tent'
   );
@@ -81,10 +83,30 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
   };
 
   const handleSelect = () => {
-    if (displayedAvailability?.available) {
+    if (!displayedAvailability?.available) return;
+  
+    if (isSelected) {
+      // If already selected, unselect
+      const currentStay = selectedCampgrounds.find(sel => 
+        sel?.campground?.id === campground.id && sel.accommodationType === selectedAccommodationType
+      );
+  
+      if (currentStay) {
+        // Remove the selected campground for this accommodation type
+        // (you can't directly update TripPlanner context here, so we'll send a special value)
+        onSelect(null as any, selectedAccommodationType);  // We'll handle this in TripPlanner
+      }
+  
+    } else {
+      // Select the campground
       onSelect(campground, selectedAccommodationType);
     }
   };
+
+  const isSelected = selectedCampgrounds.some(
+    (sel) => sel?.campground?.id === campground.id && sel.accommodationType === selectedAccommodationType
+  );  
+  
 
   const getAmenityIcon = (amenity: string) => {
     const normalizedAmenity = amenity.toLowerCase();
@@ -220,14 +242,16 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
 
           <button
             className={`py-2 px-4 rounded font-medium transition-colors duration-200 ${
-              isLoading || isUnavailable
-                ? 'bg-gray-400 text-gray-100 cursor-not-allowed'
-                : 'bg-primary hover:bg-primary-dark text-beige'
+              isSelected
+                ? 'bg-emerald-600 text-white'
+                : isLoading || isUnavailable
+                  ? 'bg-gray-400 text-gray-100 cursor-not-allowed'
+                  : 'bg-primary hover:bg-primary-dark text-beige'
             }`}
             onClick={isLoading || isUnavailable ? undefined : handleSelect}
             type="button"
           >
-            {isLoading ? 'Checking...' : isUnavailable ? 'Unavailable' : 'Select'}
+            {isSelected ? 'Selected' : isLoading ? 'Checking...' : isUnavailable ? 'Unavailable' : 'Select'}
           </button>
         </div>
       </div>

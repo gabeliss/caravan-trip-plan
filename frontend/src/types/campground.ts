@@ -30,6 +30,6 @@ export interface CampgroundWithAvailability extends Omit<Campground, 'availabili
  * Selected campground with accommodation type
  */
 export interface SelectedCampground {
-  campground: Campground;
+  campground: Campground | null;
   accommodationType: string;
 } 

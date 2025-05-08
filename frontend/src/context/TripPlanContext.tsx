@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { ItineraryPlan } from '../types';
 import tripService from '../services/tripService';
+import { SelectedCampground } from '../types/campground';
+type FlowStage = 
+  | 'destination'
+  | 'campgrounds'
+  | 'trip-summary'
+  | 'confirmation'
+  | 'completed';
+
 
 interface TripPlanContextType {
   tripPlan: ItineraryPlan | null;
@@ -9,6 +17,10 @@ interface TripPlanContextType {
   error: string | null;
   selectedDestination: string | null;
   setSelectedDestination: (destination: string | null) => void;
+  selectedCampgrounds: SelectedCampground[];
+  setSelectedCampgrounds: (campgrounds: SelectedCampground[]) => void;
+  flowStage: FlowStage;
+  setFlowStage: (stage: FlowStage) => void;
   generatePlan: (
     destinationId: string,
     nights: number,
@@ -39,6 +51,8 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedDestination, setSelectedDestination] = useState<string | null>(null);
+  const [flowStage, setFlowStage] = useState<FlowStage>('destination');
+  const [selectedCampgrounds, setSelectedCampgrounds] = useState<SelectedCampground[]>([]);
 
   const generatePlan = async (
     destinationId: string,
@@ -93,6 +107,10 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
     error,
     selectedDestination,
     setSelectedDestination,
+    flowStage,
+    setFlowStage,
+    selectedCampgrounds,
+    setSelectedCampgrounds,
     generatePlan,
     clearPlan
   };

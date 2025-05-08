@@ -46,7 +46,15 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
   tripPlan: externalTripPlan,
   loading: externalLoading
 }) => {
-  const { tripPlan: contextTripPlan, loading: contextLoading, availabilityData, generatePlan } = useTripPlan();
+  const { 
+    tripPlan: contextTripPlan, 
+    loading: contextLoading, 
+    availabilityData, 
+    generatePlan, 
+    setFlowStage,
+    selectedCampgrounds,
+    setSelectedCampgrounds
+  } = useTripPlan();
   
   // Use external props if provided, otherwise use the context values
   const tripPlan = externalTripPlan !== undefined ? externalTripPlan : contextTripPlan;
@@ -54,7 +62,6 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
 
   // All hook declarations moved before conditional returns
   const [selectedDay, setSelectedDay] = useState(1);
-  const [selectedCampgrounds, setSelectedCampgrounds] = useState<SelectedCampground[]>([]);
   const [showSummary, setShowSummary] = useState(false);
   const [guestCount, setGuestCount] = useState(() => {
     // If we have a trip plan, it should include guest count
@@ -281,51 +288,41 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     );
   }
 
-  const handleCampgroundSelect = (campground: Campground, accommodationType: string) => {
+  const handleCampgroundSelect = (campground: Campground | null, accommodationType: string) => {
     const currentStay = getLocationStays(tripPlan, destination, duration).find(stay => 
       selectedDay >= stay.startNight && selectedDay <= stay.endNight
     );
-
-    // Get the current city from the stay, or fallback to a default
-    const currentCity = currentStay?.location || 'Unknown';
-    
-    // Add the city information to the campground if it doesn't have it already
-    const campgroundWithCity = {
-      ...campground,
-      city: campground.city || currentCity
-    };
-
-    if (currentStay) {
-      setSelectedCampgrounds(prev => {
-        const updated = [...prev];
-        // Only update nights within the current stay and total duration
+  
+    const updated = [...selectedCampgrounds];
+  
+    if (campground === null) {
+      // User clicked to unselect
+      if (currentStay) {
+        for (let night = currentStay.startNight; night <= Math.min(currentStay.endNight, duration.nights); night++) {
+          updated[night - 1] = { campground: null, accommodationType: '' };
+        }
+      } else {
+        updated[selectedDay - 1] = { campground: null, accommodationType: '' };
+      }
+    } else {
+      const currentCity = currentStay?.location || 'Unknown';
+      const campgroundWithCity = {
+        ...campground,
+        city: campground.city || currentCity
+      };
+  
+      if (currentStay) {
         for (let night = currentStay.startNight; night <= Math.min(currentStay.endNight, duration.nights); night++) {
           updated[night - 1] = { campground: campgroundWithCity, accommodationType };
         }
-        // Ensure array length matches duration.nights
-        return updated.slice(0, duration.nights);
-      });
-
-      const nextStay = getLocationStays(tripPlan, destination, duration).find(stay => stay.startNight > currentStay.endNight);
-      if (nextStay && nextStay.startNight <= duration.nights) {
-        setSelectedDay(nextStay.startNight);
       } else {
-        setShowSummary(true);
-      }
-    } else {
-      setSelectedCampgrounds(prev => {
-        const updated = [...prev];
         updated[selectedDay - 1] = { campground: campgroundWithCity, accommodationType };
-        return updated.slice(0, duration.nights);
-      });
-
-      if (selectedDay < duration.nights) {
-        setSelectedDay(selectedDay + 1);
-      } else {
-        setShowSummary(true);
       }
     }
+  
+    setSelectedCampgrounds(updated);
   };
+  
 
   const handleDurationChange = (newDuration: TripDuration) => {
     if (!newDuration.startDate) {
@@ -335,7 +332,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     setDuration(newDuration);
     if (newDuration.nights !== duration.nights) {
       // Reset selected campgrounds to match new duration
-      setSelectedCampgrounds(prev => prev.slice(0, newDuration.nights));
+      setSelectedCampgrounds(selectedCampgrounds.slice(0, newDuration.nights));
       setSelectedDay(1);
     }
     
@@ -401,6 +398,29 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     });
   };
 
+  const getFilteredSelectedCampgrounds = () => {
+    return selectedCampgrounds
+      .filter(s => s?.campground !== null)
+      .map(s => s?.campground)
+      .filter((campground): campground is Campground => campground !== null);
+  };
+
+  const handleContinue = () => {
+    const currentStay = getLocationStays(tripPlan, destination, duration).find(stay => 
+      selectedDay >= stay.startNight && selectedDay <= stay.endNight
+    );
+
+    const nextStay = getLocationStays(tripPlan, destination, duration).find(stay => 
+      stay.startNight > (currentStay?.endNight || selectedDay)
+    );
+
+    if (nextStay && nextStay.startNight <= duration.nights) {
+      setSelectedDay(nextStay.startNight);
+    } else {
+      setFlowStage('trip-summary');
+    }
+  };
+
   // Render
   // ======
 
@@ -409,7 +429,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       <TripSummary
         destination={destination}
         duration={duration}
-        selectedCampgrounds={selectedCampgrounds.filter(s => s?.campground).map(s => s.campground)}
+        selectedCampgrounds={getFilteredSelectedCampgrounds()}
         guestCount={guestCount}
         onClose={onClose}
       />
@@ -586,6 +606,16 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
                   );
                 })()}
               </div>
+              
+              <div className="bottom-0 p-4">
+                <button
+                  onClick={handleContinue}
+                  className="w-full px-6 py-3 rounded-lg bg-primary-dark text-white font-semibold hover:bg-primary-dark/90 transition"
+                  disabled={!selectedCampgrounds[selectedDay - 1]?.campground}
+                >
+                  Continue
+                </button>
+              </div>
             </div>
 
             <div className="space-y-8">
@@ -596,7 +626,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
                 </h3>
                 <Map 
                   destination={destination}
-                  selectedCampgrounds={selectedCampgrounds.filter(s => s?.campground).map(s => s.campground)}
+                  selectedCampgrounds={getFilteredSelectedCampgrounds()}
                 />
               </div>
             </div>

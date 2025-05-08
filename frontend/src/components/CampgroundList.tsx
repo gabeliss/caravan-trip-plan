@@ -6,7 +6,7 @@ import { CampgroundCard } from './CampgroundCard';
 
 interface CampgroundListProps {
   campgrounds: Campground[];
-  onSelect: (campground: Campground, accommodationType: string) => void;
+  onSelect: (campground: Campground | null, accommodationType: string) => void;
   loading: boolean;
   tripStartDate: Date;
   tripEndDate: Date;
@@ -55,7 +55,7 @@ export const CampgroundList: React.FC<CampgroundListProps> = ({
     );
   };
 
-  const handleCampgroundSelect = (campground: Campground, accommodationType: string) => {
+  const handleCampgroundSelect = (campground: Campground | null, accommodationType: string) => {
     onSelect(campground, accommodationType);
   };
 

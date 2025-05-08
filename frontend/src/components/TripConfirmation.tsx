@@ -18,7 +18,7 @@ import {
 import { format, addDays } from 'date-fns';
 import { Destination, TripDuration, Campground } from '../types';
 import { Map } from './Map';
-
+import { useTripPlan } from '../context/TripPlanContext';
 interface TripConfirmationProps {
   destination: Destination;
   duration: TripDuration;
@@ -54,7 +54,7 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
   const navigate = useNavigate();
   const [showMap, setShowMap] = useState(false);
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
-
+  const { setFlowStage } = useTripPlan();
   // Debug: Log all campgrounds and their booking URLs
   console.log("TripConfirmation - All campgrounds:");
   selectedCampgrounds.forEach((campground, index) => {
@@ -260,7 +260,7 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={onBookTrip}
+                      onClick={() => setFlowStage('completed')}
                       className="w-full flex items-center justify-center gap-2 bg-primary-dark text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg hover:bg-primary-dark/90 transition-colors text-sm sm:text-base font-medium"
                     >
                       Complete & Get Full Itinerary

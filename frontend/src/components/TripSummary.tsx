@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { PaymentModal } from './PaymentModal';
 import { TripConfirmation } from './TripConfirmation';
 import { Destination, TripDuration, Campground } from '../types';
+import { useTripPlan } from '../context/TripPlanContext';
+
 
 interface TripSummaryProps {
   destination: Destination;
@@ -20,10 +22,13 @@ const TripSummary: React.FC<TripSummaryProps> = ({
 }) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [tripId, setTripId] = useState<string | null>(null);
+  const { setFlowStage } = useTripPlan();
+
 
   const handlePaymentSuccess = (id: string) => {
     setTripId(id);
     setShowPaymentModal(false);
+    setFlowStage('confirmation');
   };
 
   // If payment is successful (tripId exists), show the confirmation screen
