@@ -76,15 +76,15 @@ export const Login: React.FC = () => {
             }
           }
           // Navigate to dashboard after claim attempt (whether successful or not)
-          navigate('/dashboard');
+          navigate('/');
         } catch (claimErr) {
           console.error('❌ Login: Error claiming trip:', claimErr);
           // Still navigate to dashboard even if claim fails
-          navigate('/dashboard');
+          navigate('/');
         }
       } else {
         // Standard login flow without trip claiming
-        navigate('/dashboard');
+        navigate('/');
       }
     } catch (err: any) {
       console.error('❌ Login: Error during login:', err);

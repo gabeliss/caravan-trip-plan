@@ -90,7 +90,7 @@ function AuthAwareLoginRoute() {
   
   // Only redirect to dashboard if authenticated AND not in the process of logging out
   if (isAuthenticated && !loading && !isLoggingOut) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/" />;
   }
   
   // Otherwise show the login component

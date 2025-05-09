@@ -7,7 +7,6 @@ export const authService = {
    */
   async getCurrentUser(): Promise<User | null> {
     try {
-      console.log('🔍 authService: Getting current user session...');
   
       const timeout = new Promise<null>((resolve) => {
         setTimeout(() => {
@@ -22,7 +21,6 @@ export const authService = {
       ]);
   
       if (!sessionResponse || !sessionResponse.user) {
-        console.log('⚠️ authService: No session or user in session');
         return null;
       }
   
@@ -37,15 +35,12 @@ export const authService = {
   // Private method to fetch current user data
   async _fetchCurrentUser(user: any): Promise<User | null> {
     try {
-      console.log('✅ authService: Reusing session user:', user.id);
   
       if (!user.email_confirmed_at && user.confirmation_sent_at) {
-        console.log('⚠️ authService: Email not confirmed yet');
         return null;
       }
   
       // Fetch user profile
-      console.log('🔍 authService: Fetching user profile...');
       let { data: userData, error } = await supabase
         .from('users')
         .select('*')
@@ -53,7 +48,6 @@ export const authService = {
         .single();
   
       if (error && error.code === 'PGRST116') {
-        console.log('⚠️ authService: No user profile found, creating one...');
         const { error: insertError } = await supabase.from('users').insert({
           id: user.id,
           email: user.email || '',
@@ -76,11 +70,8 @@ export const authService = {
       }
   
       if (!userData) {
-        console.error('❌ User profile still not found');
         return null;
       }
-  
-      console.log('✅ User profile:', userData);
   
       // Fetch trips
       const { data: tripsData } = await supabase
@@ -110,7 +101,6 @@ export const authService = {
         trips
       };
   
-      console.log('✅ Final currentUser:', currentUser);
       return currentUser;
     } catch (error) {
       console.error('❌ authService: Error in _fetchCurrentUser:', error);
@@ -123,7 +113,6 @@ export const authService = {
    */
   async login(email: string, password: string): Promise<User> {
     try {
-      console.log('🔍 authService: Starting login with Supabase...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -134,17 +123,14 @@ export const authService = {
         throw error;
       }
       
-      console.log('✅ authService: Supabase authentication successful for user:', data.user.id);
       
       // Check if email is confirmed
       if (!data.user.email_confirmed_at && data.user.confirmation_sent_at) {
-        console.log('⚠️ authService: Email not confirmed for user');
         throw new Error('Please confirm your email before logging in. Check your inbox for the confirmation link.');
       }
       
       // Get user profile data
       // Fetch user profile data with timeout
-      console.log('🔍 authService: Fetching user profile data...');
       const userProfilePromise = supabase
         .from('users')
         .select('*')
@@ -164,10 +150,8 @@ export const authService = {
         throw new Error('User profile fetch timed out or failed');
       }
       
-      console.log('✅ authService: User profile fetched successfully');
       
       // Get user trips
-      console.log('🔍 authService: Fetching user trips...');
       const { data: tripsData, error: tripsError } = await supabase
         .from('trips')
         .select('*')
@@ -176,8 +160,6 @@ export const authService = {
       if (tripsError) {
         console.error('❌ authService: Error fetching user trips:', tripsError);
         // Continue anyway, just with empty trips array
-      } else {
-        console.log('✅ authService: User trips fetched successfully, count:', tripsData?.length || 0);
       }
       
       const user = {
@@ -200,7 +182,6 @@ export const authService = {
         })) : []
       };
       
-      console.log('✅ authService: Login process completed successfully');
       return user;
     } catch (error) {
       console.error('❌ authService: Login error:', error);
@@ -254,7 +235,6 @@ export const authService = {
    */
   async logout(): Promise<void> {
     try {
-      console.log('Starting Supabase signout process...');
       
       // Try both local and global signout to ensure complete logout
       const { error } = await supabase.auth.signOut({ scope: 'global' });
@@ -264,7 +244,6 @@ export const authService = {
         throw error;
       }
       
-      console.log('Supabase signout completed successfully');
       
       // Clear any local storage items that might be keeping state
       localStorage.removeItem('supabase.auth.token');

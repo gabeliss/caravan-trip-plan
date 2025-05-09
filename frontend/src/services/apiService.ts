@@ -72,7 +72,7 @@ export const apiService = {
         numAdults,
         numKids
       });
-      console.log(`Received availability for ${campgroundId}`);
+      
       return response.data;
     } catch (error: any) {
       console.error(`Failed to check availability for campground ${campgroundId}:`, error);

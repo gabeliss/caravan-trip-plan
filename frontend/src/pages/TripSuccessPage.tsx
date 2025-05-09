@@ -7,15 +7,22 @@ import { SavedTrip } from '../types';
 import { MapPin, Calendar, Users, Check, ArrowRight, LogIn, UserPlus } from 'lucide-react';
 import campgroundNamesMap from '../info/campground-ids-to-names.json';
 import nightMappings from '../info/num-night-mappings.json';
+import { useTripPlan } from '../context/TripPlanContext';
 
 export const TripSuccessPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
+  const { clearSelectedCampgrounds, clearPlan } = useTripPlan();
   const [trip, setTrip] = useState<SavedTrip | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isOwner, setIsOwner] = useState(false);
+
+  const handleReturnHome = () => {
+    clearSelectedCampgrounds();
+    clearPlan();
+  };
 
   useEffect(() => {
     const fetchTrip = async () => {
@@ -68,7 +75,11 @@ export const TripSuccessPage: React.FC = () => {
         <div className="bg-white rounded-xl shadow-md p-8 max-w-md w-full text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Oops!</h2>
           <p className="mb-6">{error}</p>
-          <Link to="/" className="select-night-button inline-flex items-center">
+          <Link 
+            to="/" 
+            className="select-night-button inline-flex items-center"
+            onClick={handleReturnHome}
+          >
             Return Home
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
@@ -83,7 +94,11 @@ export const TripSuccessPage: React.FC = () => {
         <div className="bg-white rounded-xl shadow-md p-8 max-w-md w-full text-center">
           <h2 className="text-2xl font-bold mb-4">Trip Not Found</h2>
           <p className="mb-6">We couldn't find the trip you're looking for.</p>
-          <Link to="/" className="select-night-button inline-flex items-center">
+          <Link 
+            to="/" 
+            className="select-night-button inline-flex items-center"
+            onClick={handleReturnHome}
+          >
             Return Home
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
@@ -230,7 +245,7 @@ export const TripSuccessPage: React.FC = () => {
               <h1 className="text-2xl font-bold text-green-800">Trip Confirmed!</h1>
             </div>
             <p className="text-green-700">
-              Your trip has been successfully booked. We've sent a confirmation email with your trip details.
+              Your trip has been successfully booked. We've sent a confirmation email with your trip details (check your spam / junk folder if you don't see it show up).
             </p>
           </div>
 
@@ -350,7 +365,11 @@ export const TripSuccessPage: React.FC = () => {
               )}
 
               <div className="mt-8 text-center">
-                <Link to="/" className="text-primary-dark hover:text-primary-dark/80 font-medium">
+                <Link 
+                  to="/" 
+                  className="text-primary-dark hover:text-primary-dark/80 font-medium"
+                  onClick={handleReturnHome}
+                >
                   Return to Home
                 </Link>
               </div>

@@ -52,16 +52,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
       if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && isAuthenticated) {
-        console.log('🔁 Auth already established, skipping redundant session check.');
         return;
       }
   
       if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
         try {
           if (!session?.user) {
-            console.warn('⚠️ AuthContext: No session user yet, deferring check...');
             setTimeout(() => checkSession(), 1000); // retry after 1s
           } else if (!isAuthenticated) {
             const currentUser = await authService.getCurrentUser();
@@ -132,9 +129,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setConfirmationError(null);
-      console.log("✅ AuthContext: Starting login process");
       const loggedInUser = await authService.login(email, password);
-      console.log("✅ AuthContext: authService.login returned, user:", loggedInUser);
 
 
       try {
