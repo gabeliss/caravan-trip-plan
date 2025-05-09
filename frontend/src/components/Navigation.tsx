@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Map, BookMarked, User, ChevronDown, ChevronUp, Settings, LogOut, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,6 +19,39 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDestinations, setShowDestinations] = useState(false);
   const [showDesktopDestinations, setShowDesktopDestinations] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showMobileMenu &&
+        mobileMenuRef.current && 
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        mobileMenuButtonRef.current &&
+        !mobileMenuButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowMobileMenu(false);
+      }
+
+      if (
+        showUserMenu &&
+        userMenuRef.current && 
+        !userMenuRef.current.contains(event.target as Node) &&
+        userMenuButtonRef.current &&
+        !userMenuButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowUserMenu(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMobileMenu, showUserMenu]);
 
   // Check if we're in the dashboard section
   const isDashboard = location.pathname.startsWith('/dashboard');
@@ -93,6 +126,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
           {/* Mobile Menu Button - Only visible on small screens */}
           <div className="md:hidden relative">
             <button
+              ref={mobileMenuButtonRef}
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="text-primary-dark p-2 hover:bg-beige-dark/10 rounded-lg transition-colors"
               aria-label="Toggle menu"
@@ -103,21 +137,13 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
             <AnimatePresence>
               {showMobileMenu && (
                 <motion.div
+                  ref={mobileMenuRef}
                   initial="hidden"
                   animate="visible"
                   exit="hidden"
                   variants={menuVariants}
                   className="absolute left-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-100 py-2"
                 >
-                  {isAuthenticated && (
-                    <>
-                      <div className="px-4 py-2 border-b mb-2">
-                        <div className="font-display text-lg text-primary-dark">{user?.name}</div>
-                        <div className="text-sm text-gray-500">{user?.email}</div>
-                      </div>
-                    </>
-                  )}
-                  
                   <div className="space-y-1">
                     <button
                       onClick={() => handleNavigation('/')}
@@ -189,41 +215,6 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
                         <span className="flex items-center gap-2">
                           <User className="w-4 h-4" />
                           <span>My Trips</span>
-                        </span>
-                      </button>
-                    )}
-
-                    <div className="border-t my-2"></div>
-
-                    {isAuthenticated ? (
-                      <>
-                        <button
-                          onClick={() => handleNavigation('/dashboard/settings')}
-                          className="w-full text-left px-4 py-2 text-primary-dark hover:bg-beige/50 transition-colors font-display"
-                        >
-                          <span className="flex items-center gap-2">
-                            <Settings className="w-4 h-4" />
-                            <span>Settings</span>
-                          </span>
-                        </button>
-                        <button
-                          onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 text-primary-dark hover:bg-beige/50 transition-colors font-display"
-                        >
-                          <span className="flex items-center gap-2">
-                            <LogOut className="w-4 h-4" />
-                            <span>Sign Out</span>
-                          </span>
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => handleNavigation('/login')}
-                        className="w-full text-left px-4 py-2 text-primary-dark hover:bg-beige/50 transition-colors font-display"
-                      >
-                        <span className="flex items-center gap-2">
-                          <User className="w-4 h-4" />
-                          <span>Sign In</span>
                         </span>
                       </button>
                     )}
@@ -316,6 +307,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
             {isAuthenticated ? (
               <div className="relative">
                 <button
+                  ref={userMenuButtonRef}
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="text-primary-dark hover:text-primary-dark/80 flex items-center gap-2"
                 >
@@ -326,6 +318,7 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
                 <AnimatePresence>
                   {showUserMenu && (
                     <motion.div
+                      ref={userMenuRef}
                       initial="hidden"
                       animate="visible"
                       exit="hidden"
@@ -338,6 +331,15 @@ export const Navigation: React.FC<NavigationProps> = ({ isPaid = false }) => {
                       </div>
                       
                       <div className="space-y-1">
+                        <button
+                          onClick={() => handleNavigation('/dashboard')}
+                          className="w-full text-left px-4 py-2 text-primary-dark hover:bg-beige/50 transition-colors font-display"
+                        >
+                          <span className="flex items-center gap-2">
+                            <User className="w-4 h-4" />
+                            <span>My Trips</span>
+                          </span>
+                        </button>
                         <button
                           onClick={() => handleNavigation('/dashboard/settings')}
                           className="w-full text-left px-4 py-2 text-primary-dark hover:bg-beige/50 transition-colors font-display"

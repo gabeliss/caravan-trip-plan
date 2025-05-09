@@ -72,7 +72,6 @@ export const Login: React.FC = () => {
                 ...trip,
                 user_id: currentUser.id
               });
-              console.log('✅ Login: Trip claimed successfully');
             }
           }
           // Navigate to dashboard after claim attempt (whether successful or not)

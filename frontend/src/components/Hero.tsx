@@ -31,6 +31,44 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const generateCurvedText = (text: string, radius: number = 120) => {
+    const uniqueId = `curve-${text.replace(/\s+/g, '-').toLowerCase()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    return (
+      <div className="absolute w-full -top-8 left-0 right-0 flex justify-center z-10 overflow-visible">
+        <svg 
+          className="w-full h-14 overflow-visible" 
+          viewBox="-100 -130 200 30"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <path 
+              id={uniqueId} 
+              d={`M -${radius} 0 A ${radius} ${radius} 0 0 1 ${radius} 0`}
+              fill="transparent"
+            />
+          </defs>
+          <text 
+            fill="#173421"
+            dy="-2"
+            textAnchor="middle"
+            fontSize="14"
+            className="font-display text-xs sm:text-sm md:text-base"
+            letterSpacing="1.5"
+            fontWeight="700"
+          >
+            <textPath 
+              href={`#${uniqueId}`} 
+              startOffset="50%"
+            >
+              {text}
+            </textPath>
+          </text>
+        </svg>
+      </div>
+    );
+  };
+
   const steps: Step[] = [
     {
       title: "Curate Your Trip",
@@ -82,23 +120,17 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
       container.scrollLeft < container.scrollWidth - container.clientWidth - 10
     );
     
-    // Update current step index based on scroll position
-    // Calculate more accurately for responsive layouts
     const stepWidth = container.clientWidth;
     const newIndex = Math.round(container.scrollLeft / stepWidth);
-    // Ensure we don't go out of bounds
     const safeIndex = Math.min(newIndex, steps.length - 1);
     setCurrentStepIndex(safeIndex);
   };
 
-  // Ensure scroll event is handled on component mount and screen size changes
   useEffect(() => {
     const container = stepsContainerRef.current;
     if (container) {
-      // Initial scroll position check
       handleScroll();
       
-      // Add resize listener to update arrows when window size changes
       const handleResize = () => {
         handleScroll();
       };
@@ -294,32 +326,19 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 transition={{ duration: 0.6 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div className="relative w-full pt-8 overflow-hidden">
-                  <div 
-                    className="relative text-center mb-2"
-                  >
-                    <div 
-                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
-                      style={{
-                        transform: 'perspective(100px) rotateX(10deg)',
-                        transformOrigin: 'bottom',
-                        letterSpacing: '0.1em'
-                      }}
-                    >
-                      Northern Michigan
-                    </div>
-                  </div>
-
-                  <div 
-                    onClick={() => handleLearnMore(destinations[0].id)}
-                    className="relative w-full aspect-square cursor-pointer group"
-                  >
+                <div className="relative w-full mt-12 mb-2 overflow-visible">
+                  <div className="relative w-full aspect-square cursor-pointer group overflow-visible">
+                    {generateCurvedText("Northern Michigan")}
                     <img
                       src={destinations[0].imageUrl}
                       alt={destinations[0].name}
                       className="w-full h-full object-cover rounded-full"
+                      onClick={() => handleLearnMore(destinations[0].id)}
                     />
-                    <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div 
+                      className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                      onClick={() => handleLearnMore(destinations[0].id)}
+                    >
                       <span className="text-beige font-display text-lg">Learn More</span>
                     </div>
                   </div>
@@ -336,32 +355,19 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div className="relative w-full pt-8 overflow-hidden">
-                  <div 
-                    className="relative text-center mb-2"
-                  >
-                    <div 
-                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
-                      style={{
-                        transform: 'perspective(100px) rotateX(10deg)',
-                        transformOrigin: 'bottom',
-                        letterSpacing: '0.1em'
-                      }}
-                    >
-                      Arizona
-                    </div>
-                  </div>
-
-                  <div 
-                    onClick={() => handleLearnMore(destinations[1].id)}
-                    className="relative w-full aspect-square cursor-pointer group"
-                  >
+                <div className="relative w-full mt-12 mb-2 overflow-visible">
+                  <div className="relative w-full aspect-square cursor-pointer group overflow-visible">
+                    {generateCurvedText("Arizona")}
                     <img
                       src={destinations[1].imageUrl}
                       alt={destinations[1].name}
                       className="w-full h-full object-cover rounded-full"
+                      onClick={() => handleLearnMore(destinations[1].id)}
                     />
-                    <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div 
+                      className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                      onClick={() => handleLearnMore(destinations[1].id)}
+                    >
                       <span className="text-beige font-display text-lg">Coming Soon</span>
                     </div>
                   </div>
@@ -378,32 +384,19 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div className="relative w-full pt-8 overflow-hidden">
-                  <div 
-                    className="relative text-center mb-2"
-                  >
-                    <div 
-                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
-                      style={{
-                        transform: 'perspective(100px) rotateX(10deg)',
-                        transformOrigin: 'bottom',
-                        letterSpacing: '0.1em'
-                      }}
-                    >
-                      Washington
-                    </div>
-                  </div>
-
-                  <div 
-                    onClick={() => handleLearnMore(destinations[2].id)}
-                    className="relative w-full aspect-square cursor-pointer group"
-                  >
+                <div className="relative w-full mt-12 mb-2 overflow-visible">
+                  <div className="relative w-full aspect-square cursor-pointer group overflow-visible">
+                    {generateCurvedText("Washington")}
                     <img
                       src={destinations[2].imageUrl}
                       alt={destinations[2].name}
                       className="w-full h-full object-cover rounded-full"
+                      onClick={() => handleLearnMore(destinations[2].id)}
                     />
-                    <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div 
+                      className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                      onClick={() => handleLearnMore(destinations[2].id)}
+                    >
                       <span className="text-beige font-display text-lg">Coming Soon</span>
                     </div>
                   </div>
@@ -420,32 +413,19 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div className="relative w-full pt-8 overflow-hidden">
-                  <div 
-                    className="relative text-center mb-2"
-                  >
-                    <div 
-                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
-                      style={{
-                        transform: 'perspective(100px) rotateX(10deg)',
-                        transformOrigin: 'bottom',
-                        letterSpacing: '0.1em'
-                      }}
-                    >
-                      Smoky Mountains
-                    </div>
-                  </div>
-
-                  <div 
-                    onClick={() => handleLearnMore(destinations[3].id)}
-                    className="relative w-full aspect-square cursor-pointer group"
-                  >
+                <div className="relative w-full mt-12 mb-2 overflow-visible">
+                  <div className="relative w-full aspect-square cursor-pointer group overflow-visible">
+                    {generateCurvedText("Smoky Mountains")}
                     <img
                       src={destinations[3].imageUrl}
                       alt={destinations[3].name}
                       className="w-full h-full object-cover rounded-full"
+                      onClick={() => handleLearnMore(destinations[3].id)}
                     />
-                    <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div 
+                      className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                      onClick={() => handleLearnMore(destinations[3].id)}
+                    >
                       <span className="text-beige font-display text-lg">Coming Soon</span>
                     </div>
                   </div>
@@ -462,32 +442,19 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="flex flex-col items-center gap-3"
               >
-                <div className="relative w-full pt-8 overflow-hidden">
-                  <div 
-                    className="relative text-center mb-2"
-                  >
-                    <div 
-                      className="text-[#194027] font-display text-[0.7em] md:text-[0.8em] tracking-wider"
-                      style={{
-                        transform: 'perspective(100px) rotateX(10deg)',
-                        transformOrigin: 'bottom',
-                        letterSpacing: '0.1em'
-                      }}
-                    >
-                      Southern California
-                    </div>
-                  </div>
-
-                  <div 
-                    onClick={() => handleLearnMore(destinations[4].id)}
-                    className="relative w-full aspect-square cursor-pointer group"
-                  >
+                <div className="relative w-full mt-12 mb-2 overflow-visible">
+                  <div className="relative w-full aspect-square cursor-pointer group overflow-visible">
+                    {generateCurvedText("Southern California")}
                     <img
                       src={destinations[4].imageUrl}
                       alt={destinations[4].name}
                       className="w-full h-full object-cover rounded-full"
+                      onClick={() => handleLearnMore(destinations[4].id)}
                     />
-                    <div className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div 
+                      className="absolute inset-0 bg-[#194027]/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                      onClick={() => handleLearnMore(destinations[4].id)}
+                    >
                       <span className="text-beige font-display text-lg">Coming Soon</span>
                     </div>
                   </div>

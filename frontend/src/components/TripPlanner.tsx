@@ -8,7 +8,6 @@ import { useCampgroundLoader } from '../hooks/useCampgroundLoader';
 import StaysSelector from './StaysSelector';
 import ContinueButton from './ContinueButton';
 import TripPlannerHeader from './TripPlannerHeader';
-import BackButton from './BackButton';
 import CampgroundsSection from './CampgroundsSection';
 import RouteMap from './RouteMap';
 
@@ -216,11 +215,7 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
       />
 
       <div className="max-w-7xl mx-auto">
-        <div className="px-4 py-6">
-          <BackButton onClick={handleNavigateAway} />
-        </div>
-
-        <div className="px-4">
+        <div className="p-4">
           <TripDetailsEditor
             startDate={duration.startDate as Date}
             nights={duration.nights}

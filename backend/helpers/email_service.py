@@ -44,7 +44,7 @@ The Caravan Trip Plan Team
 <html>
 <head>
   <style>
-    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #FFF6ED; max-width: 600px; margin: 0 auto; }}
+    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #FFF6ED; margin: 0 auto; }}
     h1 {{ color: #173421; }}
     .header-img {{ width: 100%; }}
     .container {{ padding: 20px; }}

@@ -325,7 +325,6 @@ def claim_trips():
             .execute()
 
         updated = len(response.data) if response.data else 0
-        print(f"✅ Claimed {updated} trips for {email} → user {user_id}")
         return jsonify({'updated': updated})
 
     except Exception as e:
