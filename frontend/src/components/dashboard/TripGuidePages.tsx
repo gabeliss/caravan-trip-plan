@@ -262,15 +262,12 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) 
         'MMM d, yyyy'
       )}`
     : `${trip.trip_details.nights} Nights`;
-  
-  console.log("Formatted destination name:", destinationName);
 
   const getConsolidatedStays = (): ConsolidatedStay[] => {
     const stays: ConsolidatedStay[] = [];
     let currentStay: ConsolidatedStay | null = null;
 
     trip.selectedCampgrounds.forEach((campground, index) => {
-      console.log(`Processing campground ${index}:`, campground.id, "bookingUrl:", campground.bookingUrl);
       
       // Verify that the campground has city information, throw an error if missing
       if (!campground.city) {
@@ -321,11 +318,6 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) 
       stays.push(currentStay);
     }
 
-    // Add debug logging for all stays
-    stays.forEach((stay, index) => {
-      console.log(`Stay ${index}:`, stay.campground.id, "bookingUrl:", stay.campground.bookingUrl, "city:", stay.campground.city);
-    });
-
     return stays;
   };
 
@@ -334,21 +326,14 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) 
       ? `Night ${stay.nights.start}`
       : `Nights ${stay.nights.start}-${stay.nights.end}`;
     
-    // Enhanced debugging
-    console.log("Rendering stay card for", stay.campground.id);
-    console.log("Direct bookingUrl from stay:", stay.campground.bookingUrl);
-    console.log("City information:", stay.campground.city);
-    
     // Try to find the campground in the trip data as a fallback for booking URL
     const campgroundInTrip = trip.selectedCampgrounds.find(c => c.id === stay.campground.id);
-    console.log("Campground in trip data:", campgroundInTrip?.id, "bookingUrl:", campgroundInTrip?.bookingUrl);
     
     // Attempt to get enhanced campground details from our JSON data
     let enhancedData = null;
     try {
       if (stay.campground.city) {
         enhancedData = getCampgroundDetails(stay.campground.id, stay.campground.city);
-        console.log("Enhanced data found for campground:", enhancedData);
       }
     } catch (error) {
       console.error("Could not get enhanced data:", error);

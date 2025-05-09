@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { tripService } from '../services/tripService';
 import { SavedTrip } from '../types';
 import { MapPin, Calendar, Users, Check, ArrowRight, LogIn, UserPlus } from 'lucide-react';
+import campgroundNamesMap from '../info/campground-ids-to-names.json';
+import nightMappings from '../info/num-night-mappings.json';
 
 export const TripSuccessPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -99,6 +101,119 @@ export const TripSuccessPage: React.FC = () => {
     });
   };
 
+  const formatShortDate = (dateString: string | Date) => {
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const getCampgroundName = (campgroundId: string) => {
+    const mapping = campgroundNamesMap as Record<string, { name: string }>;
+    return mapping[campgroundId]?.name || campgroundId;
+  };
+
+  const getStayDatePeriods = () => {
+    const { destination, nights, startDate } = trip.trip_details;
+    const nightMapping = nightMappings[destination as keyof typeof nightMappings];
+    
+    if (!nightMapping || !nightMapping[nights.toString() as keyof typeof nightMapping]) {
+      return [];
+    }
+    
+    const cityStays = nightMapping[nights.toString() as keyof typeof nightMapping];
+    const tripStartDate = new Date(startDate);
+    
+    let currentDate = new Date(tripStartDate);
+    const stayPeriods = cityStays.map((cityStay: { city: string; nights: number }) => {
+      const stayStartDate = new Date(currentDate);
+      const stayEndDate = new Date(currentDate);
+      stayEndDate.setDate(stayEndDate.getDate() + cityStay.nights);
+      
+      const period = {
+        city: cityStay.city,
+        startDate: new Date(stayStartDate),
+        endDate: new Date(stayEndDate),
+        nights: cityStay.nights
+      };
+      
+      // Set current date to the start of the next stay
+      currentDate = new Date(stayEndDate);
+      
+      return period;
+    });
+    
+    return stayPeriods;
+  };
+
+  const getCampgroundStayPeriod = (campgroundId: string, campgroundCity: string | undefined) => {
+    if (!campgroundCity) return null;
+    
+    // Try to normalize potential city formats to match what's in the night mappings
+    const normalizedCampgroundCity = campgroundCity.toLowerCase().trim();
+    
+    // Get city mappings based on campground ID
+    const cityMappings: Record<string, string> = {
+      'anchor-inn': 'traverse-city',
+      'leelanau-pines': 'traverse-city',
+      'timber-ridge': 'traverse-city',
+      'indian-river': 'mackinac-city',
+      'cabins-of-mackinaw': 'mackinac-city',
+      'teepee-campground': 'mackinac-city',
+      'pictured-rocks': 'pictured-rocks',
+      'tourist-park': 'pictured-rocks',
+      'munising-koa': 'pictured-rocks',
+      'uncle-duckys-au-train': 'pictured-rocks',
+      'uncle-duckys-paddlers-village': 'pictured-rocks',
+      'fort-superior': 'pictured-rocks',
+      'au-train-lake': 'pictured-rocks'
+    };
+    
+    const mappedCity = cityMappings[campgroundId] || normalizedCampgroundCity;
+    
+    // Find the matching stay period for this city
+    return stayPeriods.find((period: { city: string; startDate: Date; endDate: Date; nights: number }) => 
+      period.city === mappedCity
+    );
+  };
+  
+  const getUniqueCampgrounds = () => {
+    // First, extract campground IDs from the selected campgrounds
+    const campgroundIds = trip.selectedCampgrounds.map(campground => campground.id);
+    
+    // Remove duplicates from the ID list while preserving order
+    const uniqueIds = [...new Set(campgroundIds)];
+    
+    // Map unique IDs to their corresponding campgrounds
+    return uniqueIds.map(id => {
+      const campground = trip.selectedCampgrounds.find(c => c.id === id);
+      return campground!;
+    }).filter(campground => {
+      // Make sure we have a valid campground and can map it to a stay period
+      return campground && getCampgroundStayPeriod(campground.id, campground.city);
+    });
+  };
+
+  const stayPeriods = getStayDatePeriods();
+  const uniqueCampgrounds = getUniqueCampgrounds();
+
+  // Prepare the display data with proper names and formatted dates
+  const campgroundDisplayData = uniqueCampgrounds.map(campground => {
+    const stayPeriod = getCampgroundStayPeriod(campground.id, campground.city);
+    if (!stayPeriod) return null;
+    
+    const cityName = campground.city?.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
+    
+    return {
+      id: campground.id,
+      name: getCampgroundName(campground.id),
+      city: cityName,
+      startDate: stayPeriod.startDate,
+      endDate: stayPeriod.endDate
+    };
+  }).filter(Boolean);
+
   return (
     <div className="min-h-screen bg-beige-light py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
@@ -166,33 +281,12 @@ export const TripSuccessPage: React.FC = () => {
                 <div>
                   <h3 className="font-semibold mb-3">Campgrounds</h3>
                   <div className="space-y-3">
-                    {trip.selectedCampgrounds.map((campground, index) => (
-                      <div key={campground.id} className="bg-beige/20 p-3 rounded-lg">
-                        <p className="font-medium">{campground.name}</p>
-                        <p className="text-sm text-gray-600">{campground.city}</p>
+                    {campgroundDisplayData.map((campground) => (
+                      <div key={campground!.id} className="bg-beige/20 p-3 rounded-lg">
+                        <p className="font-medium">{campground!.name}</p>
+                        <p className="text-sm text-gray-600">{campground!.city}</p>
                         <p className="text-xs text-gray-500">
-                          {index === 0 
-                            ? `${formatDate(trip.trip_details.startDate)} - ` 
-                            : ''
-                          }
-                          {(() => {
-                            const startDay = index === 0 
-                              ? new Date(trip.trip_details.startDate) 
-                              : new Date(trip.trip_details.startDate);
-                            
-                            if (index > 0) {
-                              let previousNights = 0;
-                              for (let i = 0; i < index; i++) {
-                                previousNights += trip.selectedCampgrounds[i].nights || 0;
-                              }
-                              startDay.setDate(startDay.getDate() + previousNights);
-                            }
-                            
-                            const endDay = new Date(startDay);
-                            endDay.setDate(endDay.getDate() + (campground.nights || 0));
-                            
-                            return `${formatDate(startDay)} - ${formatDate(endDay)}`;
-                          })()}
+                          {formatShortDate(campground!.startDate)} - {formatShortDate(campground!.endDate)}
                         </p>
                       </div>
                     ))}

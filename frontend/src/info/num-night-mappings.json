@@ -1,0 +1,39 @@
+{
+    "northern-michigan": {
+        "1": [{ "city": "traverse-city", "nights": 1 }],
+        "2": [{ "city": "traverse-city", "nights": 2 }],
+        "3": [
+            { "city": "traverse-city", "nights": 2 },
+            { "city": "mackinac-city", "nights": 1 }
+        ],
+        "4": [
+            { "city": "traverse-city", "nights": 2 },
+            { "city": "mackinac-city", "nights": 2 }
+        ],
+        "5": [
+            { "city": "traverse-city", "nights": 2 },
+            { "city": "mackinac-city", "nights": 1 },
+            { "city": "pictured-rocks", "nights": 2 }
+        ],
+        "6": [
+            { "city": "traverse-city", "nights": 2 },
+            { "city": "mackinac-city", "nights": 2 },
+            { "city": "pictured-rocks", "nights": 2 }
+        ],
+        "7": [
+            { "city": "traverse-city", "nights": 2 },
+            { "city": "mackinac-city", "nights": 2 },
+            { "city": "pictured-rocks", "nights": 3 }
+        ],
+        "8": [
+            { "city": "traverse-city", "nights": 3 },
+            { "city": "mackinac-city", "nights": 2 },
+            { "city": "pictured-rocks", "nights": 3 }
+        ],
+        "9": [
+            { "city": "traverse-city", "nights": 3 },
+            { "city": "mackinac-city", "nights": 3 },
+            { "city": "pictured-rocks", "nights": 3 }
+        ]
+    }
+}

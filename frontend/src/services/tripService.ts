@@ -649,8 +649,6 @@ export const tripService = {
         throw new Error(result.error || 'Failed to claim guest trips');
       }
   
-      console.log(`✅ Backend claimed ${result.updated || 0} guest trips for ${email}`);
-  
       // Only fetch updated trips if anything was actually claimed
       if (!result.updated || result.updated === 0) {
         return [];

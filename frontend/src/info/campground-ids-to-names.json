@@ -1,0 +1,41 @@
+{
+    "anchor-inn": {
+        "name": "Anchor Inn"
+    },
+    "leelanau-pines": {
+        "name": "Leelanau Pines"
+    },
+    "timber-ridge": {
+        "name": "Timber Ridge"
+    },
+    "indian-river": {
+        "name": "Indian River"
+    },
+    "cabins-of-mackinaw": {
+        "name": "Cabins of Mackinaw"
+    },
+    "teepee-campground": {
+        "name": "Teepee Campground"
+    },
+    "pictured-rocks": {
+        "name": "Pictured Rocks"
+    },
+    "tourist-park": {
+        "name": "Tourist Park"
+    },
+    "munising-koa": {
+        "name": "Munising KOA"
+    },
+    "uncle-duckys-au-train": {
+        "name": "Uncle Ducky's Au Train"
+    },
+    "uncle-duckys-paddlers-village": {
+        "name": "Uncle Ducky's Paddlers Village"
+    },
+    "fort-superior": {
+        "name": "Fort Superior"
+    },
+    "au-train-lake": {
+        "name": "Au Train Lake Campground"
+    }
+}
