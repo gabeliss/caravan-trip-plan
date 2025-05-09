@@ -103,6 +103,7 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
 
   const clearSelectedCampgrounds = () => {
     setSelectedCampgrounds([]);
+    setFlowStage('destination');
   };
 
   const value = {

@@ -13,7 +13,8 @@ console.log('Trip service using API URL:', API_BASE_URL);
 interface OptimizedTripData {
   id: string;
   confirmation_id: string;
-  user_id: string;
+  user_id: string | null;
+  email?: string;
   trip_details: {
     destination: string;
     nights: number;
@@ -439,17 +440,19 @@ export const tripService = {
    * Create a new trip
    */
   async createTrip(
-    userId: string,
+    userId: string | null,
     destination: Destination,
     duration: TripDuration,
-    selectedCampgrounds: Campground[]
+    selectedCampgrounds: Campground[],
+    email?: string
   ): Promise<SavedTrip> {
     try {
       console.log('Creating trip with data:', {
         userId,
         destination,
         duration,
-        campgroundCount: selectedCampgrounds.length
+        campgroundCount: selectedCampgrounds.length,
+        email: email ? 'Provided' : 'Not provided'
       });
       
       // Validate destination has required fields
@@ -469,6 +472,12 @@ export const tripService = {
         console.error('Missing required guestCount for trip creation');
         throw new Error('Guest count is required for trip creation');
       }
+
+      // Validate email is provided for guest users (when userId is null)
+      if (!userId && !email) {
+        console.error('Missing required email for guest trip creation');
+        throw new Error('Email is required for guest trip creation');
+      }
       
       const tripId = 'T' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
       const confirmationId = 'C' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
@@ -486,6 +495,7 @@ export const tripService = {
         id: tripId,
         confirmation_id: confirmationId,
         user_id: userId,
+        email: userId ? undefined : email, // Only store email for guest users
         trip_details: {
           destination: destination.id,
           nights: duration.nights,

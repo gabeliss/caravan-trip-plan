@@ -6,7 +6,9 @@ import {
   FileText, 
   Map as MapIcon,
   CheckCircle,
-  X
+  X,
+  UserCircle,
+  Mail
 } from 'lucide-react';
 import { Destination, TripDuration, Campground, SavedTrip, TripDetails } from '../types';
 import { paymentService } from '../services/paymentService';
@@ -32,23 +34,27 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user, updateUserTrips } = useAuth();
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestName, setGuestName] = useState('');
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const tripGuidePrice = 29.99;
+
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handlePayment = async () => {
     setIsProcessing(true);
     setError(null);
+    setEmailError(null);
 
     try {
+      if (!user && (!guestEmail || !validateEmail(guestEmail))) {
+        setEmailError('Please enter a valid email address');
+        setIsProcessing(false);
+        return;
+      }
+
       const tripId = `TRIP-${Math.random().toString(36).substr(2, 9)}`;
-      console.log('Initializing payment for trip:', tripId);
-      console.log('Trip details:', {
-        destination: destination.id,
-        durationNights: duration.nights,
-        campgroundCount: selectedCampgrounds.length
-      });
-      
-      // Create a new trip object with proper types
       const tripDetails: TripDetails = {
         destination: destination.id,
         nights: duration.nights,
@@ -64,76 +70,47 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         createdAt: new Date().toISOString(),
         status: 'planned'
       };
-      
-      // Try to initialize payment first
+
       try {
-        const { sessionUrl } = await paymentService.initializePayment(
-          newTrip,
-          {
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: ''
-          }
-        );
+        await paymentService.initializePayment(newTrip, {
+          firstName: user ? user.name.split(' ')[0] : guestName || 'Guest',
+          lastName: user ? user.name.split(' ')[1] || '' : '',
+          email: user ? user.email : guestEmail,
+          phone: ''
+        });
       } catch (paymentErr) {
-        console.warn('Payment initialization error - continuing without payment session:', paymentErr);
+        console.warn('Payment session error, proceeding anyway:', paymentErr);
       }
 
-      // Save trip to Supabase
-      let dbTripSaved = false;
       let savedTrip: SavedTrip | null = null;
-      
-      if (user) {
-        try {
-          console.log('Saving trip to Supabase with user ID:', user.id);
-          // Create the trip in Supabase
-          savedTrip = await tripService.createTrip(
-            user.id,
-            destination,
-            duration,
-            selectedCampgrounds
-          );
-          
-          console.log('Trip saved successfully to database:', savedTrip.id);
-          dbTripSaved = true;
-          
-          // Update local state with the saved trip
-          updateUserTrips([...user.trips, savedTrip]);
-        } catch (dbErr) {
-          console.error('Error saving trip to Supabase:', dbErr);
-          // Still update the local state with our trip object
-          if (user && user.trips) {
-            updateUserTrips([...user.trips, newTrip]);
-          }
-        }
-      } else {
-        console.warn('No user found, skipping trip save to Supabase');
+      try {
+        savedTrip = await tripService.createTrip(
+          user ? user.id : null,
+          destination,
+          duration,
+          selectedCampgrounds,
+          user ? undefined : guestEmail
+        );
+        if (user) updateUserTrips([...user.trips, savedTrip]);
+      } catch (dbErr) {
+        console.error('Error saving trip to Supabase:', dbErr);
+        if (user?.trips) updateUserTrips([...user.trips, newTrip]);
       }
 
-      // Simulate successful payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Send confirmation email
+
       try {
         const tripToUse = savedTrip || newTrip;
-        const userEmail = user?.email || 'gabeliss17@gmail.com'; // Default fallback email
-        const firstName = user?.name?.split(' ')[0] || 'Traveler';
-        
-        console.log('Sending confirmation email to:', userEmail);
         await emailService.sendConfirmationEmail({
-          email: userEmail,
-          firstName: firstName,
+          email: user ? user.email : guestEmail,
+          firstName: user ? user.name?.split(' ')[0] : guestName || 'Traveler',
           confirmationId: tripToUse.confirmationId,
           tripId: tripToUse.id
         });
-        
-        console.log('Confirmation email sent successfully');
       } catch (emailErr) {
         console.error('Error sending confirmation email:', emailErr);
       }
-      
-      // Always continue with success, even if DB save or email sending failed
+
       onSuccess(tripId);
     } catch (err) {
       setError('Payment failed. Please try again.');
@@ -213,6 +190,48 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 </p>
               </div>
 
+              {!user && (
+                <div className="bg-beige/20 p-4 rounded-lg space-y-3">
+                  <h4 className="font-semibold text-sm mb-1">Guest Checkout</h4>
+                  <div>
+                    <label className="text-sm font-medium flex items-center gap-2 mb-1">
+                      <Mail className="w-4 h-4 text-primary-dark" />
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      value={guestEmail}
+                      onChange={(e) => {
+                        setGuestEmail(e.target.value);
+                        setEmailError(null);
+                      }}
+                      placeholder="your@email.com"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-primary-dark focus:border-primary-dark"
+                      required
+                    />
+                    {emailError && (
+                      <p className="text-red-600 text-xs mt-1">{emailError}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium flex items-center gap-2 mb-1">
+                      <UserCircle className="w-4 h-4 text-primary-dark" />
+                      Name (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={guestName}
+                      onChange={(e) => setGuestName(e.target.value)}
+                      placeholder="First name"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-1 focus:ring-primary-dark focus:border-primary-dark"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    * Required for trip confirmation email
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-4">
                 <button
                   onClick={handlePayment}
@@ -238,7 +257,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
 
               <p className="text-xs text-gray-500 text-center">
-                By completing this purchase, you'll receive immediate access to your
+                By completing this purchase, you’ll receive immediate access to your
                 trip guide and booking instructions.
               </p>
             </div>
