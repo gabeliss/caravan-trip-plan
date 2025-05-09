@@ -632,6 +632,57 @@ export const tripService = {
     }
   },
 
+  async claimGuestTrips(userId: string, email: string): Promise<SavedTrip[]> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/claim-trips`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: userId, email })
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        console.error('Backend failed to claim trips:', result.error);
+        throw new Error(result.error || 'Failed to claim guest trips');
+      }
+  
+      console.log(`✅ Backend claimed ${result.updated || 0} guest trips for ${email}`);
+  
+      // Only fetch updated trips if anything was actually claimed
+      if (!result.updated || result.updated === 0) {
+        return [];
+      }
+  
+      // Only if trips were claimed, fetch them
+      const fetchResponse = await fetch(`${API_BASE_URL}/user-trips/${userId}`);
+      const tripRows = await fetchResponse.json();
+  
+      if (!fetchResponse.ok) {
+        console.error('❌ Error fetching claimed trips:', tripRows);
+        throw new Error(tripRows.error || 'Failed to fetch claimed trips');
+      }
+  
+      const claimedTrips: SavedTrip[] = [];
+  
+      for (const row of tripRows) {
+        try {
+          const fullTrip = await this.getTripById(row.id);
+          if (fullTrip) claimedTrips.push(fullTrip);
+        } catch (err) {
+          console.error(`Error enriching trip ${row.id}:`, err);
+        }
+      }
+  
+      return claimedTrips;
+    } catch (error) {
+      console.error('❌ Error claiming guest trips:', error);
+      throw error;
+    }
+  },
+
   createTripAsGuest
 };
 

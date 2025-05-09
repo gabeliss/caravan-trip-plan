@@ -209,11 +209,12 @@ export const TripSuccessPage: React.FC = () => {
                   <button
                     onClick={async () => {
                       try {
-                        const updatedTrip = { 
-                          ...trip, 
-                          user_id: user?.id || null
-                        };
-                        await tripService.updateTrip(updatedTrip);
+                        await tripService.claimGuestTrips(user?.id || '', user?.email || '');
+                        const updatedTrip = await tripService.getTripById(trip.id);
+                        if (updatedTrip) {
+                          setTrip(updatedTrip);
+                          setIsOwner(true);
+                        }
                         navigate('/dashboard');
                       } catch (err) {
                         console.error('Error claiming trip:', err);

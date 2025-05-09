@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<{success: boolean, message: string}>;
+  register: (email: string, password: string, name: string) => Promise<{ success: boolean; message: string }>;
   logout: () => Promise<void>;
   updateUserTrips: (trips: SavedTrip[]) => void;
   loading: boolean;
@@ -17,16 +17,10 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
 export const useAuth = () => useContext(AuthContext);
 
-// Helper function to format destination ID to display name
-const formatDestinationName = (destinationId: string): string => {
-  return destinationId
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-};
+const formatDestinationName = (destinationId: string): string =>
+  destinationId.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ');
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -35,12 +29,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [confirmationError, setConfirmationError] = useState<string | null>(null);
   const [authCheckComplete, setAuthCheckComplete] = useState(false);
 
-  // Optimized function to check user session
   const checkSession = useCallback(async () => {
     try {
       setLoading(true);
       const currentUser = await authService.getCurrentUser();
-      
       if (currentUser) {
         setUser(currentUser);
         setIsAuthenticated(true);
@@ -48,8 +40,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(null);
         setIsAuthenticated(false);
       }
-    } catch (error) {
-      console.error('Session check error:', error);
+    } catch (err) {
+      console.error('Session check error:', err);
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -59,172 +51,145 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
-    // Check for existing auth session
-    // Use a faster lightweight check first then do a full refresh
-    const initialCheck = async () => {
-      try {
-        // Quick check if there's a session using Supabase directly
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          // If no session, we can stop loading immediately
-          setUser(null);
-          setIsAuthenticated(false);
-          setLoading(false);
-          setAuthCheckComplete(true);
-          return;
-        }
-        
-        // If there is a session, do the full user data fetch
-        await checkSession();
-      } catch (error) {
-        console.error('Initial auth check error:', error);
-        setLoading(false);
-        setAuthCheckComplete(true);
-      }
-    };
-
-    // Set up auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event);
-      
-      if (event === 'SIGNED_IN' && session) {
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && isAuthenticated) {
+        console.log('🔁 Auth already established, skipping redundant session check.');
+        return;
+      }
+  
+      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
         try {
-          // We'll handle this ourselves in the login method
-          // But we still want to update state if session exists
-          // to handle cases like refresh or direct URL navigation
-          if (!isAuthenticated) {
-            console.log('🔍 AuthContext: Auth state change detected, refreshing user data');
-            await checkSession();
+          if (!session?.user) {
+            console.warn('⚠️ AuthContext: No session user yet, deferring check...');
+            setTimeout(() => checkSession(), 1000); // retry after 1s
+          } else if (!isAuthenticated) {
+            const currentUser = await authService.getCurrentUser();
+            if (currentUser) {
+              setUser(currentUser);
+              setIsAuthenticated(true);
+            }
           }
-        } catch (error) {
-          console.error('❌ AuthContext: Error during auth state change handling:', error);
-          // Don't throw - we want to handle this gracefully
+      
+          // Always try to claim trips (harmless if 0)
+          if (session?.user?.email && session?.user?.id && !isAuthenticated) {
+            await tripService.claimGuestTrips(session.user.id, session.user.email);
+          }
+      
+        } catch (err) {
+          console.error('AuthContext: Error during session refresh:', err);
+        } finally {
+          setAuthCheckComplete(true);
           setLoading(false);
         }
-      } else if (event === 'SIGNED_OUT') {
+      }
+      
+  
+      if (event === 'SIGNED_OUT') {
         setUser(null);
         setIsAuthenticated(false);
         setLoading(false);
+        setAuthCheckComplete(true); // ✅ also mark complete here
       }
     });
-
-    initialCheck();
-
-    // Clean up subscription on unmount
+  
+    // ✅ Always check once immediately on mount
+    checkSession();
+  
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [checkSession, isAuthenticated]);
+  }, [checkSession]);
+  
 
   const updateUserTrips = async (trips: SavedTrip[]) => {
     if (!user) return;
-    
-    try {
-      // Update user state locally
-      setUser({ ...user, trips });
-      
-      // For each trip, make sure it's in the database
-      for (const trip of trips) {
-        try {
-          // First check if this trip already exists in Supabase
-          const existingTrip = await tripService.getTripById(trip.id);
-          
-          if (!existingTrip) {
-            // Trip doesn't exist in Supabase yet, create it
-            console.log('Creating new trip in Supabase:', trip.id);
-            await tripService.createTrip(
-              user.id,
-              {
-                id: trip.trip_details.destination,
-                name: formatDestinationName(trip.trip_details.destination),
-                region: 'Michigan'
-              },
-              {
-                nights: trip.trip_details.nights,
-                startDate: trip.trip_details.startDate,
-                guestCount: trip.trip_details.guestCount
-              },
-              trip.selectedCampgrounds
-            );
-          } else if (JSON.stringify(existingTrip) !== JSON.stringify(trip)) {
-            // Trip exists but has changes, update it
-            console.log('Updating existing trip in Supabase:', trip.id);
-            await tripService.updateTrip(trip);
-          } else {
-            // Trip exists and is unchanged
-            console.log('Trip already exists and is up to date in Supabase:', trip.id);
-          }
-        } catch (error) {
-          console.error(`Error handling trip ${trip.id}:`, error);
+    setUser({ ...user, trips });
+
+    for (const trip of trips) {
+      try {
+        const existingTrip = await tripService.getTripById(trip.id);
+        if (!existingTrip) {
+          await tripService.createTrip(user.id, {
+            id: trip.trip_details.destination,
+            name: formatDestinationName(trip.trip_details.destination),
+            region: 'Michigan'
+          }, {
+            nights: trip.trip_details.nights,
+            startDate: trip.trip_details.startDate,
+            guestCount: trip.trip_details.guestCount
+          }, trip.selectedCampgrounds);
+        } else if (JSON.stringify(existingTrip) !== JSON.stringify(trip)) {
+          await tripService.updateTrip(trip);
         }
+      } catch (err) {
+        console.error(`Error syncing trip ${trip.id}:`, err);
       }
-    } catch (error) {
-      console.error('Error updating trips:', error);
     }
   };
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('🔍 AuthContext: Starting login process...');
       setLoading(true);
       setConfirmationError(null);
-      
-      console.log('🔍 AuthContext: Calling authService.login...');
+      console.log("✅ AuthContext: Starting login process");
       const loggedInUser = await authService.login(email, password);
-      console.log('✅ AuthContext: authService.login successful, user:', loggedInUser);
-      
+      console.log("✅ AuthContext: authService.login returned, user:", loggedInUser);
+
+
+      try {
+        const claimedTrips = await tripService.claimGuestTrips(loggedInUser.id, email);
+        if (claimedTrips.length > 0) {
+          loggedInUser.trips = [...(loggedInUser.trips || []), ...claimedTrips];
+        }
+      } catch (err) {
+        console.error('Error claiming guest trips during login:', err);
+      }
+
       setUser(loggedInUser);
       setIsAuthenticated(true);
-      console.log('✅ AuthContext: User state updated, isAuthenticated set to true');
-      
-      // Return early to avoid any problems with the onAuthStateChange listener
-      return;
-    } catch (error: any) {
-      console.error('❌ AuthContext: Login error:', error);
-      
-      // Check if it's an email confirmation message
-      if (error.message && error.message.includes('confirm your email')) {
-        setConfirmationError(error.message);
-        console.log('⚠️ AuthContext: Email confirmation required');
+    } catch (err: any) {
+      console.error('Login error:', err);
+      if (err.message?.includes('confirm your email')) {
+        setConfirmationError(err.message);
       }
-      
-      throw error;
+      throw err;
     } finally {
-      console.log('🔍 AuthContext: Setting loading to false');
       setLoading(false);
     }
   };
 
-  const register = async (email: string, password: string, name: string): Promise<{success: boolean, message: string}> => {
+  const register = async (email: string, password: string, name: string) => {
     try {
       setLoading(true);
       setConfirmationError(null);
-      
-      await authService.register(email, password, name);
-      
-      // If we get here, registration was technically successful but email needs confirmation
+      const newUser = await authService.register(email, password, name);
+
+      if (newUser?.id) {
+        try {
+          const claimedTrips = await tripService.claimGuestTrips(newUser.id, email);
+          if (claimedTrips.length > 0) {
+            newUser.trips = [...(newUser.trips || []), ...claimedTrips];
+          }
+        } catch (err) {
+          console.error('Error claiming guest trips during registration:', err);
+        }
+
+        setUser(newUser);
+        setIsAuthenticated(true);
+      }
+
       return {
         success: true,
         message: 'Registration successful! Please check your email to confirm your account before logging in.'
       };
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      
-      // Check if it's an email confirmation message
-      if (error.message && error.message.includes('confirm your account')) {
-        setConfirmationError(error.message);
-        return {
-          success: true,
-          message: error.message
-        };
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      if (err.message?.includes('confirm your account')) {
+        setConfirmationError(err.message);
+        return { success: true, message: err.message };
       }
-      
-      // Otherwise it's an actual error
-      return {
-        success: false,
-        message: error.message || 'Failed to create account'
-      };
+      return { success: false, message: err.message || 'Failed to create account' };
     } finally {
       setLoading(false);
     }
@@ -232,39 +197,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      console.log('🔍 AuthContext: Starting logout process...');
       setLoading(true);
-      
-      // First, immediately clear user data and auth state
-      // This makes the UI update faster
       setUser(null);
       setIsAuthenticated(false);
-      
-      // Then call the logout service to complete the backend process
       await authService.logout();
-      console.log('✅ AuthContext: Logout completed successfully');
-      
-      // Short delay to ensure everything is cleaned up
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          setLoading(false);
-          resolve();
-        }, 300);
-      });
-    } catch (error) {
-      console.error('❌ AuthContext: Logout error:', error);
+      await new Promise(resolve => setTimeout(resolve, 300));
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
       setLoading(false);
-      // Still resolve the promise even on error
-      // This ensures navigation continues even if there's an issue with Supabase
     }
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
-      login, 
-      register, 
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated,
+      login,
+      register,
       logout,
       updateUserTrips,
       loading,

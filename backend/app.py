@@ -305,6 +305,46 @@ def create_guest_trip():
         import traceback
         traceback.print_exc()
         return jsonify({ 'error': str(e) }), 500
+    
+
+@app.route('/api/claim-trips', methods=['POST'])
+def claim_trips():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        email = data.get('email')
+
+        if not user_id or not email:
+            return jsonify({'error': 'Missing user_id or email'}), 400
+
+        # Use .filter('user_id', 'is', 'null') to avoid PGRST100
+        response = supabase.table('trips') \
+            .update({'user_id': user_id}) \
+            .eq('email', email) \
+            .filter('user_id', 'is', 'null') \
+            .execute()
+
+        updated = len(response.data) if response.data else 0
+        print(f"✅ Claimed {updated} trips for {email} → user {user_id}")
+        return jsonify({'updated': updated})
+
+    except Exception as e:
+        print("❌ Error in /api/claim-trips:", str(e))
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/user-trips/<user_id>', methods=['GET'])
+def get_user_trips(user_id):
+    try:
+        response = supabase.table('trips').select('*').eq('user_id', user_id).execute()
+        if not response or not response.data:
+            return jsonify([])
+
+        return jsonify(response.data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 if __name__ == '__main__':
     # Get port from environment variable or use default

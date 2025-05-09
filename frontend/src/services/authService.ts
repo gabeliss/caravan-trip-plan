@@ -6,170 +6,114 @@ export const authService = {
    * Get the current logged in user
    */
   async getCurrentUser(): Promise<User | null> {
-    // Add a timeout to prevent hanging indefinitely
-    const timeoutPromise = new Promise<User | null>((resolve) => {
-      setTimeout(() => {
-        console.error('❌ authService: getCurrentUser timed out after 5 seconds');
-        resolve(null);
-      }, 5000);
-    });
-
     try {
-      console.log('🔍 authService: Getting current user...');
-      
-      // Race the actual operation against the timeout
-      return await Promise.race([
-        this._fetchCurrentUser(),
-        timeoutPromise
+      console.log('🔍 authService: Getting current user session...');
+  
+      const timeout = new Promise<null>((resolve) => {
+        setTimeout(() => {
+          console.warn('⚠️ authService: getSession timed out after 5s');
+          resolve(null);
+        }, 5000);
+      });
+  
+      const sessionResponse = await Promise.race([
+        supabase.auth.getSession().then(({ data }) => data.session),
+        timeout
       ]);
-    } catch (error) {
-      console.error('❌ authService: Error getting current user:', error);
+  
+      if (!sessionResponse || !sessionResponse.user) {
+        console.log('⚠️ authService: No session or user in session');
+        return null;
+      }
+  
+      return await this._fetchCurrentUser(sessionResponse.user);
+    } catch (err) {
+      console.error('❌ Error in getCurrentUser:', err);
       return null;
     }
   },
+  
 
   // Private method to fetch current user data
-  async _fetchCurrentUser(): Promise<User | null> {
+  async _fetchCurrentUser(user: any): Promise<User | null> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        console.log('⚠️ authService: No active session found');
-        return null;
-      }
-      
-      console.log('✅ authService: Supabase session found for user:', user.id);
-      
-      // Check if email is confirmed
+      console.log('✅ authService: Reusing session user:', user.id);
+  
       if (!user.email_confirmed_at && user.confirmation_sent_at) {
-        console.log('⚠️ authService: Email not confirmed yet, please check inbox');
+        console.log('⚠️ authService: Email not confirmed yet');
         return null;
       }
-      
-      try {
-        // Get user profile data
-        console.log('🔍 authService: Fetching user profile data...');
-        let { data: userData, error } = await supabase
+  
+      // Fetch user profile
+      console.log('🔍 authService: Fetching user profile...');
+      let { data: userData, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+  
+      if (error && error.code === 'PGRST116') {
+        console.log('⚠️ authService: No user profile found, creating one...');
+        const { error: insertError } = await supabase.from('users').insert({
+          id: user.id,
+          email: user.email || '',
+          name: user.user_metadata?.name || 'User',
+          created_at: new Date().toISOString()
+        });
+  
+        if (insertError) {
+          console.error('❌ Failed to create user profile:', insertError);
+          return null;
+        }
+  
+        const { data: newUserData } = await supabase
           .from('users')
           .select('*')
           .eq('id', user.id)
           .single();
-        
-        if (error) {
-          console.error('❌ authService: Error fetching user profile:', error);
-          
-          // If no user profile exists but auth user does, create profile
-          if (error.code === 'PGRST116') {
-            try {
-              // Try to create the user profile
-              console.log('🔍 authService: Creating user profile...');
-              const { error: insertError } = await supabase
-                .from('users')
-                .insert({
-                  id: user.id,
-                  email: user.email || '',
-                  name: user.user_metadata?.name || 'User',
-                  created_at: new Date().toISOString()
-                });
-                
-              if (insertError) {
-                console.error('❌ authService: Error creating user profile:', insertError);
-                return null;
-              }
-              
-              // Try getting the user again
-              const { data: newUserData, error: newError } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-                
-              if (newError) {
-                console.error('❌ authService: Error fetching newly created profile:', newError);
-                return null;
-              }
-              
-              if (!newUserData) {
-                console.error('❌ authService: Newly created user data is null');
-                return null;
-              }
-              
-              userData = newUserData;
-              console.log('✅ authService: User profile created successfully');
-            } catch (profileError) {
-              console.error('❌ authService: Error in profile creation flow:', profileError);
-              return null;
-            }
-          } else {
-            return null;
-          }
-        }
-        
-        if (!userData) {
-          console.error('❌ authService: User data is null');
-          return null;
-        }
-        
-        console.log('✅ authService: User profile fetched successfully');
-        
-        try {
-          // Get user trips
-          console.log('🔍 authService: Fetching user trips...');
-          const { data: tripsData, error: tripsError } = await supabase
-            .from('trips')
-            .select('*')
-            .eq('user_id', user.id);
-          
-          if (tripsError) {
-            console.error('❌ authService: Error fetching user trips:', tripsError);
-            // Continue anyway with empty trips array
-          } else {
-            console.log('✅ authService: User trips fetched, count:', tripsData?.length || 0);
-            console.log('✅ authService: User trips:', tripsData);
-          }
-          
-          const currentUser = {
-            id: userData.id,
-            email: userData.email,
-            name: userData.name,
-            trips: tripsData ? tripsData.map(trip => ({
-              id: trip.id,
-              confirmationId: trip.confirmation_id,
-              trip_details: {
-                destination: trip.trip_details.destination,
-                nights: trip.trip_details.nights,
-                startDate: new Date(trip.trip_details.startDate),
-                guestCount: trip.trip_details.guestCount
-              },
-              selectedCampgrounds: trip.campgrounds,
-              createdAt: trip.created_at,
-              status: trip.status,
-              guideUrl: trip.guide_url
-            })) : []
-          };
-          console.log('✅ authService: currentUser:', currentUser);
-          
-          console.log('✅ authService: getCurrentUser completed successfully');
-          return currentUser;
-        } catch (tripsError) {
-          console.error('❌ authService: Error in trips fetch flow:', tripsError);
-          // Create user without trips
-          const currentUser = {
-            id: userData.id,
-            email: userData.email,
-            name: userData.name,
-            trips: []
-          };
-          
-          console.log('✅ authService: getCurrentUser completed with empty trips array');
-          return currentUser;
-        }
-      } catch (profileError) {
-        console.error('❌ authService: Error in profile/trips flow:', profileError);
+  
+        userData = newUserData;
+      }
+  
+      if (!userData) {
+        console.error('❌ User profile still not found');
         return null;
       }
+  
+      console.log('✅ User profile:', userData);
+  
+      // Fetch trips
+      const { data: tripsData } = await supabase
+        .from('trips')
+        .select('*')
+        .eq('user_id', user.id);
+  
+      const trips = tripsData?.map(trip => ({
+        id: trip.id,
+        confirmationId: trip.confirmation_id,
+        trip_details: {
+          destination: trip.trip_details.destination,
+          nights: trip.trip_details.nights,
+          startDate: new Date(trip.trip_details.startDate),
+          guestCount: trip.trip_details.guestCount
+        },
+        selectedCampgrounds: trip.campgrounds,
+        createdAt: trip.created_at,
+        status: trip.status,
+        guideUrl: trip.guide_url
+      })) || [];
+  
+      const currentUser: User = {
+        id: userData.id,
+        email: userData.email,
+        name: userData.name,
+        trips
+      };
+  
+      console.log('✅ Final currentUser:', currentUser);
+      return currentUser;
     } catch (error) {
-      console.error('❌ authService: Error getting current user in _fetchCurrentUser:', error);
+      console.error('❌ authService: Error in _fetchCurrentUser:', error);
       return null;
     }
   },
@@ -199,21 +143,25 @@ export const authService = {
       }
       
       // Get user profile data
+      // Fetch user profile data with timeout
       console.log('🔍 authService: Fetching user profile data...');
-      const { data: userData, error: userError } = await supabase
+      const userProfilePromise = supabase
         .from('users')
         .select('*')
         .eq('id', data.user.id)
         .single();
-      
-      if (userError) {
-        console.error('❌ authService: Error fetching user profile:', userError);
-        throw new Error('User profile not found');
-      }
-      
+
+      const userProfileTimeout = new Promise<null>((resolve) => {
+        setTimeout(() => {
+          console.warn('⚠️ authService: User profile query timed out after 5s');
+          resolve(null);
+        }, 5000);
+      });
+
+      const userData = await Promise.race([userProfilePromise.then(res => res.data), userProfileTimeout]);
+
       if (!userData) {
-        console.error('❌ authService: User data is null');
-        throw new Error('User profile not found');
+        throw new Error('User profile fetch timed out or failed');
       }
       
       console.log('✅ authService: User profile fetched successfully');

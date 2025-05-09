@@ -46,12 +46,10 @@ export const Login: React.FC = () => {
     setIsLoading(true);
     console.log('🔍 Login: Submit button clicked, attempting login...');
 
-    // Add a timeout to prevent getting stuck in loading state
     const loginTimeout = setTimeout(() => {
-      console.log('⚠️ Login: Login process taking too long, resetting loading state');
-      setIsLoading(false);
-      setError('Login request timed out. Please try again.');
-    }, 8000); // 8 seconds timeout
+      console.log('⚠️ Login is taking longer than expected...');
+      // Optionally, you could show a toast or inline spinner enhancement
+    }, 8000); // just warn, don’t trigger failure
 
     try {
       console.log('🔍 Login: Calling login function from AuthContext...');
