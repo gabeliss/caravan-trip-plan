@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { UserPlus, Mail, Lock, User, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -12,7 +12,11 @@ export const Register: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { register, isAuthenticated, loading, confirmationError } = useAuth();
+  
+  // Get the tripId from location state if it exists
+  const tripIdToClaim = location.state && (location.state as any).tripId;
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -44,6 +48,12 @@ export const Register: React.FC = () => {
         setName('');
         setEmail('');
         setPassword('');
+        
+        // If there's a tripId to claim, include it when redirecting to login
+        if (tripIdToClaim) {
+          // Include note about claiming the trip in the success message
+          setSuccess(result.message + ' After confirming your email, you can log in to claim your trip.');
+        }
       } else {
         setError(result.message);
       }
@@ -69,6 +79,7 @@ export const Register: React.FC = () => {
             <p className="mb-4">{success}</p>
             <Link 
               to="/login" 
+              state={tripIdToClaim ? { tripId: tripIdToClaim } : undefined}
               className="mt-4 inline-block text-sm text-blue-600 hover:text-blue-500"
             >
               Return to login

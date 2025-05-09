@@ -1,15 +1,10 @@
-import { ItineraryPlan } from '../types';
+import { ItineraryPlan, SavedTrip, TripDuration, Destination, Campground, TripDetails } from '../types';
 import { supabase } from './supabaseClient';
-import { SavedTrip, TripDuration, Destination, Campground, TripDetails } from '../types';
 import { enhanceCampgroundsWithData } from '../utils/enhanceCampgrounds';
 import destinationsData from '../info/destinations.json';
 
-// Get the API URL from environment variables or use default
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
-console.log('Trip service using API URL:', API_BASE_URL);
-
-// Define a type for the optimized trip data we store in Supabase
 interface OptimizedTripData {
   id: string;
   confirmation_id: string;
@@ -31,7 +26,6 @@ interface OptimizedTripData {
   guide_url?: string;
 }
 
-// Define type for the stored campground data
 interface StoredCampground {
   id: string;
   price: number;
@@ -46,16 +40,13 @@ const formatDateForApi = (date: Date): string => {
   return `${month}/${day}/${year}`;
 };
 
-// Utility function to get destination data from ID
 export const getDestinationData = (destinationId: string): Destination => {
-  // Get destination from our static JSON file
   const destination = (destinationsData as Record<string, { id: string, name: string, region: string }>)[destinationId];
   
   if (!destination) {
     throw new Error(`Destination with ID '${destinationId}' not found. Please add it to destinations.json.`);
   }
   
-  // Only return the fields we actually need
   return {
     id: destination.id,
     name: destination.name,
@@ -216,6 +207,24 @@ export const generateTripWithoutAvailability = async (
     throw error;
   }
 };
+
+export const createTripAsGuest = async (tripData: any): Promise<SavedTrip> => {
+  const response = await fetch(`${API_BASE_URL}/create-guest-trip`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(tripData)
+  });
+
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || 'Failed to create trip');
+  }
+
+  return result.trip;
+};
+
 
 // Define the tripService object with all trip-related methods
 export const tripService = {
@@ -452,8 +461,18 @@ export const tripService = {
         destination,
         duration,
         campgroundCount: selectedCampgrounds.length,
-        email: email ? 'Provided' : 'Not provided'
+        email: email
       });
+
+      if (!userId) {
+        if (!email) {
+          throw new Error('Email is required for guest trip creation');
+        }
+      
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          throw new Error('Invalid email format for guest trip');
+        }
+      }          
       
       // Validate destination has required fields
       if (!destination || !destination.id || !destination.name || !destination.region) {
@@ -495,7 +514,7 @@ export const tripService = {
         id: tripId,
         confirmation_id: confirmationId,
         user_id: userId,
-        email: userId ? undefined : email, // Only store email for guest users
+        email: userId ? undefined : email,
         trip_details: {
           destination: destination.id,
           nights: duration.nights,
@@ -611,10 +630,11 @@ export const tripService = {
       console.error(`Error deleting trip ${tripId}:`, error);
       throw error;
     }
-  }
+  },
+
+  createTripAsGuest
 };
 
-// Export default object with the functions needed by TripPlanContext
 export default {
   generateTripWithoutAvailability,
   fetchCityAvailability

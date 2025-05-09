@@ -1,8 +1,8 @@
 import { loadStripe } from '@stripe/stripe-js';
-import { TripPayment, SavedTrip, UserDetails } from '../types';
+import { TripPayment, UserDetails, TripDraft } from '../types';
 
 export const paymentService = {
-  async initializePayment(trip: SavedTrip, userDetails: UserDetails): Promise<{ sessionUrl: string }> {
+  async initializePayment(trip: TripDraft, userDetails: UserDetails): Promise<{ sessionUrl: string }> {
     try {
       const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
       if (!stripeKey) {
@@ -12,12 +12,13 @@ export const paymentService = {
       const stripe = await loadStripe(stripeKey);
       if (!stripe) throw new Error('Failed to load payment processor');
 
-      // In a real implementation, this would make a backend call to create a Stripe session
-      // For demo purposes, we'll simulate a successful payment
+      // TODO: Replace this with a POST to your backend API: /api/create-checkout-session
+      // Pass trip details + userDetails as metadata or line items.
+
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       return {
-        sessionUrl: `https://checkout.stripe.com/demo-session/${trip.id}`
+        sessionUrl: `https://checkout.stripe.com/demo-session/${trip.trip_details.destination}`
       };
     } catch (error) {
       console.error('Payment initialization error:', error);

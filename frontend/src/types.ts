@@ -59,6 +59,7 @@ export interface Campground {
     timestamp?: string;
   };
   city?: string;
+  nights?: number;
 }
 
 export interface CampgroundImage {
@@ -139,6 +140,8 @@ export interface TripDetails {
 export interface SavedTrip {
   id: string;
   confirmationId: string;
+  user_id?: string | null;
+  email?: string;
   trip_details: TripDetails;
   selectedCampgrounds: Campground[];
   createdAt: string;
@@ -146,6 +149,14 @@ export interface SavedTrip {
   guideUrl?: string;
   payment?: TripPayment;
 }
+
+export interface TripDraft {
+  trip_details: TripDetails;
+  selectedCampgrounds: Campground[];
+  createdAt: string;
+  status: 'planned' | 'active' | 'completed';
+}
+
 
 export interface TripPayment {
   tripId: string;

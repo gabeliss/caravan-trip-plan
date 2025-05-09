@@ -8,13 +8,14 @@ FLASK_APP := backend/app.py
 BACKEND_PORT := 5001
 FRONTEND_DIR := frontend
 FRONTEND_PORT := 5173
+PIP_TIMEOUT := 60
 
 # Colors for terminal output
 YELLOW := \033[1;33m
 GREEN := \033[1;32m
 NC := \033[0m # No Color
 
-.PHONY: all setup backend frontend both clean help
+.PHONY: all setup backend frontend both clean help fix-backend-deps
 
 # Default target
 all: help
@@ -28,8 +29,22 @@ setup-backend:
 	@if [ ! -d $(VENV) ]; then \
 		$(PYTHON) -m venv $(VENV); \
 	fi
-	@. $(VENV_ACTIVATE) && pip install -r backend/requirements.txt
+	@. $(VENV_ACTIVATE) && pip install --upgrade pip
+	@. $(VENV_ACTIVATE) && ( \
+		pip install --timeout $(PIP_TIMEOUT) -r backend/requirements.txt || \
+		(echo "$(YELLOW)Regular installation failed, trying one-by-one installation...$(NC)" && \
+		$(MAKE) fix-backend-deps) \
+	)
 	@echo "$(GREEN)Backend setup complete$(NC)"
+
+fix-backend-deps:
+	@echo "$(YELLOW)Installing dependencies one by one to avoid resolver issues...$(NC)"
+	@if [ ! -d $(VENV) ]; then \
+		$(PYTHON) -m venv $(VENV); \
+	fi
+	@. $(VENV_ACTIVATE) && pip install --upgrade pip
+	@. $(VENV_ACTIVATE) && xargs -n 1 pip install --timeout $(PIP_TIMEOUT) < backend/requirements.txt
+	@echo "$(GREEN)Backend dependencies fixed$(NC)"
 
 setup-frontend:
 	@echo "$(YELLOW)Setting up frontend...$(NC)"
@@ -69,6 +84,7 @@ help:
 	@echo "  $(GREEN)make setup$(NC)        - Set up both backend and frontend dependencies"
 	@echo "  $(GREEN)make setup-backend$(NC) - Set up backend dependencies only"
 	@echo "  $(GREEN)make setup-frontend$(NC) - Set up frontend dependencies only"
+	@echo "  $(GREEN)make fix-backend-deps$(NC) - Fix backend dependencies when pip gets stuck"
 	@echo "  $(GREEN)make backend$(NC)      - Run the backend server only"
 	@echo "  $(GREEN)make frontend$(NC)     - Run the frontend server only"
 	@echo "  $(GREEN)make both$(NC)         - Run both frontend and backend servers"

@@ -5,9 +5,9 @@ import requests
 from datetime import datetime, timedelta
 import os
 import logging
-from dotenv import load_dotenv  # Import dotenv for loading .env file
-import time  # For cache timestamps
-from concurrent.futures import ThreadPoolExecutor  # For parallel processing
+from dotenv import load_dotenv
+import time
+from supabase import create_client
 
 # Import helper modules
 from helpers.trip_itineraries import TRIP_ITINERARIES
@@ -31,11 +31,17 @@ MAX_CONCURRENT_REQUESTS = 10  # Maximum number of concurrent Lambda requests
 app = Flask(__name__)
 
 # Configure CORS to allow requests from the frontend
-FRONTEND_URL = os.environ.get('FRONTEND_URL', '*')
-CORS(app, resources={r"/api/*": {"origins": FRONTEND_URL}})
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+CORS(app, resources={r"/api/*": {"origins": FRONTEND_URL}}, supports_credentials=True)
 
 # Lambda API Gateway base URL - get from AWS_API_URL environment variable
 LAMBDA_BASE_URL = os.environ.get('AWS_API_URL', 'https://your-api-gateway-id.execute-api.us-east-1.amazonaws.com/dev')
+
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
+print("SUPABASE URL:", SUPABASE_URL)
+print("SUPABASE SERVICE ROLE KEY:", SUPABASE_SERVICE_ROLE_KEY)
+supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
 # Log the actual Lambda base URL for debugging
 logger.info(f"Using Lambda Base URL: {LAMBDA_BASE_URL}")
@@ -274,6 +280,31 @@ def send_confirmation():
     result = send_confirmation_email(to_email, first_name, confirmation_id, trip_link)
     
     return jsonify(result)
+
+@app.route('/api/create-guest-trip', methods=['POST', 'OPTIONS'])
+def create_guest_trip():
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        trip_data = request.json
+        if not trip_data:
+            return jsonify({'error': 'No trip data provided'}), 400
+
+        response = supabase.table('trips').insert(trip_data).execute()
+        print("SUPABASE RESPONSE:", response)
+        print("SUPABASE DATA:", response.data)
+
+
+        if not response or not response.data or len(response.data) == 0:
+            return jsonify({'error': 'Failed to insert trip'}), 500
+
+        return jsonify({ 'trip': response.data[0] })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({ 'error': str(e) }), 500
 
 if __name__ == '__main__':
     # Get port from environment variable or use default

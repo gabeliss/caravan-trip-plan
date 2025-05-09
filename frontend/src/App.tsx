@@ -9,6 +9,7 @@ import { Dashboard } from './components/dashboard/Dashboard';
 import { TripOverviewPage } from './pages/TripOverviewPage';
 import { AboutPage } from './pages/AboutPage';
 import { DestinationSelectionPage } from './pages/DestinationSelectionPage';
+import { TripSuccessPage } from './pages/TripSuccessPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { TripDuration } from './types';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -64,6 +65,7 @@ function AuthenticatedApp() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/destinations/:id" element={<TripOverviewPage />} />
           <Route path="/select-destination" element={<DestinationSelectionPage />} />
+          <Route path="/trip-success/:id" element={<TripSuccessPage />} />
           <Route path="/dashboard/*" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/" element={<HomePage />} />
         </Routes>

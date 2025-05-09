@@ -68,7 +68,6 @@ export const apiService = {
     numKids: number
   ): Promise<FullAvailability> {
     try {
-      console.log(`Checking availability for ${campgroundId}`);
       const response = await api.post('/availability', {
         campgroundId,
         startDate,

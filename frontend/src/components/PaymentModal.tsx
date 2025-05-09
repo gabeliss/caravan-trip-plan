@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   CreditCard, 
   Lock, 
@@ -31,6 +32,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user, updateUserTrips } = useAuth();
@@ -54,64 +56,96 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         return;
       }
 
-      const tripId = `TRIP-${Math.random().toString(36).substr(2, 9)}`;
       const tripDetails: TripDetails = {
         destination: destination.id,
         nights: duration.nights,
         startDate: duration.startDate || new Date(),
         guestCount: duration.guestCount
       };
-      
-      const newTrip: SavedTrip = {
-        id: tripId,
-        confirmationId: tripId,
-        trip_details: tripDetails,
-        selectedCampgrounds,
-        createdAt: new Date().toISOString(),
-        status: 'planned'
-      };
+
+      let savedTrip: SavedTrip | null = null;
 
       try {
-        await paymentService.initializePayment(newTrip, {
-          firstName: user ? user.name.split(' ')[0] : guestName || 'Guest',
-          lastName: user ? user.name.split(' ')[1] || '' : '',
-          email: user ? user.email : guestEmail,
-          phone: ''
-        });
+        await paymentService.initializePayment(
+          {
+            trip_details: tripDetails,
+            selectedCampgrounds,
+            createdAt: new Date().toISOString(),
+            status: 'planned'
+          },
+          {
+            firstName: user ? user.name.split(' ')[0] : guestName || 'Guest',
+            lastName: user ? user.name.split(' ')[1] || '' : '',
+            email: user ? user.email : guestEmail,
+            phone: ''
+          }
+        );
       } catch (paymentErr) {
         console.warn('Payment session error, proceeding anyway:', paymentErr);
       }
 
-      let savedTrip: SavedTrip | null = null;
       try {
-        savedTrip = await tripService.createTrip(
-          user ? user.id : null,
-          destination,
-          duration,
-          selectedCampgrounds,
-          user ? undefined : guestEmail
-        );
-        if (user) updateUserTrips([...user.trips, savedTrip]);
+        if (user) {
+          savedTrip = await tripService.createTrip(
+            user.id,
+            destination,
+            duration,
+            selectedCampgrounds
+          );
+          updateUserTrips([...user.trips, savedTrip]);
+        } else {
+          const tripId = 'T' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
+          const confirmationId = 'C' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
+
+          savedTrip = await tripService.createTripAsGuest({
+            id: tripId,
+            confirmation_id: confirmationId,
+            user_id: null,
+            email: guestEmail,
+            trip_details: {
+              destination: destination.id,
+              nights: duration.nights,
+              startDate: duration.startDate?.toISOString() || new Date().toISOString(),
+              guestCount: duration.guestCount,
+            },
+            campgrounds: selectedCampgrounds.map(cg => ({
+              id: cg.id,
+              price: cg.price || 0,
+              city: cg.city || '',
+            })),
+            created_at: new Date().toISOString(),
+            status: 'planned',
+          });
+        }
       } catch (dbErr) {
         console.error('Error saving trip to Supabase:', dbErr);
-        if (user?.trips) updateUserTrips([...user.trips, newTrip]);
+        setError('Failed to save your trip. Please try again.');
+        setIsProcessing(false);
+        return;
+      }
+
+
+      if (!savedTrip) {
+        setError('Failed to create trip. Please try again.');
+        setIsProcessing(false);
+        return;
       }
 
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       try {
-        const tripToUse = savedTrip || newTrip;
         await emailService.sendConfirmationEmail({
           email: user ? user.email : guestEmail,
           firstName: user ? user.name?.split(' ')[0] : guestName || 'Traveler',
-          confirmationId: tripToUse.confirmationId,
-          tripId: tripToUse.id
+          confirmationId: savedTrip.confirmationId,
+          tripId: savedTrip.id
         });
       } catch (emailErr) {
         console.error('Error sending confirmation email:', emailErr);
       }
 
-      onSuccess(tripId);
+      navigate(`/trip-success/${savedTrip.id}`);
+      onSuccess(savedTrip.id);
     } catch (err) {
       setError('Payment failed. Please try again.');
       console.error('Payment error:', err);
@@ -257,7 +291,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
 
               <p className="text-xs text-gray-500 text-center">
-                By completing this purchase, you’ll receive immediate access to your
+                By completing this purchase, you'll receive immediate access to your
                 trip guide and booking instructions.
               </p>
             </div>

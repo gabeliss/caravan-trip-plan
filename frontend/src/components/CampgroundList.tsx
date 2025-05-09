@@ -72,14 +72,7 @@ export const CampgroundList: React.FC<CampgroundListProps> = ({
         campground.siteTypes?.[type as keyof typeof campground.siteTypes]
       )
     );
-
-    console.log("Filtered Campgrounds", {
-      filteredCampgrounds,
-      loading,
-      tripStartDate,
-      tripEndDate,
-      guestCount
-    });
+    
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Filter Bar */}

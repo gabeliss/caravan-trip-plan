@@ -3,6 +3,8 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { tripService } from '../../services/tripService';
+import { authService } from '../../services/authService';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,8 +15,9 @@ export const Login: React.FC = () => {
   const location = useLocation();
   const { login, isAuthenticated, confirmationError } = useAuth();
   
-  // Check if we are in the process of logging out
+  // Check if we are in the process of logging out or have a tripId to claim
   const isLoggingOut = location.state && (location.state as any).loggingOut;
+  const tripIdToClaim = location.state && (location.state as any).tripId;
 
   // Add timeout to redirect if stuck on logout screen
   useEffect(() => {
@@ -53,9 +56,38 @@ export const Login: React.FC = () => {
     try {
       console.log('🔍 Login: Calling login function from AuthContext...');
       await login(email, password);
-      console.log('✅ Login: Login function completed successfully, navigating to dashboard...');
+      console.log('✅ Login: Login function completed successfully');
       clearTimeout(loginTimeout);
-      navigate('/dashboard');
+
+      // Check if there's a trip to claim
+      if (tripIdToClaim) {
+        try {
+          console.log('🔍 Login: Checking trip to claim:', tripIdToClaim);
+          const trip = await tripService.getTripById(tripIdToClaim);
+          
+          if (trip && trip.email === email && !trip.user_id) {
+            console.log('✅ Login: Found matching trip to claim');
+            // Update the trip with the user's ID
+            const currentUser = await authService.getCurrentUser();
+            if (currentUser) {
+              await tripService.updateTrip({
+                ...trip,
+                user_id: currentUser.id
+              });
+              console.log('✅ Login: Trip claimed successfully');
+            }
+          }
+          // Navigate to dashboard after claim attempt (whether successful or not)
+          navigate('/dashboard');
+        } catch (claimErr) {
+          console.error('❌ Login: Error claiming trip:', claimErr);
+          // Still navigate to dashboard even if claim fails
+          navigate('/dashboard');
+        }
+      } else {
+        // Standard login flow without trip claiming
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       console.error('❌ Login: Error during login:', err);
       clearTimeout(loginTimeout);
