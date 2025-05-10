@@ -22,6 +22,7 @@ interface CampgroundInfoData {
       maxGuests?: number | string;
       petRules?: string;
       quietHours?: string | null;
+      coordinates?: [number, number];
     }
   }
 }
@@ -118,6 +119,7 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
         name: detailedData.title || campground.name,
         description: detailedData.content || campground.description,
         address: detailedData.address || campground.address,
+        coordinates: detailedData.coordinates || campground.coordinates,
         rating: campground.rating || 4 + Math.random(),
         amenities: detailedData.amenities || campground.amenities || ['WiFi', 'Showers', 'Toilets', 'Fire pit'],
         images: detailedData.imageUrls?.map(url => ({ url, alt: detailedData.title })) || campground.images || [

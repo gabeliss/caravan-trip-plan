@@ -12,7 +12,9 @@ export const Map: React.FC<MapProps> = ({ destination, selectedCampgrounds = [] 
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const labelMarkersRef = useRef<mapboxgl.Marker[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [routeInfo, setRouteInfo] = useState<string | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
@@ -26,124 +28,184 @@ export const Map: React.FC<MapProps> = ({ destination, selectedCampgrounds = [] 
     try {
       mapboxgl.accessToken = token;
 
-      // Validate token before initializing map
-      fetch(`https://api.mapbox.com/tokens/v2/validate?access_token=${token}`)
-        .then(response => response.json())
-        .then(data => {
-          if (!data.valid) {
-            setError('Invalid Mapbox token');
-            return;
-          }
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current!,
+        style: 'mapbox://styles/mapbox/outdoors-v12',
+        center: destination.coordinates,
+        zoom: 7
+      });
 
-          map.current = new mapboxgl.Map({
-            container: mapContainer.current!,
-            style: 'mapbox://styles/mapbox/outdoors-v12',
-            center: destination.coordinates,
-            zoom: 7
+      map.current.on('load', () => {
+        if (!map.current) return;
+
+        // Clear existing markers
+        markersRef.current.forEach(marker => marker.remove());
+        labelMarkersRef.current.forEach(marker => marker.remove());
+        markersRef.current = [];
+        labelMarkersRef.current = [];
+
+        const validCampgrounds = selectedCampgrounds.filter(
+          (campground): campground is Campground =>
+            Boolean(
+              campground &&
+              campground.coordinates &&
+              Array.isArray(campground.coordinates) &&
+              campground.coordinates.length === 2
+            )
+        );
+
+        if (validCampgrounds.length > 0) {
+          const coordinates = validCampgrounds.map(c => c.coordinates);
+
+          // Add campground markers
+          validCampgrounds.forEach((campground, index) => {
+            // Add the black pin
+            const marker = new mapboxgl.Marker({ color: '#194027' })
+              .setLngLat(campground.coordinates)
+              .addTo(map.current!);
+            markersRef.current.push(marker);
+          
+            // Add the floating label above it
+            const city = campground.city || '';
+            const labelEl = document.createElement('div');
+            labelEl.className = 'camp-label';
+            labelEl.innerHTML = `
+              <div style="
+                background: white;
+                border-radius: 4px;
+                padding: 2px 6px;
+                font-size: 11px;
+                line-height: 1.2;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+                text-align: center;
+                transform: translateY(-8px);
+              ">
+                <div style="color: #666;">${city}</div>
+                <div>${campground.name}</div>
+              </div>
+            `;
+          
+            const labelMarker = new mapboxgl.Marker({
+              element: labelEl,
+              anchor: 'bottom',
+              offset: [0, -35]
+            })
+              .setLngLat(campground.coordinates)
+              .addTo(map.current!);
+          
+            markersRef.current.push(labelMarker);
           });
+          
+          
 
-          map.current.on('load', () => {
-            if (!map.current) return;
+          if (coordinates.length > 1) {
+            const points = coordinates.map(coord => coord.join(',')).join(';');
 
-            // Clear existing markers
-            markersRef.current.forEach(marker => marker.remove());
-            markersRef.current = [];
+            fetch(
+              `https://api.mapbox.com/directions/v5/mapbox/driving/${points}?geometries=geojson&access_token=${token}`
+            )
+              .then(response => response.json())
+              .then(data => {
+                if (!map.current || !data.routes?.[0]?.geometry) {
+                  console.error('No route data received or map not available');
+                  return;
+                }
 
-            // Add destination marker
-            const destinationMarker = new mapboxgl.Marker({ color: '#194027' })
-              .setLngLat(destination.coordinates)
-              .addTo(map.current);
-            markersRef.current.push(destinationMarker);
+                const route = data.routes[0];
+                const durationMin = Math.round(route.duration / 60);
+                const hours = Math.floor(durationMin / 60);
+                const mins = durationMin % 60;
+                const distanceMiles = (route.distance / 1609.34).toFixed(1);
+                setRouteInfo(`${hours > 0 ? `${hours} hr ` : ''}${mins} min drive • ${distanceMiles} mi`);
 
-            // Filter out any undefined campgrounds and their coordinates
-            const validCampgrounds = selectedCampgrounds.filter(
-              (campground): campground is Campground => 
-                Boolean(campground && campground.coordinates && 
-                Array.isArray(campground.coordinates) && 
-                campground.coordinates.length === 2)
-            );
+                if (map.current.getLayer('route')) {
+                  map.current.removeLayer('route');
+                }
+                if (map.current.getSource('route')) {
+                  map.current.removeSource('route');
+                }
 
-            if (validCampgrounds.length > 0) {
-              // Add markers for each valid campground
-              validCampgrounds.forEach((campground, index) => {
-                const marker = new mapboxgl.Marker({ color: '#194027' })
-                  .setLngLat(campground.coordinates)
-                  .setPopup(new mapboxgl.Popup().setHTML(`
-                    <div class="p-2">
-                      <h3 class="font-bold">${campground.name}</h3>
-                      <p class="text-sm">Night ${index + 1}</p>
-                    </div>
-                  `))
-                  .addTo(map.current!);
-                markersRef.current.push(marker);
-              });
+                map.current.addSource('route', {
+                  type: 'geojson',
+                  data: {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: route.geometry
+                  }
+                });
 
-              // Create route between campgrounds if there are at least 2
-              if (validCampgrounds.length > 1) {
-                const coordinates = validCampgrounds.map(c => c.coordinates);
-                const points = coordinates.map(coord => coord.join(',')).join(';');
+                map.current.addLayer({
+                  id: 'route',
+                  type: 'line',
+                  source: 'route',
+                  layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                  },
+                  paint: {
+                    'line-color': '#194027',
+                    'line-width': 4,
+                    'line-opacity': 0.75
+                  }
+                });
 
-                // Only fetch route if we have valid coordinates
-                if (points) {
-                  fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${points}?geometries=geojson&access_token=${token}`)
-                    .then(response => response.json())
-                    .then(data => {
-                      if (!map.current || !data.routes?.[0]?.geometry) {
-                        console.error('No route data received or map not available');
-                        return;
-                      }
+                const bounds = new mapboxgl.LngLatBounds();
+                coordinates.forEach(coord =>
+                  bounds.extend(coord as [number, number])
+                );
+                map.current.fitBounds(bounds, { padding: 50 });
 
-                      // Remove existing route layer if it exists
-                      if (map.current.getLayer('route')) {
-                        map.current.removeLayer('route');
-                      }
-                      if (map.current.getSource('route')) {
-                        map.current.removeSource('route');
-                      }
+                // Now fetch segment-by-segment labels
+                for (let i = 0; i < coordinates.length - 1; i++) {
+                  const start = coordinates[i];
+                  const end = coordinates[i + 1];
+                  const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.join(',')};${end.join(',')}?geometries=geojson&annotations=duration,distance&access_token=${token}`;
 
-                      // Add new route
-                      map.current.addSource('route', {
-                        type: 'geojson',
-                        data: {
-                          type: 'Feature',
-                          properties: {},
-                          geometry: data.routes[0].geometry
-                        }
-                      });
+                  fetch(url)
+                    .then(res => res.json())
+                    .then(segmentData => {
+                      const seg = segmentData.routes?.[0];
+                      if (!seg || seg.distance < 10 || seg.duration < 5) return;
 
-                      map.current.addLayer({
-                        id: 'route',
-                        type: 'line',
-                        source: 'route',
-                        layout: {
-                          'line-join': 'round',
-                          'line-cap': 'round'
-                        },
-                        paint: {
-                          'line-color': '#194027',
-                          'line-width': 4,
-                          'line-opacity': 0.75
-                        }
-                      });
 
-                      // Fit map to show all markers and route
-                      const bounds = new mapboxgl.LngLatBounds();
-                      coordinates.forEach(coord => bounds.extend(coord as [number, number]));
-                      map.current.fitBounds(bounds, { padding: 50 });
-                    })
-                    .catch(error => {
-                      console.error('Error fetching route:', error);
-                      setError('Error loading route data');
+                      const segDurationMin = Math.round(seg.duration / 60);
+                      const segHours = Math.floor(segDurationMin / 60);
+                      const segMins = segDurationMin % 60;
+                      const segDistance = (seg.distance / 1609.34).toFixed(1);
+
+                      const label = `${segHours > 0 ? `${segHours} hr ` : ''}${segMins} min • ${segDistance} mi`;
+
+                      const midpoint: [number, number] = [
+                        (start[0] + end[0]) / 2,
+                        (start[1] + end[1]) / 2
+                      ];
+
+                      const labelEl = document.createElement('div');
+                      labelEl.className = 'route-label';
+                      labelEl.innerText = label;
+                      labelEl.style.cssText = `
+                        background: white;
+                        border-radius: 4px;
+                        padding: 2px 6px;
+                        font-size: 12px;
+                        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+                        white-space: nowrap;
+                      `;
+
+                      const labelMarker = new mapboxgl.Marker({ element: labelEl })
+                        .setLngLat(midpoint)
+                        .addTo(map.current!);
+                      labelMarkersRef.current.push(labelMarker);
                     });
                 }
-              }
-            }
-          });
-        })
-        .catch(error => {
-          console.error('Error validating Mapbox token:', error);
-          setError('Error validating Mapbox token');
-        });
+              })
+              .catch(error => {
+                console.error('Error fetching route:', error);
+                setError('Error loading route data');
+              });
+          }
+        }
+      });
     } catch (error) {
       console.error('Error initializing map:', error);
       setError('Error initializing map');
@@ -151,6 +213,7 @@ export const Map: React.FC<MapProps> = ({ destination, selectedCampgrounds = [] 
 
     return () => {
       markersRef.current.forEach(marker => marker.remove());
+      labelMarkersRef.current.forEach(marker => marker.remove());
       if (map.current) {
         map.current.remove();
         map.current = null;
@@ -167,6 +230,13 @@ export const Map: React.FC<MapProps> = ({ destination, selectedCampgrounds = [] 
   }
 
   return (
-    <div ref={mapContainer} className="h-[400px] rounded-xl overflow-hidden shadow-md" />
+    <div className="space-y-2">
+      <div ref={mapContainer} className="h-[400px] rounded-xl overflow-hidden shadow-md" />
+      {routeInfo && (
+        <p className="text-sm text-gray-700 italic px-1">
+          Estimated route: {routeInfo}
+        </p>
+      )}
+    </div>
   );
 };

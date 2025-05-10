@@ -2,7 +2,8 @@ import { ItineraryPlan, SavedTrip, TripDuration, Destination, Campground, TripDe
 import { supabase } from './supabaseClient';
 import { enhanceCampgroundsWithData } from '../utils/enhanceCampgrounds';
 import destinationsData from '../info/destinations.json';
-
+import campgroundIdsToNames from '../info/campground-ids-to-names.json';
+import northernMichiganData from '../info/campgrounds/northern-michigan-data.json';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 interface OptimizedTripData {
@@ -30,6 +31,7 @@ interface StoredCampground {
   id: string;
   price: number;
   city: string;
+  coordinates: [number, number];
 }
 
 const formatDateForApi = (date: Date): string => {
@@ -244,6 +246,7 @@ export const tripService = {
       
       // Transform DB data into full SavedTrip objects
       return data.map(trip => {
+        console.log('Trip:', trip);
         // Validate trip_details and startDate exist
         if (!trip.trip_details || !trip.trip_details.startDate) {
           console.error(`Trip ${trip.id} is missing required trip_details or startDate`);
@@ -276,7 +279,7 @@ export const tripService = {
             description: '',
             rating: 0,
             amenities: [],
-            coordinates: [0, 0],
+            coordinates: cg.coordinates,
             images: [],
             imageUrl: '',
             address: '',
@@ -364,6 +367,8 @@ export const tripService = {
         startDate: new Date(data.trip_details.startDate),
         guestCount: data.trip_details.guestCount
       };
+
+      console.log('data.campgrounds:', data.campgrounds);
       
       // Get destination data for enhancing campgrounds
       const destinationData = getDestinationData(trip_details.destination);
@@ -376,15 +381,40 @@ export const tripService = {
           console.error(`Missing city information for campground ${cg.id} in trip ${data.id}`);
           throw new Error(`Campground ${cg.id} is missing required city information`);
         }
+
+        let campgroundData;
+        let coordinates: [number, number] = [0, 0]; // Default coordinates
+        
+        try {
+          // Check if campground ID exists in the mapping
+          if (cg.id in campgroundIdsToNames) {
+            const cityKey = campgroundIdsToNames[cg.id as keyof typeof campgroundIdsToNames].cityKey;
+            const campgroundKey = campgroundIdsToNames[cg.id as keyof typeof campgroundIdsToNames].campgroundKey;
+            
+            // Verify the city and campground keys exist in the data
+            if (cityKey in northernMichiganData && 
+                campgroundKey in (northernMichiganData as any)[cityKey]) {
+              
+              campgroundData = (northernMichiganData as any)[cityKey][campgroundKey];
+              
+              // Only use coordinates if they exist
+              if (campgroundData && campgroundData.coordinates) {
+                coordinates = campgroundData.coordinates;
+              }
+            }
+          }
+        } catch (error) {
+          console.error(`Error retrieving campground data for ${cg.id}:`, error);
+        }
         
         return {
           id: cg.id,
-          name: cg.id,
+          name: campgroundData?.title || `Campground ${cg.id}`,
           price: cg.price || 0,
-          description: '',
+          description: campgroundData?.content || '',
           rating: 0,
           amenities: [],
-          coordinates: [0, 0],
+          coordinates: coordinates,
           images: [],
           imageUrl: '',
           address: '',

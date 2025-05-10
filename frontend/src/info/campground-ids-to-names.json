@@ -1,41 +1,62 @@
 {
     "anchor-inn": {
-        "name": "Anchor Inn"
+        "name": "Anchor Inn",
+        "campgroundKey": "anchorInn",
+        "cityKey": "traverseCity"
     },
     "leelanau-pines": {
-        "name": "Leelanau Pines"
+        "name": "Leelanau Pines",
+        "campgroundKey": "leelanauPines",
+        "cityKey": "traverseCity"
     },
     "timber-ridge": {
-        "name": "Timber Ridge"
+        "name": "Timber Ridge",
+        "campgroundKey": "timberRidge",
+        "cityKey": "traverseCity"
     },
     "indian-river": {
-        "name": "Indian River"
+        "name": "Indian River",
+        "campgroundKey": "indianRiver",
+        "cityKey": "mackinacCity"
     },
     "cabins-of-mackinaw": {
-        "name": "Cabins of Mackinaw"
+        "name": "Cabins of Mackinaw",
+        "campgroundKey": "cabinsOfMackinaw",
+        "cityKey": "mackinacCity"
     },
     "teepee-campground": {
-        "name": "Teepee Campground"
-    },
-    "pictured-rocks": {
-        "name": "Pictured Rocks"
+        "name": "Teepee Campground",
+        "campgroundKey": "teepeeCampground",
+        "cityKey": "mackinacCity"
     },
     "tourist-park": {
-        "name": "Tourist Park"
+        "name": "Tourist Park",
+        "campgroundKey": "touristPark",
+        "cityKey": "picturedRocks"
     },
     "munising-koa": {
-        "name": "Munising KOA"
+        "name": "Munising KOA",
+        "campgroundKey": "munisingKoa",
+        "cityKey": "picturedRocks"
     },
     "uncle-duckys-au-train": {
-        "name": "Uncle Ducky's Au Train"
+        "name": "Uncle Ducky's Au Train",
+        "campgroundKey": "uncleDuckysAuTrain",
+        "cityKey": "picturedRocks"
     },
     "uncle-duckys-paddlers-village": {
-        "name": "Uncle Ducky's Paddlers Village"
+        "name": "Uncle Ducky's Paddlers Village",
+        "campgroundKey": "uncleDuckysPaddlersVillage",
+        "cityKey": "picturedRocks"
     },
     "fort-superior": {
-        "name": "Fort Superior"
+        "name": "Fort Superior",
+        "campgroundKey": "fortSuperior",
+        "cityKey": "picturedRocks"
     },
     "au-train-lake": {
-        "name": "Au Train Lake Campground"
+        "name": "Au Train Lake Campground",
+        "campgroundKey": "auTrainLake",
+        "cityKey": "picturedRocks"
     }
 }

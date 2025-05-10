@@ -135,7 +135,6 @@ const getCampgroundDetails = (campgroundId: string, city?: string) => {
   
   // If we found a match, return the campground details
   if (possibleMatches.length > 0) {
-    console.log(`Found campground match for ${campgroundId} in ${regionKey}:`, possibleMatches[0]);
     return regionData[possibleMatches[0]];
   }
   
@@ -202,8 +201,6 @@ const formatDestinationName = (destinationId: string): string => {
 export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) => {
   const [currentPage, setCurrentPage] = useState<Page>('overview');
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'itinerary' | 'packlist' | 'activities'>('itinerary');
-  const [packedItems, setPackedItems] = useState<Record<string, boolean>>({});
   
   // Verify required trip properties are present
   if (!trip.trip_details.guestCount) {
@@ -215,53 +212,6 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) 
   
   // Calculate days until trip
   const daysUntilTrip = differenceInDays(trip.trip_details.startDate, new Date());
-  
-  // Group nights at same location
-  const groupedNights = Array.from({ length: trip.trip_details.nights }).reduce<{
-    campground: Campground;
-    nights: number[];
-    startDate?: Date;
-    endDate?: Date;
-  }[]>((groups, _, index) => {
-    const nightIndex = index;
-    const campground = trip.selectedCampgrounds[nightIndex];
-    
-    // Calculate the date for this night
-    const date = trip.trip_details.startDate && addDays(trip.trip_details.startDate, index);
-    
-    // If this is the same campground as the last one, add to that group
-    const lastGroup = groups.length > 0 ? groups[groups.length - 1] : null;
-    
-    if (lastGroup && lastGroup.campground.id === campground.id) {
-      lastGroup.nights.push(nightIndex + 1);
-      
-      // Update end date
-      if (date) {
-        lastGroup.endDate = date;
-      }
-      
-      return groups;
-    }
-    
-    // Otherwise, start a new group
-    const newGroup = {
-      campground,
-      nights: [nightIndex + 1],
-      startDate: date,
-      endDate: date
-    };
-    
-    groups.push(newGroup);
-    return groups;
-  }, []);
-  
-  // Format trip dates
-  const dateRangeText = trip.trip_details.startDate
-    ? `${format(trip.trip_details.startDate, 'MMM d')} - ${format(
-        addDays(trip.trip_details.startDate, trip.trip_details.nights - 1),
-        'MMM d, yyyy'
-      )}`
-    : `${trip.trip_details.nights} Nights`;
 
   const getConsolidatedStays = (): ConsolidatedStay[] => {
     const stays: ConsolidatedStay[] = [];
@@ -351,7 +301,6 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) 
     
     // Use either the stay's bookingUrl, enhanced data bookingUrl, or fallback to the one from trip data
     const finalBookingUrl = stay.campground.bookingUrl || (enhancedData?.bookingUrl) || campgroundInTrip?.bookingUrl;
-    console.log("Final bookingUrl to use:", finalBookingUrl);
 
     return (
       <div className="bg-white rounded-lg border p-3">
@@ -379,7 +328,7 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) 
               <p className="text-sm text-gray-600">{enhancedData?.title || stay.campground.name}</p>
               {stay.nights.dates && (
                 <p className="text-sm text-gray-500 mt-1">
-                  {format(stay.nights.dates.start, 'MMM d')} - {format(stay.nights.dates.end, 'MMM d, yyyy')}
+                  {format(stay.nights.dates.start, 'MMM d')} - {format(addDays(stay.nights.dates.end, 1), 'MMM d, yyyy')}
                 </p>
               )}
             </div>
@@ -951,7 +900,7 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) 
             <div>
               <div className="text-sm text-gray-500 mb-1">Dates</div>
               <div className="font-medium">
-                {format(trip.trip_details.startDate, 'MMM d')} - {format(addDays(trip.trip_details.startDate, trip.trip_details.nights - 1), 'MMM d, yyyy')}
+                {format(trip.trip_details.startDate, 'MMM d')} - {format(addDays(trip.trip_details.startDate, trip.trip_details.nights), 'MMM d, yyyy')}
               </div>
             </div>
           </div>

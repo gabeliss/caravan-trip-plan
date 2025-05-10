@@ -1,626 +1,750 @@
 {
     "traverseCity": {
-        "traverseCityStatePark": {
-            "title": "Traverse City State Park",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "1132 US-31 N, Traverse City, MI 49686",
-            "cityAndState": "Traverse City, MI",
-            "content": "Located on the east arm of Grand Traverse Bay, this park offers a beautiful beach and is close to the city. Traverse City State Park features a quarter-mile of Grand Traverse Bay shoreline and offers a unique urban camping experience with easy access to downtown.",
-            "taxRate": 0.06,
-            "fixedFee": 0,
-            "message": "Unavailable",
-            "imageUrls": [
-                "https://images.unsplash.com/photo-1602391833977-358a52198938?auto=format&fit=crop&q=80",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/tcsp1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/tcsp2.png"
-            ],
-            "offerings": "Tent and RV, 250 Sites",
-            "distanceToTown": "10 minutes from downtown Traverse City",
-            "amenities": [
-                "Full-hookup",
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Lake access",
-                "Hiking trails",
-                "Pet-friendly",
-                "Boat launch",
-                "Playground",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Sanitation station"
-            ],
-            "checkInTime": "3:00 PM",
-            "checkOutTime": "1:00 PM",
-            "guidelines": "6 Guests Maximum Per Site",
-            "maxGuests": 6,
-            "petRules": "Pet Friendly",
-            "quietHours": "10:00 PM - 8:00 AM",
-            "cancellationPolicy": "Non Refundable reservation fee (paid at the time a reservation is booked): $8 for reservations made online and $10 for reservations made through the call center. $10 cancellation/modification fee. Reduced-stay fee (an incremental fee determined by the length of time a reservation is held and the number of eligible nights canceled)."
-        },
-        "traverseCityKoa": {
-            "title": "Traverse City KOA",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "9700 M-37, Buckley, MI 49620",
-            "cityAndState": "Traverse City, MI",
-            "content": "Family-friendly campground with amenities including a pool, mini-golf, and more. This KOA offers a perfect blend of comfort and outdoor recreation with activities for campers of all ages.",
-            "taxRate": 0.06,
-            "fixedFee": 0,
-            "message": "Unavailable",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/koa1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/koa2.png"
-            ],
-            "offerings": "Tent and RV, 120 Sites",
-            "distanceToTown": "25 minutes from downtown Traverse City",
-            "amenities": [
-                "Full-hookup",
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Pet-friendly",
-                "Playground",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Sanitation station",
-                "WiFi",
-                "Camp Store",
-                "Pool",
-                "Laundry Facilities",
-                "Fridge - Lodging",
-                "Microwave - Lodging",
-                "Air Conditioning - Lodging"
-            ],
-            "checkInTime": "Tent, RV - 2:30 PM, Lodging - 3:00 PM",
-            "checkOutTime": "Tent, RV - 12:00 PM, Lodging - 11:00 AM",
-            "guidelines": "6 Guests Maximum Per Site, Pets Friendly for a fee ($25 per day per dog), Quiet Hours: 10:00 PM - 8:00 AM",
-            "maxGuests": 6,
-            "petRules": "Pets Friendly for a fee ($25 per day per dog)",
-            "quietHours": "10:00 PM - 8:00 AM",
-            "cancellationPolicy": "Cancellations for RV/tent sites (7+ days), cabins (14+ days), and lodges/studios (1+ month) incur a $25 fee; cancellations after these windows forfeit the deposit. Changes follow the same timeline."
-        },
-        "anchorInn": {
-            "title": "Anchor Inn",
-            "accomodationType": ["lodging"],
-            "address": "12068 S W Bay Shore Dr, Traverse City, MI 49684",
-            "cityAndState": "Traverse City, MI",
-            "content": "Comfortable lodging near the water with various accommodation options. Anchor Inn offers a mix of unique cabins with easy access to Grand Traverse Bay and downtown.",
-            "bookingUrl": "https://secure.thinkreservations.com/anchorinn/reservations",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn1.jpeg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn2.jpeg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn3.jpeg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn4.jpeg"
-            ],
-            "offerings": "Tent and Cabins, 35 Sites",
-            "distanceToTown": "7 minutes from downtown Traverse City",
-            "amenities": [
-                "Restrooms",
-                "Picnic area",
-                "Showers",
-                "Lake access",
-                "Playground",
-                "Pet-friendly",
-                "Fire-pit",
-                "WiFi",
-                "Kitchenette",
-                "Fridge",
-                "Microwave (room dependent)",
-                "Air Conditioning"
-            ],
-            "checkInTime": "3:00 PM",
-            "checkOutTime": "10:00 AM",
-            "guidelines": "6 Guests Maximum Per Site, Pet Friendly for a fee ($30 for one night, $55 for two or more nights)",
-            "maxGuests": 6,
-            "petRules": "Pet Friendly for a fee ($30 for one night, $55 for two or more nights)",
-            "quietHours": null,
-            "cancellationPolicy": "For nightly reservations, cancellations within 7 days of arrival are non-refundable, 8-30 days incur a 15% fee, and cancellations more than 30 days out are fully refundable; rescheduling within 7 days also carries a 15% fee and voids future refunds. For weekly reservations (7+ nights), cancellations within 30 days are non-refundable, while cancellations 30 days or more before arrival incur a 15% fee."
-        },
-        "leelanauPines": {
-            "title": "Leelanau Pines Campground",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "6500 E. Leelanau Pines Drive, Cedar, MI 49621",
-            "cityAndState": "Leelanau, MI",
-            "content": "Set along the beautiful shores of Lake Leelanau, Leelanau Pines Campground offers a perfect waterfront getaway with tent sites and cozy cabins, both featuring stunning lake views and easy water access. It's a favorite for boating, fishing, and water sports, while peaceful sunrises and nearby Leelanau Peninsula wineries make it an ideal spot for both relaxation and local exploration.",
-            "bookingUrl": "https://leelanaupinescampresort.com/stay/search",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines2.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines3.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines4.png"
-            ],
-            "offerings": "Tent, x Sites",
-            "distanceToTown": "15 minutes from Suttons Bay, 20 minutes from downtown Leland, and 25 minutes from Traverse City",
-            "amenities": [
-                "Full-hookup",
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Lake access",
-                "Pet-friendly",
-                "Boat launch",
-                "Playground",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Sanitation station",
-                "WiFi",
-                "Camp Store",
-                "Laundry Facilities"
-            ],
-            "checkInTime": "3:00 PM",
-            "checkOutTime": "Tent, RV - 1:00 PM\nLodging - 10:00 AM",
-            "guidelines": "8 Guests Maximum Per Site, Pet Friendly for RV & Tent Sites and Select Lodging, Quiet Hours: 11:00 PM - 8:00 AM",
-            "maxGuests": 8,
-            "petRules": "Pet Friendly for RV & Tent Sites and Select Lodging",
-            "quietHours": "11:00 PM - 8:00 AM",
-            "cancellationPolicy": "RV & Tent Cancellations:\n - Cancel 2+ weeks before arrival: Refund minus $25 fee or full camp credit.\n - Cancel 1+ week before arrival: 50% camp credit, 50% forfeited.\n - Cancel less than 1 week before: Full forfeiture.\n\nLodging Cancellations:\n - Cancel 3+ weeks before arrival: Refund minus $25 fee or full camp credit.\n - Cancel 2+ weeks before arrival: 50% camp credit, 50% forfeited.\n - Cancel less than 2 weeks before: Full forfeiture."
-        },
-        "timberRidge": {
-            "title": "Timber Ridge Recreation Area",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "4050 E Hammond Rd, Traverse City, MI 49686",
-            "cityAndState": "Traverse City, MI",
-            "content": "Timber Ridge is a highly-rated campground nestled in the lush woodlands just outside Traverse City, Michigan. Known for its family-friendly atmosphere and proximity to local attractions, it offers a perfect blend of outdoor adventure and modern conveniences.",
-            "bookingUrl": "https://bookingsus.newbook.cloud/timberridgeresort/api.php",
-            "imageUrls": [
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge1.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge2.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge3.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge4.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge5.png"
-            ],
-            "offerings": "Tent, Amenities, x Sites",
-            "distanceToTown": "15 minutes from downtown Traverse City",
-            "amenities": [
-                "Full-hookup",
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Lake access",
-                "Pet-friendly",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Sanitation station",
-                "WiFi",
-                "Camp Store",
-                "Pool",
-                "Laundry Facilities",
-                "Kitchenette - Lodging",
-                "Microwave - Lodging"
-            ],
-            "checkInTime": "Tent & RV - 3:00 PM\nLodging - 4:00 PM",
-            "checkOutTime": "11:00 AM",
-            "guidelines": "Tent & RV - 6 Guests Maximum Per Site, Lodging - 7 (depending on lodging type), Pet Friendly for a fee ($10 per night), Quiet Hours: 11:00 PM",
-            "maxGuests": "Tent & RV - 6\nLodging - 10",
-            "petRules": "Pet Friendly for a fee ($10 per night)",
-            "quietHours": "11:00 PM",
-            "cancellationPolicy": "A $15 processing fee applies to all cancellations. You may cancel up to 30 days prior to arrival for a refund, minus the fee. Reservations canceled within 30 days of arrival are non-refundable. Rescheduling is permitted within the same calendar year."
-        },
-        "whiteWaterPark": {
-            "title": "White Water Park Campground",
-            "accomodationType": ["tent", "rv"],
-            "address": "9500 Park Road, Williamsburg, MI 49690",
-            "cityAndState": "Williamsburg, MI",
-            "content": "Whitewater Campground is a scenic, family-friendly campground nestled along the shores of Elk Lake, offering a peaceful retreat with easy access to Traverse City and the beauty of Northern Michigan. Whether you're looking to relax by the water or explore the nearby hiking trails and charming towns, Whitewater Campground is an excellent home base for your adventure.",
-            "offerings": "55 Sites",
-            "taxRate": 0,
-            "fixedFee": 8,
-            "message": "Unavailable",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/whiteWater1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/whiteWater2.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/whiteWater3.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/whiteWater4.png"
-            ],
-            "distanceToTown": "15 minutes from Suttons Bay, 20 minutes from downtown Leland, and 25 minutes from Traverse City",
-            "amenities": [
-                "Water & electric on all sites",
-                "Fire pit",
-                "Picnic table", 
-                "Lake Access",
-                "Boat launch",
-                "Pet-friendly",
-                "Bathhouse with restrooms & showers",
-                "Camp store",
-                "Soccer and Volleyball court",
-                "Wi-Fi",
-                "Kayak & paddleboard rentals"
-            ],
-            "checkInTime": "3:00 PM",
-            "checkOutTime": "12:00 PM",
-            "guidelines": "Maximum of 6 people per site, 2 vehicles per site. Maximum of 2 adult sleeping units per site; the second unit must be registered with the ranger station at check-in and will be charged an additional fee of $25 per night. Quiet hours: 10:00 PM - 7:00 AM",
-            "maxGuests": 6,
-            "petRules": "Pet Friendly",
-            "quietHours": "10:00 PM - 7:00 AM",
-            "cancellationPolicy": "If you cancel at least 14 days before your arrival, you will receive a refund minus an $8.00 reservation fee and the first night's camping fee. If you cancel less than 14 days before your arrival, no refund will be issued. Full refunds for camping fees may be given only under limited circumstances and must be approved by the Parks & Recreation Manager. The $8.00 reservation fee is non-refundable under any circumstances. No refunds will be issued for early departure due to weather or other natural conditions."
-        }
+      "traverseCityStatePark": {
+        "title": "Traverse City State Park",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "1132 US-31 N, Traverse City, MI 49686",
+        "cityAndState": "Traverse City, MI",
+        "content": "Located on the east arm of Grand Traverse Bay, this park offers a beautiful beach and is close to the city. Traverse City State Park features a quarter-mile of Grand Traverse Bay shoreline and offers a unique urban camping experience with easy access to downtown.",
+        "taxRate": 0.06,
+        "fixedFee": 0,
+        "message": "Unavailable",
+        "imageUrls": [
+          "https://images.unsplash.com/photo-1602391833977-358a52198938?auto=format&fit=crop&q=80",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/tcsp1.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/tcsp2.png"
+        ],
+        "offerings": "Tent and RV, 250 Sites",
+        "distanceToTown": "10 minutes from downtown Traverse City",
+        "amenities": [
+          "Full-hookup",
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Lake access",
+          "Hiking trails",
+          "Pet-friendly",
+          "Boat launch",
+          "Playground",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Sanitation station"
+        ],
+        "checkInTime": "3:00 PM",
+        "checkOutTime": "1:00 PM",
+        "guidelines": "6 Guests Maximum Per Site",
+        "maxGuests": 6,
+        "petRules": "Pet Friendly",
+        "quietHours": "10:00 PM - 8:00 AM",
+        "cancellationPolicy": "Non Refundable reservation fee (paid at the time a reservation is booked): $8 for reservations made online and $10 for reservations made through the call center. $10 cancellation/modification fee. Reduced-stay fee (an incremental fee determined by the length of time a reservation is held and the number of eligible nights canceled).",
+        "coordinates": [
+          -85.55453,
+          44.74749
+        ]
+      },
+      "traverseCityKoa": {
+        "title": "Traverse City KOA",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "9700 M-37, Buckley, MI 49620",
+        "cityAndState": "Traverse City, MI",
+        "content": "Family-friendly campground with amenities including a pool, mini-golf, and more. This KOA offers a perfect blend of comfort and outdoor recreation with activities for campers of all ages.",
+        "taxRate": 0.06,
+        "fixedFee": 0,
+        "message": "Unavailable",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/koa1.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/koa2.png"
+        ],
+        "offerings": "Tent and RV, 120 Sites",
+        "distanceToTown": "25 minutes from downtown Traverse City",
+        "amenities": [
+          "Full-hookup",
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Pet-friendly",
+          "Playground",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Sanitation station",
+          "WiFi",
+          "Camp Store",
+          "Pool",
+          "Laundry Facilities",
+          "Fridge - Lodging",
+          "Microwave - Lodging",
+          "Air Conditioning - Lodging"
+        ],
+        "checkInTime": "Tent, RV - 2:30 PM, Lodging - 3:00 PM",
+        "checkOutTime": "Tent, RV - 12:00 PM, Lodging - 11:00 AM",
+        "guidelines": "6 Guests Maximum Per Site, Pets Friendly for a fee ($25 per day per dog), Quiet Hours: 10:00 PM - 8:00 AM",
+        "maxGuests": 6,
+        "petRules": "Pets Friendly for a fee ($25 per day per dog)",
+        "quietHours": "10:00 PM - 8:00 AM",
+        "cancellationPolicy": "Cancellations for RV/tent sites (7+ days), cabins (14+ days), and lodges/studios (1+ month) incur a $25 fee; cancellations after these windows forfeit the deposit. Changes follow the same timeline.",
+        "coordinates": [
+          -85.677486,
+          44.545686
+        ]
+      },
+      "anchorInn": {
+        "title": "Anchor Inn",
+        "accomodationType": [
+          "lodging"
+        ],
+        "address": "12068 S W Bay Shore Dr, Traverse City, MI 49684",
+        "cityAndState": "Traverse City, MI",
+        "content": "Comfortable lodging near the water with various accommodation options. Anchor Inn offers a mix of unique cabins with easy access to Grand Traverse Bay and downtown.",
+        "bookingUrl": "https://secure.thinkreservations.com/anchorinn/reservations",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn2.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn3.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AnchorInn4.jpeg"
+        ],
+        "offerings": "Tent and Cabins, 35 Sites",
+        "distanceToTown": "7 minutes from downtown Traverse City",
+        "amenities": [
+          "Restrooms",
+          "Picnic area",
+          "Showers",
+          "Lake access",
+          "Playground",
+          "Pet-friendly",
+          "Fire-pit",
+          "WiFi",
+          "Kitchenette",
+          "Fridge",
+          "Microwave (room dependent)",
+          "Air Conditioning"
+        ],
+        "checkInTime": "3:00 PM",
+        "checkOutTime": "10:00 AM",
+        "guidelines": "6 Guests Maximum Per Site, Pet Friendly for a fee ($30 for one night, $55 for two or more nights)",
+        "maxGuests": 6,
+        "petRules": "Pet Friendly for a fee ($30 for one night, $55 for two or more nights)",
+        "quietHours": null,
+        "cancellationPolicy": "For nightly reservations, cancellations within 7 days of arrival are non-refundable, 8-30 days incur a 15% fee, and cancellations more than 30 days out are fully refundable; rescheduling within 7 days also carries a 15% fee and voids future refunds. For weekly reservations (7+ nights), cancellations within 30 days are non-refundable, while cancellations 30 days or more before arrival incur a 15% fee.",
+        "coordinates": [
+          -85.638626,
+          44.803087
+        ]
+      },
+      "leelanauPines": {
+        "title": "Leelanau Pines Campground",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "6500 E. Leelanau Pines Drive, Cedar, MI 49621",
+        "cityAndState": "Leelanau, MI",
+        "content": "Set along the beautiful shores of Lake Leelanau, Leelanau Pines Campground offers a perfect waterfront getaway with tent sites and cozy cabins, both featuring stunning lake views and easy water access. It's a favorite for boating, fishing, and water sports, while peaceful sunrises and nearby Leelanau Peninsula wineries make it an ideal spot for both relaxation and local exploration.",
+        "bookingUrl": "https://leelanaupinescampresort.com/stay/search",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines1.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines2.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines3.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/leelanauPines4.png"
+        ],
+        "offerings": "Tent, x Sites",
+        "distanceToTown": "15 minutes from Suttons Bay, 20 minutes from downtown Leland, and 25 minutes from Traverse City",
+        "amenities": [
+          "Full-hookup",
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Lake access",
+          "Pet-friendly",
+          "Boat launch",
+          "Playground",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Sanitation station",
+          "WiFi",
+          "Camp Store",
+          "Laundry Facilities"
+        ],
+        "checkInTime": "3:00 PM",
+        "checkOutTime": "Tent, RV - 1:00 PM\nLodging - 10:00 AM",
+        "guidelines": "8 Guests Maximum Per Site, Pet Friendly for RV & Tent Sites and Select Lodging, Quiet Hours: 11:00 PM - 8:00 AM",
+        "maxGuests": 8,
+        "petRules": "Pet Friendly for RV & Tent Sites and Select Lodging",
+        "quietHours": "11:00 PM - 8:00 AM",
+        "cancellationPolicy": "RV & Tent Cancellations:\n - Cancel 2+ weeks before arrival: Refund minus $25 fee or full camp credit.\n - Cancel 1+ week before arrival: 50% camp credit, 50% forfeited.\n - Cancel less than 1 week before: Full forfeiture.\n\nLodging Cancellations:\n - Cancel 3+ weeks before arrival: Refund minus $25 fee or full camp credit.\n - Cancel 2+ weeks before arrival: 50% camp credit, 50% forfeited.\n - Cancel less than 2 weeks before: Full forfeiture.",
+        "coordinates": [
+          -85.731109,
+          44.867727
+        ]
+      },
+      "timberRidge": {
+        "title": "Timber Ridge Recreation Area",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "4050 E Hammond Rd, Traverse City, MI 49686",
+        "cityAndState": "Traverse City, MI",
+        "content": "Timber Ridge is a highly-rated campground nestled in the lush woodlands just outside Traverse City, Michigan. Known for its family-friendly atmosphere and proximity to local attractions, it offers a perfect blend of outdoor adventure and modern conveniences.",
+        "bookingUrl": "https://bookingsus.newbook.cloud/timberridgeresort/api.php",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge1.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge2.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge3.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge4.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/timberRidge5.png"
+        ],
+        "offerings": "Tent, Amenities, x Sites",
+        "distanceToTown": "15 minutes from downtown Traverse City",
+        "amenities": [
+          "Full-hookup",
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Lake access",
+          "Pet-friendly",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Sanitation station",
+          "WiFi",
+          "Camp Store",
+          "Pool",
+          "Laundry Facilities",
+          "Kitchenette - Lodging",
+          "Microwave - Lodging"
+        ],
+        "checkInTime": "Tent & RV - 3:00 PM\nLodging - 4:00 PM",
+        "checkOutTime": "11:00 AM",
+        "guidelines": "Tent & RV - 6 Guests Maximum Per Site, Lodging - 7 (depending on lodging type), Pet Friendly for a fee ($10 per night), Quiet Hours: 11:00 PM",
+        "maxGuests": "Tent & RV - 6\nLodging - 10",
+        "petRules": "Pet Friendly for a fee ($10 per night)",
+        "quietHours": "11:00 PM",
+        "cancellationPolicy": "A $15 processing fee applies to all cancellations. You may cancel up to 30 days prior to arrival for a refund, minus the fee. Reservations canceled within 30 days of arrival are non-refundable. Rescheduling is permitted within the same calendar year.",
+        "coordinates": [
+          -85.499094,
+          44.715677
+        ]
+      },
+      "whiteWaterPark": {
+        "title": "White Water Park Campground",
+        "accomodationType": [
+          "tent",
+          "rv"
+        ],
+        "address": "9500 Park Road, Williamsburg, MI 49690",
+        "cityAndState": "Williamsburg, MI",
+        "content": "Whitewater Campground is a scenic, family-friendly campground nestled along the shores of Elk Lake, offering a peaceful retreat with easy access to Traverse City and the beauty of Northern Michigan. Whether you're looking to relax by the water or explore the nearby hiking trails and charming towns, Whitewater Campground is an excellent home base for your adventure.",
+        "offerings": "55 Sites",
+        "taxRate": 0,
+        "fixedFee": 8,
+        "message": "Unavailable",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/whiteWater1.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/whiteWater2.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/whiteWater3.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/whiteWater4.png"
+        ],
+        "distanceToTown": "15 minutes from Suttons Bay, 20 minutes from downtown Leland, and 25 minutes from Traverse City",
+        "amenities": [
+          "Water & electric on all sites",
+          "Fire pit",
+          "Picnic table",
+          "Lake Access",
+          "Boat launch",
+          "Pet-friendly",
+          "Bathhouse with restrooms & showers",
+          "Camp store",
+          "Soccer and Volleyball court",
+          "Wi-Fi",
+          "Kayak & paddleboard rentals"
+        ],
+        "checkInTime": "3:00 PM",
+        "checkOutTime": "12:00 PM",
+        "guidelines": "Maximum of 6 people per site, 2 vehicles per site. Maximum of 2 adult sleeping units per site; the second unit must be registered with the ranger station at check-in and will be charged an additional fee of $25 per night. Quiet hours: 10:00 PM - 7:00 AM",
+        "maxGuests": 6,
+        "petRules": "Pet Friendly",
+        "quietHours": "10:00 PM - 7:00 AM",
+        "cancellationPolicy": "If you cancel at least 14 days before your arrival, you will receive a refund minus an $8.00 reservation fee and the first night's camping fee. If you cancel less than 14 days before your arrival, no refund will be issued. Full refunds for camping fees may be given only under limited circumstances and must be approved by the Parks & Recreation Manager. The $8.00 reservation fee is non-refundable under any circumstances. No refunds will be issued for early departure due to weather or other natural conditions.",
+        "coordinates": [
+          -85.38817,
+          44.81625
+        ]
+      }
     },
     "mackinacCity": {
-        "indianRiver": {
-            "title": "Indian River RV Resort",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "561 N. Straits Hwy., Indian River, MI 49749",
-            "cityAndState": "Indian River, MI",
-            "content": "Indian River RV Resort in Michigan offers a family-friendly camping experience with spacious RV sites and cozy log cabins. Enjoy amenities like a heated pool, playground, camp store, and easy access to nearby lakes for outdoor activities, making it the perfect base for relaxation and adventure.",
-            "bookingUrl": "https://www.campspot.com/book/indianriverrv",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver2.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver3.jpeg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver4.jpeg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver5.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver6.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver7.png"
-            ],
-            "offerings": "Tent, RV, Cabin, x Sites",
-            "distanceToTown": "28 minutes from Mackinaw City",
-            "amenities": [
-                "Full-hookup",
-                "Restrooms",
-                "Showers",
-                "Hiking Trails",
-                "Picnic area",
-                "Pet-friendly",
-                "Playground",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Sanitation station",
-                "WiFi",
-                "Camp Store",
-                "Pool",
-                "Laundry Facilities",
-                "Microwave - Lodging",
-                "Fridge - Lodging"
-            ],
-            "checkInTime": "1:00 PM",
-            "checkOutTime": "11:00 AM",
-            "guidelines": "Lodging - 4 Guests Maximum, Tent & RV - 8 Guests Maximum, Pet Friendly, Quiet Hours: 10:00 PM - 8:00 AM",
-            "maxGuests": "Lodging - 4\nTent & RV - 8",
-            "petRules": "Pet Friendly",
-            "quietHours": "10:00 PM - 8:00 AM",
-            "cancellationPolicy": "All reservations require the first night's deposit. There is a $20 cancellation fee if you cancel your reservation at least 30 days in advance. Your deposit will be held as a credit for 12 months if you cancel 8-30 days in advance. No deposits will be refunded for cancellations within a week of your scheduled arrival, and no refunds will be issued after check-in."
-        },
-        "stIgnaceKoa": {
-            "title": "St. Ignace KOA",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "W1118 US-2, St Ignace, MI 49781",
-            "cityAndState": "St. Ignace, MI",
-            "content": "St. Ignace KOA offers a scenic, family-friendly camping experience with stunning views of the Straits of Mackinac, located near Mackinac Island. Enjoy full-hookup RV sites, cozy tent sites, and amenities like a playground, picnic areas, fire pits, Wi-Fi, and easy access to water activities and hiking trails.",
-            "taxRate": 0.06,
-            "fixedFee": 0,
-            "message": "Unavailable",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/stignacekoa1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/stignacekoa2.jpg"
-            ],
-            "offerings": "Tent and RV, 80 Sites",
-            "distanceToTown": "20 minutes from Mackinaw City",
-            "amenities": [
-                "Full-hookup",
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Pet-friendly",
-                "Playground",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Sanitation station",
-                "WiFi",
-                "Camp Store",
-                "Laundry Facilities",
-                "Kitchenette - Select Lodging",
-                "Microwave - Select Lodging",
-                "Fridge - Select Lodging"
-            ],
-            "checkInTime": "Tent & RV - 1:00 PM, Lodging - 3:00 PM",
-            "checkOutTime": "11:00 AM",
-            "guidelines": "Tent & RV - 6 Guests Maximum Per Site, Lodging - 8 Guests Maximum, Pet Friendly, Quiet Hours: 11:00 PM - 7:00 AM",
-            "maxGuests": "Tent & RV - 6\nLodging - 8",
-            "petRules": "Pet Friendly",
-            "quietHours": "11:00 PM - 7:00 AM",
-            "cancellationPolicy": "RV & Tent Sites: Cancellations must be made at least 7 days before arrival to receive a refund minus a $20 administrative fee. Cancellations within 7 days forfeit the first night's fee. Lodging (Deluxe Cabins/Glamping Tents/Camping Cabins): Cancellations must be made at least 14 days before arrival to receive a refund minus a $20 administrative fee. Cancellations within 14 days forfeit the full deposit."
-        },
-        "straitsStatePark": {
-            "title": "Straits State Park",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "720 Church St, St Ignace, MI 49781",
-            "cityAndState": "St. Ignace, MI",
-            "content": "Straits State Park is home to 181 acres of recreation with views of the Mackinac Bridge and Straits of Mackinac. The park features a campground, overnight lodging facilities, picnic areas, viewing platforms, a playground and a waterfront area along Lake Huron.",
-            "taxRate": 0.06,
-            "fixedFee": 8,
-            "message": "Unavailable",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/straitssp1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/straitssp2.jpg"
-            ],
-            "offerings": "Tent and RV, 270 Sites",
-            "distanceToTown": "15 minutes from Mackinaw City",
-            "amenities": [
-                "Restrooms",
-                "Lake access",
-                "Playground",
-                "Picnic area",
-                "Hiking trails",
-                "Pet-friendly",
-                "Fire-pit",
-                "Sanitation station"
-            ],
-            "checkInTime": "RV, Tent - 3:00 PM, Lodging - 4:00 PM",
-            "checkOutTime": "RV, Tent - 1:00 PM, Lodging - 12:00 PM",
-            "guidelines": "RV, Tent - 6 Guests Maximum Per Site, Lodging - 4 Guests Maximum, Pet Friendly, Quiet Hours: 10:00 PM - 8:00 AM",
-            "maxGuests": "RV, Tent - 6\nLodging - 4",
-            "petRules": "Pet Friendly",
-            "quietHours": "10:00 PM - 8:00 AM",
-            "cancellationPolicy": "Non Refundable reservation fee (paid at the time a reservation is booked): $8 for reservations made online. $10 cancellation/modification fee. If you cancel or reduce nights on a reservation prior to your scheduled arrival, it will result in the forfeiture of the reservation fee, the cancel/modification fee, plus a fee that is a percentage of the cost of all forfeited nights."
-        },
-        "cabinsOfMackinaw": {
-            "title": "Cabins of Mackinaw",
-            "accomodationType": ["lodging"],
-            "address": "712 S Huron Ave, Mackinaw City, MI 49701",
-            "cityAndState": "Mackinaw City, MI",
-            "content": "The Cabins of Mackinac in Mackinaw City, Michigan, offer private cabins with hotel-quality amenities, located directly across from the Mackinac Island ferry docks",
-            "bookingUrl": "https://ssl.mackinaw-city.com/newreservations/request.php?HotelId=13",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/cabinsmack1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/cabinsmack2.jpg"
-            ],
-            "offerings": "Cabin Rentals",
-            "distanceToTown": "2 minutes from Mackinaw City",
-            "amenities": [
-                "Restrooms",
-                "Showers",
-                "WiFi",
-                "Pool",
-                "Laundry Facilities",
-                "Fridge",
-                "Microwave"
-            ],
-            "checkInTime": "4:00 PM",
-            "checkOutTime": "11:00 AM",
-            "guidelines": "8 Guests Maximum, No pets allowed",
-            "maxGuests": 8,
-            "petRules": "No pets allowed",
-            "quietHours": null,
-            "cancellationPolicy": "72 Hour Cancellation Policy - Reservations must be cancelled by noon three days before day of arrival. Reservations made within 72 hours of arrival are effective, final and irrevocable immediately upon booking and cannot be cancelled without penalty."
-        },
-        "teePeeCampground": {
-            "title": "TeePee Campground",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "11262 US-23, Mackinaw City, MI 49701",
-            "cityAndState": "Mackinac City, MI",
-            "content": "Tee Pee Campground in Mackinaw City offers a relaxed, family-friendly camping experience with stunning views of the Mackinac Bridge and Island. Guests enjoy spacious sites for tents and RVs, amenities like restrooms, showers, and a camp store, plus easy access to Mackinac Island ferries and local attractions.",
-            "bookingUrl": "https://www.campspot.com/book/tee-pee-campground",
-            "offerings": "Tent, RV, Cabin, 100 Sites",
-            "message": "Unavailable",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee2.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee3.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee4.jpg"
-            ],
-            "amenities": [
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Lake access",
-                "Pet-friendly",
-                "Playground",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Sanitation station",
-                "WiFi"
-            ],
-            "checkInTime": "12:00 PM",
-            "checkOutTime": "12:00 PM",
-            "guidelines": "6 Guests Maximum Per Site, Pet Friendly",
-            "maxGuests": 6,
-            "petRules": "Pet Friendly",
-            "quietHours": null,
-            "cancellationPolicy": "Cancelling your reservation on the day of or within 7 days prior to arrival will result in no refund. Cancellations 8 or more days will receive a full refund minus a $10 processing fee.",
-            "distanceToTown": "4 minutes from Mackinaw City"
-        }
+      "indianRiver": {
+        "title": "Indian River RV Resort",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "561 N. Straits Hwy., Indian River, MI 49749",
+        "cityAndState": "Indian River, MI",
+        "content": "Indian River RV Resort in Michigan offers a family-friendly camping experience with spacious RV sites and cozy log cabins. Enjoy amenities like a heated pool, playground, camp store, and easy access to nearby lakes for outdoor activities, making it the perfect base for relaxation and adventure.",
+        "bookingUrl": "https://www.campspot.com/book/indianriverrv",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver1.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver2.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver3.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver4.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver5.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/IndianRiver6.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/indianRiver7.png"
+        ],
+        "offerings": "Tent, RV, Cabin, x Sites",
+        "distanceToTown": "28 minutes from Mackinaw City",
+        "amenities": [
+          "Full-hookup",
+          "Restrooms",
+          "Showers",
+          "Hiking Trails",
+          "Picnic area",
+          "Pet-friendly",
+          "Playground",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Sanitation station",
+          "WiFi",
+          "Camp Store",
+          "Pool",
+          "Laundry Facilities",
+          "Microwave - Lodging",
+          "Fridge - Lodging"
+        ],
+        "checkInTime": "1:00 PM",
+        "checkOutTime": "11:00 AM",
+        "guidelines": "Lodging - 4 Guests Maximum, Tent & RV - 8 Guests Maximum, Pet Friendly, Quiet Hours: 10:00 PM - 8:00 AM",
+        "maxGuests": "Lodging - 4\nTent & RV - 8",
+        "petRules": "Pet Friendly",
+        "quietHours": "10:00 PM - 8:00 AM",
+        "cancellationPolicy": "All reservations require the first night's deposit. There is a $20 cancellation fee if you cancel your reservation at least 30 days in advance. Your deposit will be held as a credit for 12 months if you cancel 8-30 days in advance. No deposits will be refunded for cancellations within a week of your scheduled arrival, and no refunds will be issued after check-in.",
+        "coordinates": [
+          -84.601627,
+          45.470794
+        ]
+      },
+      "stIgnaceKoa": {
+        "title": "St. Ignace KOA",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "W1118 US-2, St Ignace, MI 49781",
+        "cityAndState": "St. Ignace, MI",
+        "content": "St. Ignace KOA offers a scenic, family-friendly camping experience with stunning views of the Straits of Mackinac, located near Mackinac Island. Enjoy full-hookup RV sites, cozy tent sites, and amenities like a playground, picnic areas, fire pits, Wi-Fi, and easy access to water activities and hiking trails.",
+        "taxRate": 0.06,
+        "fixedFee": 0,
+        "message": "Unavailable",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/stignacekoa1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/stignacekoa2.jpg"
+        ],
+        "offerings": "Tent and RV, 80 Sites",
+        "distanceToTown": "20 minutes from Mackinaw City",
+        "amenities": [
+          "Full-hookup",
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Pet-friendly",
+          "Playground",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Sanitation station",
+          "WiFi",
+          "Camp Store",
+          "Laundry Facilities",
+          "Kitchenette - Select Lodging",
+          "Microwave - Select Lodging",
+          "Fridge - Select Lodging"
+        ],
+        "checkInTime": "Tent & RV - 1:00 PM, Lodging - 3:00 PM",
+        "checkOutTime": "11:00 AM",
+        "guidelines": "Tent & RV - 6 Guests Maximum Per Site, Lodging - 8 Guests Maximum, Pet Friendly, Quiet Hours: 11:00 PM - 7:00 AM",
+        "maxGuests": "Tent & RV - 6\nLodging - 8",
+        "petRules": "Pet Friendly",
+        "quietHours": "11:00 PM - 7:00 AM",
+        "cancellationPolicy": "RV & Tent Sites: Cancellations must be made at least 7 days before arrival to receive a refund minus a $20 administrative fee. Cancellations within 7 days forfeit the first night's fee. Lodging (Deluxe Cabins/Glamping Tents/Camping Cabins): Cancellations must be made at least 14 days before arrival to receive a refund minus a $20 administrative fee. Cancellations within 14 days forfeit the full deposit.",
+        "coordinates": [
+          -84.77402,
+          45.854462
+        ]
+      },
+      "straitsStatePark": {
+        "title": "Straits State Park",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "720 Church St, St Ignace, MI 49781",
+        "cityAndState": "St. Ignace, MI",
+        "content": "Straits State Park is home to 181 acres of recreation with views of the Mackinac Bridge and Straits of Mackinac. The park features a campground, overnight lodging facilities, picnic areas, viewing platforms, a playground and a waterfront area along Lake Huron.",
+        "taxRate": 0.06,
+        "fixedFee": 8,
+        "message": "Unavailable",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/straitssp1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/straitssp2.jpg"
+        ],
+        "offerings": "Tent and RV, 270 Sites",
+        "distanceToTown": "15 minutes from Mackinaw City",
+        "amenities": [
+          "Restrooms",
+          "Lake access",
+          "Playground",
+          "Picnic area",
+          "Hiking trails",
+          "Pet-friendly",
+          "Fire-pit",
+          "Sanitation station"
+        ],
+        "checkInTime": "RV, Tent - 3:00 PM, Lodging - 4:00 PM",
+        "checkOutTime": "RV, Tent - 1:00 PM, Lodging - 12:00 PM",
+        "guidelines": "RV, Tent - 6 Guests Maximum Per Site, Lodging - 4 Guests Maximum, Pet Friendly, Quiet Hours: 10:00 PM - 8:00 AM",
+        "maxGuests": "RV, Tent - 6\nLodging - 4",
+        "petRules": "Pet Friendly",
+        "quietHours": "10:00 PM - 8:00 AM",
+        "cancellationPolicy": "Non Refundable reservation fee (paid at the time a reservation is booked): $8 for reservations made online. $10 cancellation/modification fee. If you cancel or reduce nights on a reservation prior to your scheduled arrival, it will result in the forfeiture of the reservation fee, the cancel/modification fee, plus a fee that is a percentage of the cost of all forfeited nights.",
+        "coordinates": [
+          -84.72121,
+          45.853449
+        ]
+      },
+      "cabinsOfMackinaw": {
+        "title": "Cabins of Mackinaw",
+        "accomodationType": [
+          "lodging"
+        ],
+        "address": "712 S Huron Ave, Mackinaw City, MI 49701",
+        "cityAndState": "Mackinaw City, MI",
+        "content": "The Cabins of Mackinac in Mackinaw City, Michigan, offer private cabins with hotel-quality amenities, located directly across from the Mackinac Island ferry docks",
+        "bookingUrl": "https://ssl.mackinaw-city.com/newreservations/request.php?HotelId=13",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/cabinsmack1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/cabinsmack2.jpg"
+        ],
+        "offerings": "Cabin Rentals",
+        "distanceToTown": "2 minutes from Mackinaw City",
+        "amenities": [
+          "Restrooms",
+          "Showers",
+          "WiFi",
+          "Pool",
+          "Laundry Facilities",
+          "Fridge",
+          "Microwave"
+        ],
+        "checkInTime": "4:00 PM",
+        "checkOutTime": "11:00 AM",
+        "guidelines": "8 Guests Maximum, No pets allowed",
+        "maxGuests": 8,
+        "petRules": "No pets allowed",
+        "quietHours": null,
+        "cancellationPolicy": "72 Hour Cancellation Policy - Reservations must be cancelled by noon three days before day of arrival. Reservations made within 72 hours of arrival are effective, final and irrevocable immediately upon booking and cannot be cancelled without penalty.",
+        "coordinates": [
+          -84.727671,
+          45.773877
+        ]
+      },
+      "teePeeCampground": {
+        "title": "TeePee Campground",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "11262 US-23, Mackinaw City, MI 49701",
+        "cityAndState": "Mackinac City, MI",
+        "content": "Tee Pee Campground in Mackinaw City offers a relaxed, family-friendly camping experience with stunning views of the Mackinac Bridge and Island. Guests enjoy spacious sites for tents and RVs, amenities like restrooms, showers, and a camp store, plus easy access to Mackinac Island ferries and local attractions.",
+        "bookingUrl": "https://www.campspot.com/book/tee-pee-campground",
+        "offerings": "Tent, RV, Cabin, 100 Sites",
+        "message": "Unavailable",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee2.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee3.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/teePee4.jpg"
+        ],
+        "amenities": [
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Lake access",
+          "Pet-friendly",
+          "Playground",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Sanitation station",
+          "WiFi"
+        ],
+        "checkInTime": "12:00 PM",
+        "checkOutTime": "12:00 PM",
+        "guidelines": "6 Guests Maximum Per Site, Pet Friendly",
+        "maxGuests": 6,
+        "petRules": "Pet Friendly",
+        "quietHours": null,
+        "cancellationPolicy": "Cancelling your reservation on the day of or within 7 days prior to arrival will result in no refund. Cancellations 8 or more days will receive a full refund minus a $10 processing fee.",
+        "distanceToTown": "4 minutes from Mackinaw City",
+        "coordinates": [
+          -84.715912,
+          45.764911
+        ]
+      }
     },
     "picturedRocks": {
-        "munisingKoa": {
-            "title": "Munising KOA",
-            "accomodationType": ["tent", "rv", "lodging"],
-            "address": "E10102 M-28, Wetmore, MI 49895",
-            "cityAndState": "Munising, MI",
-            "content": "Munising KOA provides a comfortable camping experience with excellent amenities and a prime location for exploring Pictured Rocks National Lakeshore. Set amongst tall pine trees, this well-maintained campground offers a variety of site options and is known for its friendly staff and clean facilities. The campground's central location makes it easy to access all the natural wonders of the Pictured Rocks area.",
-            "taxRate": 0.06,
-            "fixedFee": 0,
-            "message": "Unavailable",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/munisingkoa1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/munisingkoa2.jpg"
-            ],
-            "offerings": "Tent and RV, 120 Sites",
-            "distanceToTown": "6 minutes from Downtown Munising, 9 minutes from Pictured Rocks National Lakeshore",
-            "amenities": [
-                "Full-hookup",
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Pet-friendly",
-                "Playground",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Sanitation station",
-                "WiFi",
-                "Camp Store",
-                "Pool",
-                "Laundry Facilities"
-            ],
-            "checkInTime": "RV, Tent - 2:30 PM, Lodging - 3:00 PM",
-            "checkOutTime": "RV, Tent - 12:00 PM, Lodging - 11:00 AM",
-            "guidelines": "RV, Tent - 6 Guests Maximum, Lodging - 4 Guests Maximum, Pet Friendly, Quiet Hours: 10:00 PM - 8:00 AM",
-            "maxGuests": 6,
-            "petRules": "Pet Friendly",
-            "quietHours": "10:00 PM - 8:00 AM",
-            "cancellationPolicy": "Cancellations for RV/tent sites (7+ days), cabins (14+ days), and lodges/studios (1+ month) incur a $25 fee; cancellations after these windows forfeit the deposit. Changes follow the same timelines."
-        },
-        "touristPark": {
-            "title": "Tourist Park Campground",
-            "accomodationType": ["tent", "rv"],
-            "address": "E8518 M-28, Munising, MI 49862",
-            "cityAndState": "Munising, MI",
-            "content": "Located in Munising, Tourist Park Campground offers a perfect balance of convenience and natural beauty, with tent sites situated along the shores of the Anna River. This peaceful park is a great option for those looking to explore the wonders of Pictured Rocks National Lakeshore while being close to town.",
-            "bookingUrl": "https://www.campspot.com/book/munisingtouristparkcampground",
-            "imageUrls": [
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark1.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark2.png",
-            "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark3NEW.png"
-            ],
-            "offerings": "Tent, x Sites",
-            "distanceToTown": "4 minutes from Downtown Munising, 9 minutes from Pictured Rocks National Lakeshore",
-            "amenities": [
-                "Full-hookup",
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Lake access",
-                "Pet-friendly",
-                "Fire-pit",
-                "Sanitation station",
-                "WiFi"
-            ],
-            "checkInTime": "12:00 PM",
-            "checkOutTime": "12:00 PM",
-            "guidelines": "6 Guests Maximum Per Site, Pet Friendly",
-            "maxGuests": 6,
-            "petRules": "Pet Friendly",
-            "cancellationPolicy": "All cancellations done before or 3 days prior to arrival will be assessed a $20 fee. All cancellations that occur within 72 hours prior to your arrival are charged 50% of their current reservation. If the cancellation is for a one-night stay you will be billed the one night."
-        },
-        "uncleDuckysAuTrain": {
-            "title": "Uncle Ducky's - Au Train",
-            "accomodationType": ["tent", "lodging"],
-            "address": "E4947 Hwy M-28 Au Train, Michigan 49806",
-            "cityAndState": "Au Train, MI",
-            "content": "Uncle Ducky's in Au Train offers a unique adventure-focused camping experience with convenient access to kayaking, paddleboarding, and other water sports. Located just a short drive from Pictured Rocks National Lakeshore, this campground caters to outdoor enthusiasts looking to maximize their exploration of the area. The campground features rustic tent sites and is known for its guided tours and rental equipment, making it easy to experience the beauty of Lake Superior and the surrounding landscape.",
-            "bookingUrl": "https://www.paddlingmichigan.com/lodging/au-train-beach-campground/reservations/",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/PaddlersVillageAuTrain1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/PaddlersVillageAuTrain2.jpg"
-            ],
-            "offerings": "Tent, 40 Sites",
-            "distanceToTown": "15 minutes from Munising, 5 minutes from Au Train Beach",
-            "amenities": [
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Lake access",
-                "WiFi",
-                "Hiking trails",
-                "Pet-friendly",
-                "Fire-pit",
-                "Firewood & Ice"
-            ],
-            "checkInTime": "3:00 PM",
-            "checkOutTime": "11:00 AM",
-            "guidelines": "8 Guests Maximum Per Site, Pet Friendly with a Fee",
-            "maxGuests": 8,
-            "petRules": "Pet Friendly with a Fee",
-            "cancellationPolicy": [
-                "There is a standard 4.5% cancellation fee for all reservations",
-                "All reservations have until 14 day prior to your date of arrival to cancel without additional penalties",
-                "Reservations canceled within 14 days of the arrival date will be charge the standard cancellation fee plus the cost of 1 full night stay",
-                "All reservations canceled within 72 hours of check-in will not receive a refund"
-            ]
-        },
-        "uncleDuckysPaddlersVillage": {
-            "title": "Uncle Ducky's Paddlers Village",
-            "accomodationType": ["lodging"],
-            "address": "Paddler's Village, Scrooge's Alley, Munising, MI 49862",
-            "cityAndState": "Traverse City, MI",
-            "content": "Paddlers Village Accommodation in Au Train offers a unique, adventure-focused stay with easy access to kayaking, paddleboarding, and other water sports. Located just a short drive from Pictured Rocks National Lakeshore, this accommodation is ideal for outdoor enthusiasts looking to fully explore the area. Featuring comfortable, rustic lodging options, Paddlers Village is known for its proximity to guided tours and rental equipment, allowing guests to easily enjoy the beauty of Lake Superior and the surrounding landscape.",
-            "bookingUrl": "https://www.paddlingmichigan.com/lodging/paddlers-village/reservations/",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/uncleDuckys1.png"
-            ],
-            "offerings": "Tent, 40 Sites",
-            "distanceToTown": "6 minutes from Munising, 11 minutes from Pictured Rocks",
-            "amenities": [
-                "Restrooms",
-                "Showers",
-                "Picnic area",
-                "Lake access",
-                "WiFi",
-                "Hiking trails",
-                "Pet-friendly",
-                "Fire-pit",
-                "Firewood & Ice",
-                "Fridge - Select Lodging"
-            ],
-            "checkInTime": "3:00 PM",
-            "checkOutTime": "11:00 AM",
-            "guidelines": "8 Guests Maximum Per Site, Pet Friendly with a Fee",
-            "maxGuests": 8,
-            "petRules": "Pet Friendly with a Fee",
-            "cancellationPolicy": [
-                "There is a standard 4.5% cancellation fee for all reservations.",
-                "All reservations have until 14 day prior to your date of arrival to cancel without additional penalties.",
-                "Reservations canceled within 14 days of the arrival date will be charge the standard cancellation fee plus the cost of 1 full night stay.",
-                "All reservations canceled within 72 hours of check-in will not receive a refund."
-            ]
-        },
-        "fortSuperior": {
-            "title": "Fort Superior Campground",
-            "accomodationType": ["tent"],
-            "address": "N7685 Old Golf Course Rd. Munising, MI 49862",
-            "cityAndState": "Munising, MI",
-            "content": "Fort Superior Campground is a hidden gem located near Munising, offering a unique camping experience surrounded by dense forests and rugged landscapes. This more rustic campground may require some walking to reach your site, but the breathtaking views of Lake Superior make it worthwhile.",
-            "bookingUrl": "https://www.fortsuperiorcampground.com/campsites/rooms/",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior1.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior2.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior3.png",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior4.png"
-            ],
-            "offerings": "Tent, x Sites",
-            "distanceToTown": "5 minutes from Munising, 10 minutes from Pictured Rocks",
-            "amenities": [
-                "Privy Toilets",
-                "Picnic area",
-                "Pet-friendly",
-                "Fire-pit",
-                "Firewood"
-            ],
-            "checkInTime": "2:00 PM",
-            "checkOutTime": "11:00 AM",
-            "guidelines": "6 Guests Maximum Per Site, 2 vehicles per site",
-            "maxGuests": 6,
-            "petRules": "Pet Friendly",
-            "cancellationPolicy": "Full payment is required at the time of reservation, and all cancellations or changes must be submitted via email to fortsuperiorcampground@gmail.com. A $25 cancellation fee applies for cancellations made up to two weeks prior to check-in; within two weeks, the fee is $25 plus one full night's stay. No refunds will be issued for cancellations within three days of check-in or for early check-outs, and credit card processing fees are non-refundable."
-        },
-        "auTrainLake": {
-            "title": "Au Train Lake Campground",
-            "accomodationType": ["tent", "rv"],
-            "address": "Co Hwy 596, Au Train, MI 49806",
-            "cityAndState": "Au Train, MI",
-            "content": "Au Train Lake Campground offers a peaceful lakeside camping experience with a focus on fishing, boating, and water recreation. Located in the heart of the Hiawatha National Forest, this campground provides a serene escape with direct access to Au Train Lake. The surrounding forest creates a private atmosphere for campers looking to connect with nature, while still being within driving distance of popular attractions like Pictured Rocks National Lakeshore.",
-            "bookingUrl": "https://www.recreation.gov/camping/campgrounds/233172",
-            "imageUrls": [
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground1.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground2.jpg",
-                "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground3.jpg"
-            ],
-            "offerings": "Tent, 35 Sites",
-            "distanceToTown": "20 minutes from Munising, 27 minutes from Pictured Rocks",
-            "amenities": [
-                "Privy Toilet",
-                "Boat Launch",
-                "Picnic area",
-                "Lake access",
-                "Hiking trails",
-                "Pet-friendly",
-                "Fire-pit"
-            ],
-            "checkInTime": "2:00 PM",
-            "checkOutTime": "11:00 AM",
-            "guidelines": "8 Guests Maximum Per Site, 2 vehicles per site",
-            "maxGuests": 8,
-            "petRules": "Pet Friendly",
-            "cancellationPolicy": "You can cancel the reservation any time before the date of your scheduled arrival. You will receive a refund for your stay, minus the following fees: $10 cancellation fee, any reservation fees (only if paid when booking), any previous change fees."
-        }
+      "munisingKoa": {
+        "title": "Munising KOA",
+        "accomodationType": [
+          "tent",
+          "rv",
+          "lodging"
+        ],
+        "address": "E10102 M-28, Wetmore, MI 49895",
+        "cityAndState": "Munising, MI",
+        "content": "Munising KOA provides a comfortable camping experience with excellent amenities and a prime location for exploring Pictured Rocks National Lakeshore. Set amongst tall pine trees, this well-maintained campground offers a variety of site options and is known for its friendly staff and clean facilities. The campground's central location makes it easy to access all the natural wonders of the Pictured Rocks area.",
+        "taxRate": 0.06,
+        "fixedFee": 0,
+        "message": "Unavailable",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/munisingkoa1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/munisingkoa2.jpg"
+        ],
+        "offerings": "Tent and RV, 120 Sites",
+        "distanceToTown": "6 minutes from Downtown Munising, 9 minutes from Pictured Rocks National Lakeshore",
+        "amenities": [
+          "Full-hookup",
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Pet-friendly",
+          "Playground",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Sanitation station",
+          "WiFi",
+          "Camp Store",
+          "Pool",
+          "Laundry Facilities"
+        ],
+        "checkInTime": "RV, Tent - 2:30 PM, Lodging - 3:00 PM",
+        "checkOutTime": "RV, Tent - 12:00 PM, Lodging - 11:00 AM",
+        "guidelines": "RV, Tent - 6 Guests Maximum, Lodging - 4 Guests Maximum, Pet Friendly, Quiet Hours: 10:00 PM - 8:00 AM",
+        "maxGuests": 6,
+        "petRules": "Pet Friendly",
+        "quietHours": "10:00 PM - 8:00 AM",
+        "cancellationPolicy": "Cancellations for RV/tent sites (7+ days), cabins (14+ days), and lodges/studios (1+ month) incur a $25 fee; cancellations after these windows forfeit the deposit. Changes follow the same timelines.",
+        "coordinates": [
+          -86.593774,
+          46.377868
+        ]
+      },
+      "touristPark": {
+        "title": "Tourist Park Campground",
+        "accomodationType": [
+          "tent",
+          "rv"
+        ],
+        "address": "E8518 M-28, Munising, MI 49862",
+        "cityAndState": "Munising, MI",
+        "content": "Located in Munising, Tourist Park Campground offers a perfect balance of convenience and natural beauty, with tent sites situated along the shores of the Anna River. This peaceful park is a great option for those looking to explore the wonders of Pictured Rocks National Lakeshore while being close to town.",
+        "bookingUrl": "https://www.campspot.com/book/munisingtouristparkcampground",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark1.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark2.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/touristPark3NEW.png"
+        ],
+        "offerings": "Tent, x Sites",
+        "distanceToTown": "4 minutes from Downtown Munising, 9 minutes from Pictured Rocks National Lakeshore",
+        "amenities": [
+          "Full-hookup",
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Lake access",
+          "Pet-friendly",
+          "Fire-pit",
+          "Sanitation station",
+          "WiFi"
+        ],
+        "checkInTime": "12:00 PM",
+        "checkOutTime": "12:00 PM",
+        "guidelines": "6 Guests Maximum Per Site, Pet Friendly",
+        "maxGuests": 6,
+        "petRules": "Pet Friendly",
+        "cancellationPolicy": "All cancellations done before or 3 days prior to arrival will be assessed a $20 fee. All cancellations that occur within 72 hours prior to your arrival are charged 50% of their current reservation. If the cancellation is for a one-night stay you will be billed the one night.",
+        "coordinates": [
+          -86.67745,
+          46.440785
+        ]
+      },
+      "uncleDuckysAuTrain": {
+        "title": "Uncle Ducky's - Au Train",
+        "accomodationType": [
+          "tent",
+          "lodging"
+        ],
+        "address": "E4947 Hwy M-28 Au Train, Michigan 49806",
+        "cityAndState": "Au Train, MI",
+        "content": "Uncle Ducky's in Au Train offers a unique adventure-focused camping experience with convenient access to kayaking, paddleboarding, and other water sports. Located just a short drive from Pictured Rocks National Lakeshore, this campground caters to outdoor enthusiasts looking to maximize their exploration of the area. The campground features rustic tent sites and is known for its guided tours and rental equipment, making it easy to experience the beauty of Lake Superior and the surrounding landscape.",
+        "bookingUrl": "https://www.paddlingmichigan.com/lodging/au-train-beach-campground/reservations/",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/PaddlersVillageAuTrain1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/PaddlersVillageAuTrain2.jpg"
+        ],
+        "offerings": "Tent, 40 Sites",
+        "distanceToTown": "15 minutes from Munising, 5 minutes from Au Train Beach",
+        "amenities": [
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Lake access",
+          "WiFi",
+          "Hiking trails",
+          "Pet-friendly",
+          "Fire-pit",
+          "Firewood & Ice"
+        ],
+        "checkInTime": "3:00 PM",
+        "checkOutTime": "11:00 AM",
+        "guidelines": "8 Guests Maximum Per Site, Pet Friendly with a Fee",
+        "maxGuests": 8,
+        "petRules": "Pet Friendly with a Fee",
+        "cancellationPolicy": [
+          "There is a standard 4.5% cancellation fee for all reservations",
+          "All reservations have until 14 day prior to your date of arrival to cancel without additional penalties",
+          "Reservations canceled within 14 days of the arrival date will be charge the standard cancellation fee plus the cost of 1 full night stay",
+          "All reservations canceled within 72 hours of check-in will not receive a refund"
+        ],
+        "coordinates": [
+          -86.864694,
+          46.433775
+        ]
+      },
+      "uncleDuckysPaddlersVillage": {
+        "title": "Uncle Ducky's Paddlers Village",
+        "accomodationType": [
+          "lodging"
+        ],
+        "address": "Paddler's Village, Scrooge's Alley, Munising, MI 49862",
+        "cityAndState": "Traverse City, MI",
+        "content": "Paddlers Village Accommodation in Au Train offers a unique, adventure-focused stay with easy access to kayaking, paddleboarding, and other water sports. Located just a short drive from Pictured Rocks National Lakeshore, this accommodation is ideal for outdoor enthusiasts looking to fully explore the area. Featuring comfortable, rustic lodging options, Paddlers Village is known for its proximity to guided tours and rental equipment, allowing guests to easily enjoy the beauty of Lake Superior and the surrounding landscape.",
+        "bookingUrl": "https://www.paddlingmichigan.com/lodging/paddlers-village/reservations/",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/uncleDuckys1.png"
+        ],
+        "offerings": "Tent, 40 Sites",
+        "distanceToTown": "6 minutes from Munising, 11 minutes from Pictured Rocks",
+        "amenities": [
+          "Restrooms",
+          "Showers",
+          "Picnic area",
+          "Lake access",
+          "WiFi",
+          "Hiking trails",
+          "Pet-friendly",
+          "Fire-pit",
+          "Firewood & Ice",
+          "Fridge - Select Lodging"
+        ],
+        "checkInTime": "3:00 PM",
+        "checkOutTime": "11:00 AM",
+        "guidelines": "8 Guests Maximum Per Site, Pet Friendly with a Fee",
+        "maxGuests": 8,
+        "petRules": "Pet Friendly with a Fee",
+        "cancellationPolicy": [
+          "There is a standard 4.5% cancellation fee for all reservations.",
+          "All reservations have until 14 day prior to your date of arrival to cancel without additional penalties.",
+          "Reservations canceled within 14 days of the arrival date will be charge the standard cancellation fee plus the cost of 1 full night stay.",
+          "All reservations canceled within 72 hours of check-in will not receive a refund."
+        ],
+        "coordinates": [
+          -86.703869,
+          46.438557
+        ]
+      },
+      "fortSuperior": {
+        "title": "Fort Superior Campground",
+        "accomodationType": [
+          "tent"
+        ],
+        "address": "N7685 Old Golf Course Rd. Munising, MI 49862",
+        "cityAndState": "Munising, MI",
+        "content": "Fort Superior Campground is a hidden gem located near Munising, offering a unique camping experience surrounded by dense forests and rugged landscapes. This more rustic campground may require some walking to reach your site, but the breathtaking views of Lake Superior make it worthwhile.",
+        "bookingUrl": "https://www.fortsuperiorcampground.com/campsites/rooms/",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior1.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior2.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior3.png",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/fortSuperior4.png"
+        ],
+        "offerings": "Tent, x Sites",
+        "distanceToTown": "5 minutes from Munising, 10 minutes from Pictured Rocks",
+        "amenities": [
+          "Privy Toilets",
+          "Picnic area",
+          "Pet-friendly",
+          "Fire-pit",
+          "Firewood"
+        ],
+        "checkInTime": "2:00 PM",
+        "checkOutTime": "11:00 AM",
+        "guidelines": "6 Guests Maximum Per Site, 2 vehicles per site",
+        "maxGuests": 6,
+        "petRules": "Pet Friendly",
+        "cancellationPolicy": "Full payment is required at the time of reservation, and all cancellations or changes must be submitted via email to fortsuperiorcampground@gmail.com. A $25 cancellation fee applies for cancellations made up to two weeks prior to check-in; within two weeks, the fee is $25 plus one full night's stay. No refunds will be issued for cancellations within three days of check-in or for early check-outs, and credit card processing fees are non-refundable.",
+        "coordinates": [
+          -86.683938,
+          46.428406
+        ]
+      },
+      "auTrainLake": {
+        "title": "Au Train Lake Campground",
+        "accomodationType": [
+          "tent",
+          "rv"
+        ],
+        "address": "Co Hwy 596, Au Train, MI 49806",
+        "cityAndState": "Au Train, MI",
+        "content": "Au Train Lake Campground offers a peaceful lakeside camping experience with a focus on fishing, boating, and water recreation. Located in the heart of the Hiawatha National Forest, this campground provides a serene escape with direct access to Au Train Lake. The surrounding forest creates a private atmosphere for campers looking to connect with nature, while still being within driving distance of popular attractions like Pictured Rocks National Lakeshore.",
+        "bookingUrl": "https://www.recreation.gov/camping/campgrounds/233172",
+        "imageUrls": [
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground2.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/AuTrainLakeCampground3.jpg"
+        ],
+        "offerings": "Tent, 35 Sites",
+        "distanceToTown": "20 minutes from Munising, 27 minutes from Pictured Rocks",
+        "amenities": [
+          "Privy Toilet",
+          "Boat Launch",
+          "Picnic area",
+          "Lake access",
+          "Hiking trails",
+          "Pet-friendly",
+          "Fire-pit"
+        ],
+        "checkInTime": "2:00 PM",
+        "checkOutTime": "11:00 AM",
+        "guidelines": "8 Guests Maximum Per Site, 2 vehicles per site",
+        "maxGuests": 8,
+        "petRules": "Pet Friendly",
+        "cancellationPolicy": "You can cancel the reservation any time before the date of your scheduled arrival. You will receive a refund for your stay, minus the following fees: $10 cancellation fee, any reservation fees (only if paid when booking), any previous change fees.",
+        "coordinates": [
+          -86.837666,
+          46.43031
+        ]
+      }
     }
   }
