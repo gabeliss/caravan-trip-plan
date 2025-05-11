@@ -110,7 +110,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             },
             campgrounds: selectedCampgrounds.map(cg => ({
               id: cg.id,
-              price: cg.price || 0,
+              price: cg.price,
               city: cg.city || '',
             })),
             created_at: new Date().toISOString(),

@@ -38,7 +38,6 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
   
   // Update internal state when props change
   useEffect(() => {
-    console.log(`TripDetailsEditor props changed: adultCount=${adultCount}, childCount=${childCount}, nights=${nights}`);
     setGuestCount(adultCount + childCount);
     setNightsValue(nights);
     setDateValue(startDate);

@@ -99,7 +99,13 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
   
     } else {
       // Select the campground
-      onSelect(campground, selectedAccommodationType);
+      onSelect(
+        {
+          ...campground,
+          price: displayedAvailability.price
+        },
+        selectedAccommodationType
+      );
     }
   };
 

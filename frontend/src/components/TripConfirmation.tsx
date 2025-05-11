@@ -110,7 +110,7 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
     : null;
 
   // Calculate total price for payment state
-  const totalPrice = selectedCampgrounds.length > 0 ? 0 : 0; // This would be actual camping costs
+  const totalPrice = selectedCampgrounds.reduce((sum, cg) => sum + cg.price, 0);
   const allNightsBooked = selectedCampgrounds.length === duration.nights;
 
   return (
@@ -150,6 +150,8 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                     ? `Night ${stay.nights[0]}`
                     : `Nights ${stay.nights[0]}-${stay.nights[stay.nights.length - 1]}`;
                   
+                  const campground = selectedCampgrounds.find(c => c.id === stay.campground.id);
+
                   return (
                     <div key={`${stay.campground.id}-${stay.nights[0]}`} className="space-y-2">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
@@ -173,10 +175,11 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                               <div className="min-w-0">
                                 <h4 className="font-medium text-primary-dark truncate">{stay.campground.name}</h4>
                                 <p className="text-xs sm:text-sm text-gray-600 mt-1">Standard Site</p>
+                                <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                                  ${campground?.price?.toFixed(2) || '0.00'} per night
+                                </p>
                               </div>
                               {(() => {
-                                const campground = selectedCampgrounds.find(c => c.id === stay.campground.id);
-                                
                                 if (!isPaid) {
                                   return (
                                     <button
@@ -188,7 +191,7 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                                     </button>
                                   );
                                 }
-                                
+
                                 return campground?.bookingUrl ? (
                                   <a
                                     href={campground.bookingUrl}
@@ -232,16 +235,26 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                 <div className="border-t mt-6 pt-6">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
                     <div>
-                      <h3 className="text-base sm:text-lg font-semibold mb-1">Total Cost</h3>
-                      <p className="text-xs sm:text-sm text-gray-500">Includes trip guide and camping fees</p>
+                      <h3 className="text-base sm:text-lg font-semibold mb-1">Total Estimate</h3>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        You'll only pay the guide fee now. Campground bookings are paid separately on external campground websites using booking links.
+                      </p>
                     </div>
-                    <div className="text-right">
-                      <div className="text-xl sm:text-2xl font-bold">${(totalPrice + 29.99).toFixed(2)}</div>
-                      <div className="text-xs sm:text-sm text-gray-500">
-                        ${totalPrice.toFixed(2)} camping + $29.99 guide
+                    <div className="text-right space-y-1">
+                      <div className="flex justify-between sm:justify-end gap-3 text-sm text-gray-700 whitespace-nowrap">
+                        <span className="whitespace-nowrap">Trip Guide (charged now):</span>
+                        <span className="font-medium text-gray-900 whitespace-nowrap">$29.99</span>
+                      </div>
+                      <div className="flex justify-between sm:justify-end gap-3 text-sm text-gray-700 whitespace-nowrap">
+                        <span className="whitespace-nowrap">Estimated Camping Fees:</span>
+                        <span className="font-medium text-gray-900 whitespace-nowrap">${totalPrice.toFixed(2)}</span>
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold text-primary-dark pt-1">
+                        $29.99 due now
                       </div>
                     </div>
                   </div>
+
 
                   {!allNightsBooked ? (
                     <div>

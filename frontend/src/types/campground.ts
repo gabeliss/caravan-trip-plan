@@ -5,7 +5,7 @@ import { Campground } from '../types';
  */
 export interface AccommodationAvailability {
   available: boolean;
-  price: number | null;
+  price: number;
   message: string;
   timestamp?: string;
   error?: string;
@@ -32,4 +32,5 @@ export interface CampgroundWithAvailability extends Omit<Campground, 'availabili
 export interface SelectedCampground {
   campground: Campground | null;
   accommodationType: string;
+  price: number;
 } 
