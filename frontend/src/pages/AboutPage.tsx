@@ -61,9 +61,23 @@ export const AboutPage: React.FC = () => {
       <div ref={containerRef} className="pt-12 pb-24 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <motion.div style={{ opacity, y }} className="space-y-32">
-            {timelineEvents.map((event, index) => (
-              <div key={event.year} className="relative">
-                <div className="grid md:grid-cols-2 gap-16 items-center will-change-transform backface-visible">
+          {timelineEvents.map((event, index) => {
+            const sectionRef = useRef<HTMLDivElement>(null);
+            const { scrollYProgress } = useScroll({
+              target: sectionRef,
+              offset: ["start center", "end center"],
+            });
+
+            const sectionOpacity = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.3, 1, 1, 0.3]);
+
+            return (
+              <motion.div
+                key={event.year}
+                ref={sectionRef}
+                style={{ opacity: sectionOpacity }}
+                className="relative transition-opacity duration-500"
+              >
+                <div className="grid md:grid-cols-2 gap-16 items-center">
                   <div className={`order-1 md:${index % 2 === 0 ? 'order-1' : 'order-2'}`}>
                     <span className="text-[#DC7644] font-display text-xl">{event.year}</span>
                     <h2 className="text-4xl font-display text-[#22342B] mt-2 mb-6">{event.title}</h2>
@@ -81,8 +95,10 @@ export const AboutPage: React.FC = () => {
                     />
                   </div>
                 </div>
-              </div>
-            ))}
+              </motion.div>
+            );
+          })}
+
           </motion.div>
         </div>
       </div>
