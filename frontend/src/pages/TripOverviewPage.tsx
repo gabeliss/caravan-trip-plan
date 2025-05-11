@@ -9,15 +9,8 @@ import {
   LucideIcon
 } from 'lucide-react';
 import { destinations } from '../data/destinations';
-// Import the trip overviews data
 import tripOverviewsData from '../info/trip-overviews.json';
 
-// Define types for highlights to fix type errors
-type HighlightIcon = typeof Mountain | typeof Utensils | typeof Ship | typeof Sun | 
-                     typeof Tree | typeof Waves | typeof Bike | typeof Camera |
-                     typeof Wine | typeof Palmtree | typeof CloudSun;
-
-// Interface for JSON data
 interface HighlightData {
   type: string;
   name: string;
@@ -37,7 +30,6 @@ interface LocationContentData {
   highlights: HighlightData[];
 }
 
-// Runtime interface with icon components
 interface Highlight {
   type: string;
   name: string;
@@ -57,7 +49,6 @@ interface LocationContent {
   highlights: Highlight[];
 }
 
-// Map icon names to actual icon components
 const iconMap: Record<string, LucideIcon> = {
   Mountain,
   Utensils,
@@ -79,14 +70,11 @@ export const TripOverviewPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState<Record<string, number>>({});
   const [isHovering, setIsHovering] = useState<Record<string, boolean>>({});
   
-  // Prevent infinite loops with refs
   const initialized = useRef(false);
   const loggedImages = useRef(false);
 
-  // Get content data from JSON
   const rawContent = id ? (tripOverviewsData as Record<string, LocationContentData>)[id] : undefined;
   
-  // Process content to add icon components
   const content: LocationContent | undefined = rawContent ? {
     ...rawContent,
     highlights: rawContent.highlights.map(highlight => ({
@@ -95,30 +83,36 @@ export const TripOverviewPage: React.FC = () => {
     }))
   } : undefined;
 
-  // Initialize image indices once on component mount only
-  useEffect(() => {
-    if (content && !initialized.current) {
-      const initialIndices: Record<string, number> = {};
-      content.highlights.forEach((_, index) => {
-        initialIndices[index] = 0;
-      });
-      setCurrentImageIndex(initialIndices);
-      initialized.current = true;
+  const getHighlightImages = (highlight: Highlight): string[] => {
+    // First check for images array (like in Farm Club case)
+    if (highlight.images && highlight.images.length > 0) {
+      return highlight.images;
     }
-  }, [content]);
+    
+    // Then check for a single image property
+    if (highlight.image) {
+      return [highlight.image];
+    }
+    
+    // Fallback to a default image
+    return ['https://images.unsplash.com/photo-1496545672447-f699b503d270?auto=format&fit=crop&q=80'];
+  };
 
-  // Log image counts only once (for debugging)
   useEffect(() => {
-    if (content && !loggedImages.current) {
-      content.highlights.forEach((highlight, index) => {
-        const images = getHighlightImages(highlight);
-        if (images.length > 1) {
-          console.log(`Highlight ${index} (${highlight.name}) has ${images.length} images`);
-        }
-      });
-      loggedImages.current = true;
-    }
-  }, [content]);
+    if (!content || !content.highlights.length) return;
+  
+    const initialIndices: Record<string, number> = {};
+    content.highlights.forEach((_, index) => {
+      initialIndices[index] = 0;
+    });
+    setCurrentImageIndex(initialIndices);
+    initialized.current = true;
+  
+    return () => {
+      initialized.current = false;
+    };
+  }, [id]);
+  
 
   if (!destination || !content) {
     return (
@@ -136,22 +130,6 @@ export const TripOverviewPage: React.FC = () => {
     );
   }
 
-  const getHighlightImages = (highlight: Highlight): string[] => {
-    // First check for images array (like in Farm Club case)
-    if (highlight.images && highlight.images.length > 0) {
-      return highlight.images;
-    }
-    
-    // Then check for a single image property
-    if (highlight.image) {
-      return [highlight.image];
-    }
-    
-    // Fallback to a default image
-    return ['https://images.unsplash.com/photo-1496545672447-f699b503d270?auto=format&fit=crop&q=80'];
-  };
-
-  // Fixed navigation handlers 
   const handlePrevImage = (highlightIndex: number) => {
     const imageArray = getHighlightImages(content.highlights[highlightIndex]);
     setCurrentImageIndex(prev => ({
@@ -277,7 +255,6 @@ export const TripOverviewPage: React.FC = () => {
 
             <div className="space-y-32">
               {content.highlights.map((highlight, index) => {
-                // Get images for this highlight
                 const highlightImages = getHighlightImages(highlight);
                 const currentIndex = currentImageIndex[index] !== undefined ? currentImageIndex[index] : 0;
                 
