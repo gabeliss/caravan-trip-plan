@@ -283,22 +283,38 @@ export const TripOverviewPage: React.FC = () => {
                           <div className="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200">
                             <div className="relative w-full h-full">
                               {highlightImages.map((image, imageIndex) => (
-                                <motion.img
-                                  key={imageIndex}
-                                  src={image}
-                                  alt={`${highlight.name} - View ${imageIndex + 1}`}
-                                  className="absolute w-full h-full object-cover transition-opacity duration-300"
-                                  initial={{ opacity: 0 }}
-                                  animate={{ 
-                                    opacity: currentIndex === imageIndex ? 1 : 0,
-                                    zIndex: currentIndex === imageIndex ? 1 : 0
-                                  }}
-                                  onError={(e) => {
-                                    console.error(`Failed to load image: ${image}`);
-                                    // Replace broken images with a placeholder
-                                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80";
-                                  }}
-                                />
+                                image.toLowerCase().endsWith('.mov') ? (
+                                  <motion.video
+                                    key={imageIndex}
+                                    src={image}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    className="absolute w-full h-full object-cover"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ 
+                                      opacity: currentIndex === imageIndex ? 1 : 0,
+                                      zIndex: currentIndex === imageIndex ? 1 : 0
+                                    }}
+                                  />
+                                ) : (
+                                  <motion.img
+                                    key={imageIndex}
+                                    src={image}
+                                    alt={`${highlight.name} - View ${imageIndex + 1}`}
+                                    className="absolute w-full h-full object-cover transition-opacity duration-300"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ 
+                                      opacity: currentIndex === imageIndex ? 1 : 0,
+                                      zIndex: currentIndex === imageIndex ? 1 : 0
+                                    }}
+                                    onError={(e) => {
+                                      console.error(`Failed to load image: ${image}`);
+                                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80";
+                                    }}
+                                  />
+                                )
                               ))}
                             </div>
                           </div>

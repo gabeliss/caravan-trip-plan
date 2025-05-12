@@ -173,10 +173,10 @@
         "name": "Hiking Chimney Tops Trail",
         "description": "The Chimney Tops Trail is a 4-mile round-trip hike that leads to one of the best views in the park. The trail climbs steadily through thick forests and rocky sections, rewarding you with panoramic views from the top. It's a strenuous hike, but the effort is worth it, especially with the fall foliage in full display along the route and from the summit.",
         "images": [
-          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/HikingChimneyTops/Hiking1.jpeg",
-          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/HikingChimneyTops/Hiking2.jpeg",
-          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/HikingChimneyTops/Hiking3.jpeg",
-          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/HikingChimneyTops/Hiking4.jpeg"
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/Hiking/Hiking1.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/Hiking/Hiking2.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/Hiking/Hiking3.jpeg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SmokyMountain/Hiking/Hiking4.jpeg"
         ],
         "iconName": "Mountain"
       }
@@ -219,7 +219,7 @@
           "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountain1.jpg",
           "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountain2.jpeg",
           "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountain3.jpg",
-          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountain4.jpeg"
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/pages/destinations/SouthernCalifornia/HikeRyanMountain/RyanMountan4.jpeg"
         ],
         "iconName": "Mountain"
       }
