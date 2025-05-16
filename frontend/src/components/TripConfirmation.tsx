@@ -1,18 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { 
-  Calendar,
-  MapPin,
-  Tent,
-  Clock,
+import {
   ExternalLink,
   ArrowRight,
-  Map as MapIcon,
   Lock,
-  ChevronDown,
-  ChevronUp,
-  Moon,
   ArrowLeft
 } from 'lucide-react';
 import { format, addDays } from 'date-fns';
@@ -52,8 +43,6 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
   children
 }) => {
   const navigate = useNavigate();
-  const [showMap, setShowMap] = useState(false);
-  const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
   const { setFlowStage, clearSelectedCampgrounds } = useTripPlan();
 
   const handleNavigateAway = () => {
@@ -66,10 +55,8 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
     let currentGroup: StayGroup | null = null;
 
     selectedCampgrounds.forEach((campground, index) => {
-      // Default location value in case distanceToTown is undefined
       let location = destination?.name || 'Unknown location';
       
-      // Safely extract location from distanceToTown if it exists
       if (campground.distanceToTown) {
         const parts = campground.distanceToTown.split(' to ');
         if (parts.length > 1) {
@@ -105,11 +92,6 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
     return groups;
   };
 
-  const daysUntilTrip = duration.startDate 
-    ? Math.ceil((duration.startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-    : null;
-
-  // Calculate total price for payment state
   const totalPrice = selectedCampgrounds.reduce((sum, cg) => sum + cg.price, 0);
   const allNightsBooked = selectedCampgrounds.length === duration.nights;
 

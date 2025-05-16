@@ -17,6 +17,7 @@ import { useAuth } from '../context/AuthContext';
 import { tripService } from '../services/tripService';
 import { emailService } from '../services/emailService';
 import { loadStripe } from '@stripe/stripe-js';
+import { TermsAndConditionsCheckbox } from './TermsAndConditionsCheckbox';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -42,6 +43,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [guestEmail, setGuestEmail] = useState('');
   const [guestName, setGuestName] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const tripGuidePrice = 29.99;
 
@@ -202,11 +204,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               )}
 
               <div className="space-y-4">
+                <TermsAndConditionsCheckbox 
+                  isChecked={termsAccepted}
+                  onCheckChange={setTermsAccepted}
+                />
+                
                 <button
                   onClick={handlePayment}
-                  disabled={isProcessing}
+                  disabled={isProcessing || !termsAccepted}
                   className={`w-full flex items-center justify-center gap-2 bg-primary-dark text-beige px-6 py-3 rounded-lg hover:bg-primary-dark/90 transition-colors ${
-                    isProcessing ? 'opacity-75 cursor-not-allowed' : ''
+                    (isProcessing || !termsAccepted) ? 'opacity-75 cursor-not-allowed' : ''
                   }`}
                 >
                   <CreditCard className="w-5 h-5" />
