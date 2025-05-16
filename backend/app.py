@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
+import stripe
 import requests
 from datetime import datetime, timedelta
 import os
@@ -8,45 +9,37 @@ import logging
 from dotenv import load_dotenv
 import time
 from supabase import create_client
+import random
 
-# Import helper modules
 from helpers.trip_itineraries import TRIP_ITINERARIES
 from helpers.cities_data import get_cities_data
 from helpers.campgrounds_data import get_campgrounds_data
 from helpers.lambda_mappings import get_lambda_mappings
 from helpers.email_service import send_confirmation_email
 
-# Load environment variables from .env file
 load_dotenv()
 
-# Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Simple in-memory cache for availability results
 availability_cache = {}
-CACHE_DURATION = 1800  # Cache duration in seconds (30 minutes)
-MAX_CONCURRENT_REQUESTS = 10  # Maximum number of concurrent Lambda requests
+CACHE_DURATION = 1800
+MAX_CONCURRENT_REQUESTS = 10
 
 app = Flask(__name__)
 
-# Configure CORS to allow requests from the frontend
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
 CORS(app, resources={r"/api/*": {"origins": FRONTEND_URL}}, supports_credentials=True)
 
-# Lambda API Gateway base URL - get from AWS_API_URL environment variable
 LAMBDA_BASE_URL = os.environ.get('AWS_API_URL', 'https://your-api-gateway-id.execute-api.us-east-1.amazonaws.com/dev')
 
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
-print("SUPABASE URL:", SUPABASE_URL)
-print("SUPABASE SERVICE ROLE KEY:", SUPABASE_SERVICE_ROLE_KEY)
+
 supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
-# Log the actual Lambda base URL for debugging
-logger.info(f"Using Lambda Base URL: {LAMBDA_BASE_URL}")
+stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
-# Helper function to call a Lambda function
 def call_lambda_function(lambda_path, payload, timeout=30):
     """
     Call a Lambda function with the given payload.
@@ -60,7 +53,6 @@ def call_lambda_function(lambda_path, payload, timeout=30):
         dict: The response from the Lambda function
     """
     lambda_url = f"{LAMBDA_BASE_URL}/{lambda_path}"
-    logger.info(f"Calling Lambda function: {lambda_url}")
     
     try:
         response = requests.post(
@@ -179,7 +171,6 @@ def generate_trip_plan():
     num_adults = data.get('numAdults', 2)
     num_kids = data.get('numKids', 0)
     
-    logger.info(f"Received trip plan request: destinationId={destination_id}, nights={nights}, startDate={start_date_str}")
     
     if not all([destination_id, nights, start_date_str]):
         return jsonify({"error": "Missing required parameters"}), 400
@@ -199,13 +190,11 @@ def generate_trip_plan():
         if destination_id not in TRIP_ITINERARIES:
             return jsonify({"error": f"No itinerary found for destination: {destination_id}"}), 404
         
-        logger.info(f"Available night options for {destination_id}: {list(TRIP_ITINERARIES[destination_id].keys())}")
-        
+
         if nights not in TRIP_ITINERARIES[destination_id]:
             return jsonify({"error": f"No itinerary found for {destination_id} with {nights} nights"}), 404
         
         itinerary = TRIP_ITINERARIES[destination_id][nights]
-        logger.info(f"Found itinerary: {itinerary}")
         
         # Generate detailed itinerary with dates
         detailed_itinerary = []
@@ -225,7 +214,6 @@ def generate_trip_plan():
             # Get campgrounds data from the helper module
             campgrounds_data = get_campgrounds_data()
             city_campgrounds = campgrounds_data.get(city_id, [])
-            logger.info(f"Found {len(city_campgrounds)} campgrounds for {city_id}")
             
             # Create stop details (without availability data)
             stop_details = {
@@ -262,20 +250,16 @@ def send_confirmation():
     if not data:
         return jsonify({"error": "No data provided"}), 400
     
-    to_email = data.get('email', os.environ.get('ADMIN_EMAIL'))
+    to_email = data.get('email', '')
     first_name = data.get('firstName', 'Traveler')
     confirmation_id = data.get('confirmationId', '###')
     trip_id = data.get('tripId')
     
-    # If trip_id is missing, return an error
     if not trip_id:
         return jsonify({"error": "Missing required tripId parameter"}), 400
     
-    # Create the trip link - in a real app, this would be a proper URL to the trip details
     frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
     trip_link = f"{frontend_url}/dashboard/trips/{trip_id}"
-    
-    logger.info(f"Sending confirmation email to {to_email} for trip {trip_id}")
     
     result = send_confirmation_email(to_email, first_name, confirmation_id, trip_link)
     
@@ -342,10 +326,148 @@ def get_user_trips(user_id):
         return jsonify(response.data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
 
+@app.route('/api/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    data = request.get_json()
 
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': 2999,  # $29.99 in cents
+                    'product_data': {
+                        'name': 'Trip Guide Package',
+                    },
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=data['success_url'],
+            cancel_url=data['cancel_url'],
+            metadata={
+                'email': data.get('email'),
+                'guest_name': data.get('guest_name', ''),
+                'trip_details': json.dumps(data.get('trip_details')),
+                'user_id': data.get('user_id', ''),
+                'campgrounds': json.dumps(data.get('campgrounds', [])),
+            }
+        )
+        return jsonify({'id': session.id})
+    except Exception as e:
+        return jsonify(error=str(e)), 400
+
+@app.route('/api/redeem-checkout-session', methods=['POST'])
+def redeem_checkout_session():
+    data = request.get_json()
+    session_id = data.get('session_id')
+
+    if not session_id:
+        return jsonify({'error': 'Missing session_id parameter'}), 400
+
+    try:
+
+        existing = supabase.table('trips').select('*').eq('stripe_session_id', session_id).execute()
+        if existing.data and len(existing.data) > 0:
+            trip = existing.data[0]
+            return jsonify({
+                "tripId": trip["id"],
+                "confirmationId": trip["confirmation_id"],
+                "email": trip.get("email") or ""
+            }), 200
+
+        if not hasattr(app, 'processed_sessions'):
+            app.processed_sessions = {}
+            
+        if session_id in app.processed_sessions:
+            return jsonify(app.processed_sessions[session_id])
+            
+        session = stripe.checkout.Session.retrieve(session_id)
+        
+        if session.payment_status != 'paid':
+            return jsonify({'error': 'Payment not completed'}), 400
+            
+        metadata = session.metadata
+        email = metadata.get('email')
+        guest_name = metadata.get('guest_name', 'Guest')
+        user_id = metadata.get('user_id', '')
+        trip_details = json.loads(metadata.get('trip_details', '{}'))
+        campgrounds_data = json.loads(metadata.get('campgrounds', '[]'))
+
+        
+        trip_id = 'T' + ''.join(str(random.randint(0, 9)) for _ in range(16))
+        confirmation_id = 'C' + ''.join(str(random.randint(0, 9)) for _ in range(16))
+        
+        if user_id:
+            trip_data = {
+                "id": trip_id,
+                "confirmation_id": confirmation_id,
+                "user_id": user_id,
+                "trip_details": {
+                    "destination": trip_details.get("destination"),
+                    "nights": trip_details.get("nights"),
+                    "startDate": trip_details.get("startDate"),
+                    "guestCount": trip_details.get("guestCount")
+                },
+                "campgrounds": campgrounds_data,
+                "created_at": datetime.now().isoformat(),
+                "status": "planned",
+                "guide_url": "/trip-guide.pdf",
+                "stripe_session_id": session_id
+            }
+        else:
+            trip_data = {
+                "id": trip_id,
+                "confirmation_id": confirmation_id,
+                "user_id": None,
+                "email": email,
+                "trip_details": {
+                    "destination": trip_details.get("destination"),
+                    "nights": trip_details.get("nights"),
+                    "startDate": trip_details.get("startDate"),
+                    "guestCount": trip_details.get("guestCount")
+                },
+                "campgrounds": campgrounds_data,
+                "created_at": datetime.now().isoformat(),
+                "status": "planned",
+                "guide_url": "/trip-guide.pdf",
+                "stripe_session_id": session_id
+            }
+        
+        response = supabase.table('trips').insert(trip_data).execute()
+        
+        if not response or not response.data or len(response.data) == 0:
+            return jsonify({'error': 'Failed to save trip'}), 500
+        
+        frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+        trip_link = f"{frontend_url}/trip-success/{trip_id}"
+        
+        try:
+            send_confirmation_email(
+                to_email=email,
+                first_name=guest_name.split(' ')[0],
+                confirmation_id=confirmation_id,
+                trip_link=trip_link
+            )
+        except Exception as email_err:
+            logger.error(f"Failed to send confirmation email: {str(email_err)}")
+            
+        result = {
+            "tripId": trip_id,
+            "confirmationId": confirmation_id,
+            "email": email
+        }
+        app.processed_sessions[session_id] = result
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        logger.error(f"Error redeeming checkout session: {str(e)}")
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    # Get port from environment variable or use default
     port = int(os.environ.get('PORT', 5001))
     app.run(host='0.0.0.0', port=port) 

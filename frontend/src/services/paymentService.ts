@@ -1,24 +1,57 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { TripPayment, UserDetails, TripDraft } from '../types';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
 export const paymentService = {
   async initializePayment(trip: TripDraft, userDetails: UserDetails): Promise<{ sessionUrl: string }> {
     try {
-      const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+      const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
       if (!stripeKey) {
-        throw new Error('Stripe public key is missing');
+        throw new Error('Stripe publishable key is missing');
       }
 
+      const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: userDetails.email,
+          guest_name: `${userDetails.firstName} ${userDetails.lastName}`.trim(),
+          trip_details: trip.trip_details,
+          campgrounds: trip.selectedCampgrounds.map(cg => ({
+            id: cg.id,
+            price: cg.price,
+            city: cg.city || ''
+          })),
+          success_url: `${window.location.origin}/trip-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: window.location.href
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
+      }
+
+      const data = await response.json();
+      const sessionId = data.id;
+      
       const stripe = await loadStripe(stripeKey);
-      if (!stripe) throw new Error('Failed to load payment processor');
-
-      // TODO: Replace this with a POST to your backend API: /api/create-checkout-session
-      // Pass trip details + userDetails as metadata or line items.
-
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      if (!stripe) {
+        throw new Error('Failed to load Stripe');
+      }
+      
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
 
       return {
-        sessionUrl: `https://checkout.stripe.com/demo-session/${trip.trip_details.destination}`
+        sessionUrl: `${window.location.origin}/trip-success?session_id=${sessionId}`
       };
     } catch (error) {
       console.error('Payment initialization error:', error);

@@ -65,6 +65,7 @@ function AuthenticatedApp() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/destinations/:id" element={<TripOverviewPage />} />
           <Route path="/select-destination" element={<DestinationSelectionPage />} />
+          <Route path="/trip-success" element={<TripSuccessPage />} />
           <Route path="/trip-success/:id" element={<TripSuccessPage />} />
           <Route path="/dashboard/*" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/" element={<HomePage />} />
@@ -139,7 +140,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 function HomePage() {
   const navigate = useNavigate();
-  const [duration, setDuration] = React.useState<TripDuration>({ nights: 3, guestCount: 2 });
+  const [duration, setDuration] = React.useState<TripDuration>({ nights: 3, guestCount: 2, startDate: new Date() });
 
   const handleDateSelect = (date: Date, guestCount: number) => {
     // Navigate to destination selection page with trip parameters

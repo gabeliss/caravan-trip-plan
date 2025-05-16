@@ -3,7 +3,7 @@
 interface ImportMetaEnv {
   readonly VITE_API_URL: string;
   readonly VITE_MAPBOX_TOKEN: string;
-  readonly VITE_STRIPE_PUBLIC_KEY: string;
+  readonly VITE_STRIPE_PUBLISHABLE_KEY: string;
 }
 
 interface ImportMeta {

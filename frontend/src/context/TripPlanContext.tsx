@@ -66,14 +66,10 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
     setError(null);
     
     try {
-      // Validate required parameters
       if (numAdults === undefined) {
         throw new Error('Number of adults is required for trip planning');
       }
-      
-      console.log(`Generating plan for destination: ${destinationId}, nights: ${nights} (type: ${typeof nights})`);
-      
-      // Generate trip plan - availability will be fetched lazily by individual components
+
       const result = await tripService.generateTripWithoutAvailability(
         destinationId,
         nights,
@@ -82,10 +78,7 @@ export const TripPlanProvider: React.FC<TripPlanProviderProps> = ({ children }) 
         numKids
       );
 
-      console.log('generatePlan() result', result);
       setTripPlan(result.plan);
-      
-      console.log('Trip plan generated successfully - availability will be fetched by campground cards as needed');
     } catch (err: any) {
       const errorMessage = err?.message || 'Failed to generate trip plan. Please try again.';
       setError(errorMessage);

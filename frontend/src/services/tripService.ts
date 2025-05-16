@@ -56,15 +56,6 @@ export const getDestinationData = (destinationId: string): Destination => {
   };
 };
 
-/**
- * Fetches availability for a specific city and date range
- * @param cityId ID of the city
- * @param startDate Start date in MM/DD/YY format
- * @param endDate End date in MM/DD/YY format
- * @param numAdults Number of adults
- * @param numKids Number of kids
- * @returns Promise with availability data
- */
 export const fetchCityAvailability = async (
   cityId: string,
   startDate: string,
@@ -130,15 +121,6 @@ export const fetchCityAvailability = async (
   }
 };
 
-/**
- * Generates a trip plan without pre-fetching availability for all campgrounds
- * @param destinationId ID of the destination
- * @param nights Total number of nights
- * @param startDate Starting date of the trip
- * @param numAdults Number of adults
- * @param numKids Number of kids
- * @returns Promise with trip plan structure
- */
 export const generateTripWithoutAvailability = async (
   destinationId: string,
   nights: number,
@@ -147,7 +129,6 @@ export const generateTripWithoutAvailability = async (
   numKids: number
 ) => {
   try {
-    // Validate that all required parameters are present
     if (numAdults === undefined) {
       throw new Error('Number of adults is required for trip planning');
     }
@@ -156,7 +137,6 @@ export const generateTripWithoutAvailability = async (
       throw new Error('Number of kids is required for trip planning');
     }
     
-    // Use the backend API to generate the trip plan
     const response = await fetch(`${API_BASE_URL}/trip-plan`, {
       method: 'POST',
       headers: {
@@ -178,14 +158,12 @@ export const generateTripWithoutAvailability = async (
     
     const tripPlanData = await response.json();
     
-    // Convert the backend response to our frontend ItineraryPlan format
     const plan: ItineraryPlan = {
       destination: destinationId,
       totalNights: nights,
       startDate: new Date(startDate),
       guestCount: numAdults + numKids,
       stops: tripPlanData.stops.map((stop: any) => {
-        // Parse dates from MM/DD/YY format
         const [startMonth, startDay, startYear] = stop.startDate.split('/').map(Number);
         const [endMonth, endDay, endYear] = stop.endDate.split('/').map(Number);
         
@@ -199,8 +177,6 @@ export const generateTripWithoutAvailability = async (
       })
     };
     
-    // Return the plan and the raw data
-    // Availability data is no longer pre-fetched by the backend
     return {
       plan
     };
@@ -228,11 +204,7 @@ export const createTripAsGuest = async (tripData: any): Promise<SavedTrip> => {
 };
 
 
-// Define the tripService object with all trip-related methods
 export const tripService = {
-  /**
-   * Get trips for a specific user
-   */
   async getUserTrips(userId: string): Promise<SavedTrip[]> {
     try {
       const { data, error } = await supabase
@@ -244,10 +216,7 @@ export const tripService = {
       
       if (!data) return [];
       
-      // Transform DB data into full SavedTrip objects
       return data.map(trip => {
-        console.log('Trip:', trip);
-        // Validate trip_details and startDate exist
         if (!trip.trip_details || !trip.trip_details.startDate) {
           console.error(`Trip ${trip.id} is missing required trip_details or startDate`);
           throw new Error(`Trip ${trip.id} is missing required data`);
@@ -260,13 +229,10 @@ export const tripService = {
           guestCount: trip.trip_details.guestCount
         };
         
-        // Get destination data for enhancing campgrounds
         const destinationData = getDestinationData(trip_details.destination);
         const cityName = destinationData.name;
         
-        // Convert minimal campground data to fully enhanced campgrounds
         let campgrounds = trip.campgrounds.map((cg: StoredCampground) => {
-          // Verify city information is present
           if (!cg.city) {
             console.error(`Missing city information for campground ${cg.id} in trip ${trip.id}`);
             throw new Error(`Campground ${cg.id} is missing required city information`);
@@ -317,12 +283,10 @@ export const tripService = {
               rv: false,
               lodging: false
             },
-            // Add the city from the stored campground data
             city: cg.city
           };
         });
         
-        // Enhance campgrounds with data from our static JSON files
         campgrounds = enhanceCampgroundsWithData(campgrounds, cityName);
         
         return {
@@ -341,9 +305,6 @@ export const tripService = {
     }
   },
   
-  /**
-   * Get a specific trip by ID
-   */
   async getTripById(tripId: string): Promise<SavedTrip | null> {
     try {
       const { data, error } = await supabase
@@ -355,7 +316,6 @@ export const tripService = {
       if (error) throw error;
       if (!data) return null;
       
-      // Validate trip_details and startDate exist
       if (!data.trip_details || !data.trip_details.startDate) {
         console.error(`Trip ${data.id} is missing required trip_details or startDate`);
         throw new Error(`Trip ${data.id} is missing required data`);
@@ -367,16 +327,11 @@ export const tripService = {
         startDate: new Date(data.trip_details.startDate),
         guestCount: data.trip_details.guestCount
       };
-
-      console.log('data.campgrounds:', data.campgrounds);
       
-      // Get destination data for enhancing campgrounds
       const destinationData = getDestinationData(trip_details.destination);
       const cityName = destinationData.name;
       
-      // Convert minimal campground data to fully enhanced campgrounds
       let campgrounds = data.campgrounds.map((cg: StoredCampground) => {
-        // Verify city information is present
         if (!cg.city) {
           console.error(`Missing city information for campground ${cg.id} in trip ${data.id}`);
           throw new Error(`Campground ${cg.id} is missing required city information`);
@@ -386,18 +341,15 @@ export const tripService = {
         let coordinates: [number, number] = [0, 0]; // Default coordinates
         
         try {
-          // Check if campground ID exists in the mapping
           if (cg.id in campgroundIdsToNames) {
             const cityKey = campgroundIdsToNames[cg.id as keyof typeof campgroundIdsToNames].cityKey;
             const campgroundKey = campgroundIdsToNames[cg.id as keyof typeof campgroundIdsToNames].campgroundKey;
             
-            // Verify the city and campground keys exist in the data
             if (cityKey in northernMichiganData && 
                 campgroundKey in (northernMichiganData as any)[cityKey]) {
               
               campgroundData = (northernMichiganData as any)[cityKey][campgroundKey];
               
-              // Only use coordinates if they exist
               if (campgroundData && campgroundData.coordinates) {
                 coordinates = campgroundData.coordinates;
               }
@@ -486,13 +438,6 @@ export const tripService = {
     email?: string
   ): Promise<SavedTrip> {
     try {
-      console.log('Creating trip with data:', {
-        userId,
-        destination,
-        duration,
-        campgroundCount: selectedCampgrounds.length,
-        email: email
-      });
 
       if (!userId) {
         if (!email) {
@@ -504,25 +449,21 @@ export const tripService = {
         }
       }          
       
-      // Validate destination has required fields
       if (!destination || !destination.id || !destination.name || !destination.region) {
         console.error('Invalid destination object:', destination);
         throw new Error('Destination is missing required fields');
       }
       
-      // Validate startDate exists
       if (!duration.startDate) {
         console.error('Missing required startDate for trip creation');
         throw new Error('Start date is required for trip creation');
       }
       
-      // Validate guestCount exists
       if (duration.guestCount === undefined) {
         console.error('Missing required guestCount for trip creation');
         throw new Error('Guest count is required for trip creation');
       }
 
-      // Validate email is provided for guest users (when userId is null)
       if (!userId && !email) {
         console.error('Missing required email for guest trip creation');
         throw new Error('Email is required for guest trip creation');
@@ -531,7 +472,6 @@ export const tripService = {
       const tripId = 'T' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
       const confirmationId = 'C' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
       
-      // Create trip_details object from destination and duration
       const trip_details: TripDetails = {
         destination: destination.id,
         nights: duration.nights,
@@ -539,7 +479,6 @@ export const tripService = {
         guestCount: duration.guestCount
       };
       
-      // Store only essential data for Supabase
       const tripData: OptimizedTripData = {
         id: tripId,
         confirmation_id: confirmationId,
@@ -552,8 +491,6 @@ export const tripService = {
           guestCount: duration.guestCount
         },
         campgrounds: selectedCampgrounds.map(cg => {
-          // Use the city property directly from the campground object
-          // This is set during trip planning and should be available
           if (!cg.city) {
             throw new Error(`Missing city information for campground: ${cg.id}. City information is required for all campgrounds.`);
           }
@@ -568,8 +505,6 @@ export const tripService = {
         status: 'planned'
       };
       
-      console.log('Preparing to insert trip data into Supabase:', JSON.stringify(tripData, null, 2));
-      
       const { data, error } = await supabase
         .from('trips')
         .insert(tripData)
@@ -580,8 +515,6 @@ export const tripService = {
         throw error;
       }
       
-      // Return the SavedTrip object constructed from our input data
-      // We don't rely on the response data since Supabase may not return it completely
       return {
         id: tripId,
         confirmationId,
@@ -596,18 +529,13 @@ export const tripService = {
     }
   },
   
-  /**
-   * Update an existing trip
-   */
   async updateTrip(trip: SavedTrip): Promise<SavedTrip> {
     try {
-      // Validate startDate exists
       if (!trip.trip_details.startDate) {
         console.error(`Trip ${trip.id} is missing required startDate for update`);
         throw new Error(`Start date is required for trip update`);
       }
       
-      // Store only essential data for Supabase
       const tripData = {
         trip_details: {
           destination: trip.trip_details.destination,
@@ -616,7 +544,6 @@ export const tripService = {
           guestCount: trip.trip_details.guestCount
         },
         campgrounds: trip.selectedCampgrounds.map(cg => {
-          // Ensure city information is included
           if (!cg.city) {
             throw new Error(`Missing city information for campground: ${cg.id}. City information is required for all campgrounds.`);
           }
@@ -645,9 +572,6 @@ export const tripService = {
     }
   },
   
-  /**
-   * Delete a trip
-   */
   async deleteTrip(tripId: string): Promise<void> {
     try {
       const { error } = await supabase
@@ -679,12 +603,10 @@ export const tripService = {
         throw new Error(result.error || 'Failed to claim guest trips');
       }
   
-      // Only fetch updated trips if anything was actually claimed
       if (!result.updated || result.updated === 0) {
         return [];
       }
-  
-      // Only if trips were claimed, fetch them
+
       const fetchResponse = await fetch(`${API_BASE_URL}/user-trips/${userId}`);
       const tripRows = await fetchResponse.json();
   

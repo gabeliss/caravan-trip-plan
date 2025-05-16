@@ -1,7 +1,6 @@
 import { Campground } from '../types';
 import northernMichiganData from '../info/campgrounds/northern-michigan-data.json';
 
-// Define a type for the campground data structure from JSON
 interface CampgroundInfoData {
   [region: string]: {
     [campgroundId: string]: {
@@ -27,9 +26,7 @@ interface CampgroundInfoData {
   }
 }
 
-// Helper function to get region key from city name
 const getRegionKey = (cityName: string): string => {
-  // Convert from display name to camelCase region key used in JSON data
   const cityMappings: Record<string, string> = {
     'Traverse City': 'traverseCity',
     'Mackinac City': 'mackinacCity',
@@ -39,11 +36,9 @@ const getRegionKey = (cityName: string): string => {
   return cityMappings[cityName] || cityName.toLowerCase().replace(/\s+/g, '');
 };
 
-// Function to enhance campgrounds with data from the JSON file
 export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityName: string): Campground[] => {
   if (!cityName) return campgroundList;
   
-  // Get the region data from our JSON
   const regionKey = getRegionKey(cityName);
   const regionData = (northernMichiganData as unknown as CampgroundInfoData)[regionKey];
   
@@ -53,34 +48,20 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
   }
   
   return campgroundList.map(campground => {
-    // Create a more comprehensive set of possible keys to match between API and JSON data
     const campgroundId = campground.id;
     
-    // Extract the base name without the region prefix
     const baseNameParts = campgroundId.split('-');
-    const baseName = baseNameParts.slice(Math.max(0, baseNameParts.length - 2)).join('');
     
-    // Create different variations of the ID to try matching
     const possibleKeys = [
-      // Direct transformations
-      campgroundId.replace(/-/g, ''),                         // Remove all hyphens
-      baseNameParts[baseNameParts.length - 1],                // Just the last part
-      
-      // CamelCase variations 
-      // Convert kebab-case to camelCase (e.g., "traverse-city-state-park" to "traverseCityStatePark")
+      campgroundId.replace(/-/g, ''),
+      baseNameParts[baseNameParts.length - 1],
       campgroundId.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()),
-      
-      // Specific case for single-word campgrounds with region prefixes
-      baseNameParts[baseNameParts.length - 1].toLowerCase(),  // Last part lowercase
-      
-      // Try more aggressive transformations for complex cases
-      campgroundId.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() // Remove all non-alphanumeric
+      baseNameParts[baseNameParts.length - 1].toLowerCase(),
+      campgroundId.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
     ];
-    
-    // Find the matching key in our JSON data
+
     let matchingKey = '';
     
-    // First try exact matches
     for (const key of Object.keys(regionData)) {
       if (possibleKeys.includes(key)) {
         matchingKey = key;
@@ -88,11 +69,9 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
       }
     }
     
-    // If no exact match, try partial matches
     if (!matchingKey) {
       for (const key of Object.keys(regionData)) {
         for (const possibleKey of possibleKeys) {
-          // Check if the key contains the possible key or vice versa
           if (key.toLowerCase().includes(possibleKey.toLowerCase()) || 
               possibleKey.toLowerCase().includes(key.toLowerCase())) {
             matchingKey = key;
@@ -103,11 +82,9 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
       }
     }
     
-    // If we found matching detailed data, enhance the campground with it
     if (matchingKey && regionData[matchingKey]) {
       const detailedData = regionData[matchingKey];
       
-      // Create site types based on the accommodationType array in the JSON data
       const siteTypes = {
         tent: detailedData.accomodationType?.includes('tent') || false,
         rv: detailedData.accomodationType?.includes('rv') || false,
@@ -159,9 +136,6 @@ export const enhanceCampgroundsWithData = (campgroundList: Campground[], cityNam
       };
     }
 
-    // Debug: Log if we didn't find a match
-    console.log(`No match found for ${campgroundId} - no enhancement applied`);
-    
     return campground;
   });
 }; 

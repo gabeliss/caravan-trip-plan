@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate, Link, useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { tripService } from '../services/tripService';
@@ -9,15 +9,23 @@ import campgroundNamesMap from '../info/campground-ids-to-names.json';
 import nightMappings from '../info/num-night-mappings.json';
 import { useTripPlan } from '../context/TripPlanContext';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
 export const TripSuccessPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get('session_id');
   const { isAuthenticated, user } = useAuth();
   const { clearSelectedCampgrounds, clearPlan } = useTripPlan();
   const [trip, setTrip] = useState<SavedTrip | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isOwner, setIsOwner] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(!!sessionId);
+  const [sessionProcessed, setSessionProcessed] = useState(false);
+  const hasProcessed = useRef(false);
 
   const handleReturnHome = () => {
     clearSelectedCampgrounds();
@@ -25,14 +33,60 @@ export const TripSuccessPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchTrip = async () => {
-      if (!id) {
-        setError('No trip ID provided');
+    const processCheckoutSession = async () => {
+      if (!sessionId || hasProcessed.current) return;
+  
+      hasProcessed.current = true;
+  
+      try {
+        setIsLoading(true);
+        setProcessingPayment(true);
+  
+        const response = await fetch(`${API_BASE_URL}/redeem-checkout-session`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ session_id: sessionId })
+        });
+  
+        const responseData = await response.json();
+  
+        if (!response.ok) {
+          setSessionProcessed(true);
+          setIsLoading(false);
+          throw new Error(responseData.error || 'Failed to process payment');
+        }
+  
+        const { tripId } = responseData;
+  
+        setSessionProcessed(true);
+        setProcessingPayment(false);
         setIsLoading(false);
+        navigate(`/trip-success/${tripId}`, { replace: true });
+  
+      } catch (err) {
+        console.error('Error processing checkout session:', err);
+        setError(`Payment verification failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        setProcessingPayment(false);
+        setIsLoading(false);
+        setSessionProcessed(true);
+      }
+    };
+  
+    processCheckoutSession();
+  }, [sessionId, navigate]);
+  
+
+
+  useEffect(() => {
+    const fetchTrip = async () => {
+      if ((!id) || (sessionId && !sessionProcessed)) {
         return;
       }
 
       try {
+        setIsLoading(true);
         const fetchedTrip = await tripService.getTripById(id);
         
         if (!fetchedTrip) {
@@ -56,14 +110,16 @@ export const TripSuccessPage: React.FC = () => {
     };
 
     fetchTrip();
-  }, [id, isAuthenticated, user]);
+  }, [id, isAuthenticated, user, processingPayment, sessionId, sessionProcessed]);
 
-  if (isLoading) {
+  if (isLoading || processingPayment) {
     return (
       <div className="min-h-screen bg-beige-light flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-t-4 border-b-4 border-green-500 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg text-green-800">Loading your trip...</p>
+          <p className="text-lg text-green-800">
+            {processingPayment ? 'Processing your payment...' : 'Loading your trip...'}
+          </p>
         </div>
       </div>
     );

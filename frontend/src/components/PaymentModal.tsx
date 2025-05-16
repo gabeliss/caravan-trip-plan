@@ -16,6 +16,9 @@ import { paymentService } from '../services/paymentService';
 import { useAuth } from '../context/AuthContext';
 import { tripService } from '../services/tripService';
 import { emailService } from '../services/emailService';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 interface PaymentModalProps {
   destination: Destination;
@@ -59,97 +62,29 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       const tripDetails: TripDetails = {
         destination: destination.id,
         nights: duration.nights,
-        startDate: duration.startDate || new Date(),
+        startDate: duration.startDate,
         guestCount: duration.guestCount
       };
 
-      let savedTrip: SavedTrip | null = null;
-
-      try {
-        await paymentService.initializePayment(
-          {
-            trip_details: tripDetails,
-            selectedCampgrounds,
-            createdAt: new Date().toISOString(),
-            status: 'planned'
-          },
-          {
-            firstName: user ? user.name.split(' ')[0] : guestName || 'Guest',
-            lastName: user ? user.name.split(' ')[1] || '' : '',
-            email: user ? user.email : guestEmail,
-            phone: ''
-          }
-        );
-      } catch (paymentErr) {
-        console.warn('Payment session error, proceeding anyway:', paymentErr);
-      }
-
-      try {
-        if (user) {
-          savedTrip = await tripService.createTrip(
-            user.id,
-            destination,
-            duration,
-            selectedCampgrounds
-          );
-          updateUserTrips([...user.trips, savedTrip]);
-        } else {
-          const tripId = 'T' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
-          const confirmationId = 'C' + Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
-
-          savedTrip = await tripService.createTripAsGuest({
-            id: tripId,
-            confirmation_id: confirmationId,
-            user_id: null,
-            email: guestEmail,
-            trip_details: {
-              destination: destination.id,
-              nights: duration.nights,
-              startDate: duration.startDate?.toISOString() || new Date().toISOString(),
-              guestCount: duration.guestCount,
-            },
-            campgrounds: selectedCampgrounds.map(cg => ({
-              id: cg.id,
-              price: cg.price,
-              city: cg.city || '',
-            })),
-            created_at: new Date().toISOString(),
-            status: 'planned',
-          });
-        }
-      } catch (dbErr) {
-        console.error('Error saving trip to Supabase:', dbErr);
-        setError('Failed to save your trip. Please try again.');
-        setIsProcessing(false);
-        return;
-      }
-
-
-      if (!savedTrip) {
-        setError('Failed to create trip. Please try again.');
-        setIsProcessing(false);
-        return;
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      try {
-        await emailService.sendConfirmationEmail({
+      await paymentService.initializePayment(
+        {
+          trip_details: tripDetails,
+          selectedCampgrounds,
+          createdAt: new Date().toISOString(),
+          status: 'planned'
+        },
+        {
+          firstName: user ? user.name.split(' ')[0] : guestName || 'Guest',
+          lastName: user ? user.name.split(' ')[1] || '' : '',
           email: user ? user.email : guestEmail,
-          firstName: user ? user.name?.split(' ')[0] : guestName || 'Traveler',
-          confirmationId: savedTrip.confirmationId,
-          tripId: savedTrip.id
-        });
-      } catch (emailErr) {
-        console.error('Error sending confirmation email:', emailErr);
-      }
+          phone: ''
+        }
+      );
 
-      navigate(`/trip-success/${savedTrip.id}`);
-      onSuccess(savedTrip.id);
+      // The user will be redirected to Stripe, so we don't need to navigate or handle success here
     } catch (err) {
-      setError('Payment failed. Please try again.');
+      setError('Payment initialization failed. Please try again.');
       console.error('Payment error:', err);
-    } finally {
       setIsProcessing(false);
     }
   };

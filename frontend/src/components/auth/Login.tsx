@@ -13,59 +13,40 @@ export const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated, confirmationError } = useAuth();
+  const { login, confirmationError } = useAuth();
   
-  // Check if we are in the process of logging out or have a tripId to claim
   const isLoggingOut = location.state && (location.state as any).loggingOut;
   const tripIdToClaim = location.state && (location.state as any).tripId;
 
-  // Add timeout to redirect if stuck on logout screen
   useEffect(() => {
-    // If we're in the logging out state, set a timeout to redirect to home
     if (isLoggingOut) {
       const redirectTimeout = setTimeout(() => {
-        console.log('🔍 Login: Logout redirect timeout triggered, navigating to home');
-        // Use replace to prevent browser back button from returning to the logout screen
         navigate('/', { replace: true });
-      }, 3000); // 3 seconds timeout
+      }, 3000);
       
       return () => clearTimeout(redirectTimeout);
     }
   }, [isLoggingOut, navigate]);
 
-  // Redirect if already authenticated - check this in the background
-  // This is now handled by the AuthAwareLoginRoute in App.tsx
-  // Keeping only the console logs for debugging
-  useEffect(() => {
-    console.log('🔍 Login: Auth state check - isAuthenticated:', isAuthenticated, 'isLoggingOut:', isLoggingOut);
-  }, [isAuthenticated, isLoggingOut]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    console.log('🔍 Login: Submit button clicked, attempting login...');
 
     const loginTimeout = setTimeout(() => {
-      console.log('⚠️ Login is taking longer than expected...');
-      // Optionally, you could show a toast or inline spinner enhancement
-    }, 8000); // just warn, don’t trigger failure
+      console.log('Login is taking longer than expected...');
+    }, 8000);
 
     try {
-      console.log('🔍 Login: Calling login function from AuthContext...');
       await login(email, password);
-      console.log('✅ Login: Login function completed successfully');
       clearTimeout(loginTimeout);
 
-      // Check if there's a trip to claim
       if (tripIdToClaim) {
         try {
-          console.log('🔍 Login: Checking trip to claim:', tripIdToClaim);
           const trip = await tripService.getTripById(tripIdToClaim);
           
           if (trip && trip.email === email && !trip.user_id) {
-            console.log('✅ Login: Found matching trip to claim');
-            // Update the trip with the user's ID
             const currentUser = await authService.getCurrentUser();
             if (currentUser) {
               await tripService.updateTrip({
@@ -74,19 +55,16 @@ export const Login: React.FC = () => {
               });
             }
           }
-          // Navigate to dashboard after claim attempt (whether successful or not)
           navigate('/');
         } catch (claimErr) {
-          console.error('❌ Login: Error claiming trip:', claimErr);
-          // Still navigate to dashboard even if claim fails
+          console.error('Login: Error claiming trip:', claimErr);
           navigate('/');
         }
       } else {
-        // Standard login flow without trip claiming
         navigate('/');
       }
     } catch (err: any) {
-      console.error('❌ Login: Error during login:', err);
+      console.error('Login: Error during login:', err);
       clearTimeout(loginTimeout);
       if (err.message && err.message.includes('confirm your email')) {
         setError('Please check your email and confirm your account before logging in.');
@@ -94,7 +72,6 @@ export const Login: React.FC = () => {
         setError('Invalid email or password');
       }
     } finally {
-      console.log('🔍 Login: Setting isLoading to false...');
       clearTimeout(loginTimeout);
       setIsLoading(false);
     }

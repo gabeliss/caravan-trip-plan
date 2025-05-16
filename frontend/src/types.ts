@@ -111,7 +111,7 @@ export interface Destination {
 }
 
 export interface TripDuration {
-  startDate?: Date;
+  startDate: Date;
   nights: number;
   guestCount: number;
 }

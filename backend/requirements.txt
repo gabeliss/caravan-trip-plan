@@ -7,3 +7,4 @@ sendgrid==6.10.0
 beautifulsoup4==4.12.2
 lxml==5.2.1
 supabase==2.15.1
+stripe==12.1.0

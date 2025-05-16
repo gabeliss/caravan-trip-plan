@@ -432,8 +432,10 @@
         "content": "The Cabins of Mackinac in Mackinaw City, Michigan, offer private cabins with hotel-quality amenities, located directly across from the Mackinac Island ferry docks",
         "bookingUrl": "https://ssl.mackinaw-city.com/newreservations/request.php?HotelId=13",
         "imageUrls": [
-          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/cabinsmack1.jpg",
-          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images/bookNorthernMichiganPage/cabinsmack2.jpg"
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/CabinsofMackinac1.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/CabinsofMackinac2.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/CabinsofMackinac3.jpg",
+          "https://caravan-bucket.s3.us-east-2.amazonaws.com/images-caravan/bookNorthernMichiganPage/CabinsofMackinac4.jpg"
         ],
         "offerings": "Cabin Rentals",
         "distanceToTown": "2 minutes from Mackinaw City",

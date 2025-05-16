@@ -74,16 +74,16 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
   }, []);
 
   const handleSelect = (date: Date | undefined) => {
-    if (date) {
-      if (isBefore(date, today)) {
-        setError('Please select a future date');
-        return;
-      }
-      setError(null);
-      setSelected(date);
-      onSelect(date, guestCount);
-      setShowCalendar(false);
+    if (!date) return;
+    
+    if (isBefore(date, today)) {
+      setError('Please select a future date');
+      return;
     }
+    setError(null);
+    setSelected(date);
+    onSelect(date, guestCount);
+    setShowCalendar(false);
   };
 
   const handleGuestSelect = (count: number) => {

@@ -292,7 +292,6 @@ export const TripGuidePages: React.FC<TripGuidePagesProps> = ({ trip, onBack }) 
       if (stay.campground.id === 'teepee-campground' && stay.campground.city && stay.campground.city.toLowerCase().includes('mackinac')) {
         try {
           enhancedData = (northernMichiganData as any)['mackinacCity']['teePeeCampground'];
-          console.log("Found data for teepee-campground using direct lookup:", enhancedData);
         } catch (directLookupError) {
           console.error("Direct lookup also failed:", directLookupError);
         }

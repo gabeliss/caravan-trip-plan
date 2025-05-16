@@ -38,7 +38,7 @@ interface StayGroup {
     name: string;
     imageUrl?: string;
   };
-  startDate?: Date;
+  startDate: Date;
 }
 
 export const TripConfirmation: React.FC<TripConfirmationProps> = ({

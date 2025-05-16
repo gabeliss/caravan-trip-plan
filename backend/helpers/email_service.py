@@ -13,7 +13,7 @@ def send_confirmation_email(
 ) -> dict:
     try:
         sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        from_email = Email(os.environ.get('SENDGRID_FROM_EMAIL'))
+        from_email = Email(os.environ.get('ADMIN_EMAIL'))
         subject = f"Your Caravan Trip Plan is Ready!"
 
         # Plain text fallback

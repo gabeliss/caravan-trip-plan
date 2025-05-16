@@ -40,19 +40,10 @@ export const DestinationSelectionPage: React.FC = () => {
   }, [startDate, numNights, navigate]);
 
   const handleDestinationSelect = (destinationId: string) => {
-    // Only allow selection of Northern Michigan
     if (destinationId === 'northern-michigan') {
       setSelectedDestination(destinationId);
       setFlowStage('campgrounds');
       
-      // Generate trip plan with availability data
-      console.log('Generating trip plan with params:', {
-        destinationId,
-        numNights,
-        startDate,
-        numAdults,
-        numKids
-      });
       generatePlan(
         destinationId,
         numNights,
