@@ -20,6 +20,47 @@ interface TripDetailsEditorProps {
   }) => void;
 }
 
+const useDropdownPosition = (buttonRef: React.RefObject<HTMLElement>) => {
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0, placement: 'bottom' });
+  
+  const updatePosition = () => {
+    if (!buttonRef.current) return;
+    
+    const rect = buttonRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    
+    const width = rect.width;
+    let placement = 'bottom';
+    
+    if (spaceBelow < 240 && spaceAbove > spaceBelow) {
+      placement = 'top';
+    }
+    
+    setPosition({
+      top: rect.bottom,
+      left: rect.left,
+      width,
+      placement
+    });
+  };
+  
+  useEffect(() => {
+    updatePosition();
+    
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [buttonRef]);
+  
+  return { position, updatePosition };
+};
+
 export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
   startDate,
   nights,
@@ -55,6 +96,11 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
   const guestDropdownRef = useRef<HTMLDivElement>(null);
   const nightsButtonRef = useRef<HTMLButtonElement>(null);
   const nightsDropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Get position data for dropdowns
+  const { position: guestPosition, updatePosition: updateGuestPosition } = useDropdownPosition(guestButtonRef);
+  const { position: nightsPosition, updatePosition: updateNightsPosition } = useDropdownPosition(nightsButtonRef);
+  const { position: calendarPosition, updatePosition: updateCalendarPosition } = useDropdownPosition(dateButtonRef);
   
   // State for tracking if any value has changed from initial
   const [hasChanges, setHasChanges] = useState<boolean>(false);
@@ -213,6 +259,7 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                         setShowGuestDropdown(!showGuestDropdown);
                         setShowNightsDropdown(false);
                         setShowCalendar(false);
+                        updateGuestPosition();
                       }}
                       className={`w-full flex items-center gap-2 px-4 py-3 border border-[#22342B]/20 bg-white rounded-lg hover:border-[#22342B]/40 transition-colors text-[#22342B] focus:outline-none focus:border-[#22342B] focus:ring-2 focus:ring-[#22342B]/20`}
                     >
@@ -223,15 +270,26 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                       <ChevronDown className="w-5 h-5 text-[#22342B]/60" />
                     </button>
 
-                    <AnimatePresence>
-                      {showGuestDropdown && (
+                    {showGuestDropdown && (
+                      <div className="fixed z-50" style={{ position: 'fixed', top: '0', left: '0', right: '0', bottom: '0', pointerEvents: 'none' }}>
                         <motion.div
                           ref={guestDropdownRef}
-                          initial={{ opacity: 0, y: -10 }}
+                          initial={{ opacity: 0, y: guestPosition.placement === 'top' ? 10 : -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-xl border border-[#22342B]/10 z-50 w-full"
-                          style={{ maxHeight: '240px', overflowY: 'auto' }}
+                          exit={{ opacity: 0, y: guestPosition.placement === 'top' ? 10 : -10 }}
+                          className="bg-white rounded-lg shadow-xl border border-[#22342B]/10"
+                          style={{
+                            position: 'fixed',
+                            width: guestPosition.width,
+                            maxHeight: '240px',
+                            overflowY: 'auto',
+                            pointerEvents: 'auto',
+                            [guestPosition.placement === 'top' ? 'bottom' : 'top']: 
+                              guestPosition.placement === 'top' 
+                                ? `calc(100vh - ${guestPosition.top}px)`
+                                : `${guestPosition.top}px`,
+                            left: `${guestPosition.left}px`,
+                          }}
                         >
                           <div className="py-1">
                             {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
@@ -247,8 +305,8 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                             ))}
                           </div>
                         </motion.div>
-                      )}
-                    </AnimatePresence>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -264,6 +322,7 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                         setShowNightsDropdown(!showNightsDropdown);
                         setShowGuestDropdown(false);
                         setShowCalendar(false);
+                        updateNightsPosition();
                       }}
                       className="w-full flex items-center gap-2 px-4 py-3 border border-[#22342B]/20 rounded-lg hover:border-[#22342B]/40 transition-colors text-[#22342B] focus:outline-none focus:border-[#22342B] focus:ring-2 focus:ring-[#22342B]/20 bg-white"
                     >
@@ -273,15 +332,26 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                       <ChevronDown className="w-5 h-5 text-[#22342B]/60" />
                     </button>
 
-                    <AnimatePresence>
-                      {showNightsDropdown && (
+                    {showNightsDropdown && (
+                      <div className="fixed z-50" style={{ position: 'fixed', top: '0', left: '0', right: '0', bottom: '0', pointerEvents: 'none' }}>
                         <motion.div
                           ref={nightsDropdownRef}
-                          initial={{ opacity: 0, y: -10 }}
+                          initial={{ opacity: 0, y: nightsPosition.placement === 'top' ? 10 : -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-xl border border-[#22342B]/10 z-50 w-full"
-                          style={{ maxHeight: '240px', overflowY: 'auto' }}
+                          exit={{ opacity: 0, y: nightsPosition.placement === 'top' ? 10 : -10 }}
+                          className="bg-white rounded-lg shadow-xl border border-[#22342B]/10"
+                          style={{
+                            position: 'fixed',
+                            width: nightsPosition.width,
+                            maxHeight: '240px',
+                            overflowY: 'auto',
+                            pointerEvents: 'auto',
+                            [nightsPosition.placement === 'top' ? 'bottom' : 'top']: 
+                              nightsPosition.placement === 'top' 
+                                ? `calc(100vh - ${nightsPosition.top}px)`
+                                : `${nightsPosition.top}px`,
+                            left: `${nightsPosition.left}px`,
+                          }}
                         >
                           <div className="py-1">
                             {Array.from({ length: maxNights }, (_, i) => i + 1).map(num => (
@@ -297,8 +367,8 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                             ))}
                           </div>
                         </motion.div>
-                      )}
-                    </AnimatePresence>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -314,6 +384,7 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                         setShowCalendar(!showCalendar);
                         setShowGuestDropdown(false);
                         setShowNightsDropdown(false);
+                        updateCalendarPosition();
                       }}
                       className="w-full flex items-center gap-2 px-4 py-3 border border-[#22342B]/20 rounded-lg hover:border-[#22342B]/40 transition-colors text-[#22342B] focus:outline-none focus:border-[#22342B] focus:ring-2 focus:ring-[#22342B]/20 bg-white"
                     >
@@ -324,15 +395,24 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                       <ChevronDown className="w-5 h-5 text-[#22342B]/60" />
                     </button>
 
-                    <AnimatePresence>
-                      {showCalendar && (
+                    {showCalendar && (
+                      <div className="fixed z-50" style={{ position: 'fixed', top: '0', left: '0', right: '0', bottom: '0', pointerEvents: 'none' }}>
                         <motion.div
                           ref={calendarRef}
-                          initial={{ opacity: 0, y: -10 }}
+                          initial={{ opacity: 0, y: calendarPosition.placement === 'top' ? 10 : -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-xl border border-[#22342B]/10 z-50"
-                          style={{ width: "100%", maxWidth: "320px" }}
+                          exit={{ opacity: 0, y: calendarPosition.placement === 'top' ? 10 : -10 }}
+                          className="bg-white rounded-lg shadow-xl border border-[#22342B]/10"
+                          style={{
+                            position: 'fixed',
+                            width: Math.max(calendarPosition.width, 320),
+                            pointerEvents: 'auto',
+                            [calendarPosition.placement === 'top' ? 'bottom' : 'top']: 
+                              calendarPosition.placement === 'top' 
+                                ? `calc(100vh - ${calendarPosition.top}px)`
+                                : `${calendarPosition.top}px`,
+                            left: `${calendarPosition.left}px`,
+                          }}
                         >
                           <DayPicker
                             mode="single"
@@ -365,18 +445,18 @@ export const TripDetailsEditor: React.FC<TripDetailsEditorProps> = ({
                             }}
                           />
                         </motion.div>
-                      )}
-                    </AnimatePresence>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
               
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div className="text-sm text-[#22342B]/80">
                   <span className="font-medium">{format(dateValue, 'MMM d, yyyy')}</span> - <span className="font-medium">{format(endDate, 'MMM d, yyyy')}</span> · <span className="font-medium">{guestCount}</span> total guests
                 </div>
                 <button
-                  className={`px-6 py-2.5 rounded-lg text-white font-medium transition-colors ${
+                  className={`w-full sm:w-auto px-6 py-2.5 rounded-lg text-white font-medium transition-colors ${
                     hasChanges
                       ? 'bg-[#194027] hover:bg-[#194027]/90'
                       : 'bg-gray-400 cursor-not-allowed'

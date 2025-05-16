@@ -109,10 +109,10 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
     if (campground === null) {
       if (currentStay) {
         for (let night = currentStay.startNight; night <= Math.min(currentStay.endNight, duration.nights); night++) {
-          updated[night - 1] = { campground: null, accommodationType: '' };
+          updated[night - 1] = { campground: null, accommodationType: '', price: 0 };
         }
       } else {
-        updated[selectedDay - 1] = { campground: null, accommodationType: '' };
+        updated[selectedDay - 1] = { campground: null, accommodationType: '', price: 0 };
       }
     } else {
       const currentCity = currentStay?.location || 'Unknown';
@@ -123,10 +123,10 @@ const TripPlanner: React.FC<TripPlannerProps> = ({
   
       if (currentStay) {
         for (let night = currentStay.startNight; night <= Math.min(currentStay.endNight, duration.nights); night++) {
-          updated[night - 1] = { campground: campgroundWithCity, accommodationType };
+          updated[night - 1] = { campground: campgroundWithCity, accommodationType, price: campgroundWithCity.price };
         }
       } else {
-        updated[selectedDay - 1] = { campground: campgroundWithCity, accommodationType };
+        updated[selectedDay - 1] = { campground: campgroundWithCity, accommodationType, price: campgroundWithCity.price };
       }
     }
   

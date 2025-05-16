@@ -79,22 +79,19 @@ export const TripOverviewPage: React.FC = () => {
     ...rawContent,
     highlights: rawContent.highlights.map(highlight => ({
       ...highlight,
-      icon: iconMap[highlight.iconName] || Mountain // Default to Mountain if icon not found
+      icon: iconMap[highlight.iconName] || Mountain
     }))
   } : undefined;
 
   const getHighlightImages = (highlight: Highlight): string[] => {
-    // First check for images array (like in Farm Club case)
     if (highlight.images && highlight.images.length > 0) {
       return highlight.images;
     }
     
-    // Then check for a single image property
     if (highlight.image) {
       return [highlight.image];
     }
     
-    // Fallback to a default image
     return ['https://images.unsplash.com/photo-1496545672447-f699b503d270?auto=format&fit=crop&q=80'];
   };
 
@@ -280,7 +277,7 @@ export const TripOverviewPage: React.FC = () => {
                         onMouseLeave={() => setIsHovering(prev => ({ ...prev, [index]: false }))}
                       >
                         <div className="relative group">
-                          <div className="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200">
+                          <div className="aspect-[4/5] rounded-xl overflow-hidden bg-gray-200">
                             <div className="relative w-full h-full">
                               {highlightImages.map((image, imageIndex) => (
                                 image.toLowerCase().endsWith('.mov') ? (
@@ -327,14 +324,15 @@ export const TripOverviewPage: React.FC = () => {
                                 {currentIndex + 1} / {highlightImages.length}
                               </div>
                             
-                              {/* Navigation buttons */}
+                              {/* Navigation buttons - Updated to use sheer arrow style */}
                               <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20">
                                 <button
                                   type="button"
                                   onClick={() => handlePrevImage(index)}
-                                  className="h-12 w-12 flex items-center justify-center bg-white border-2 border-[#194027] rounded-full shadow-lg hover:bg-[#f0f0f0] transition-colors"
+                                  className="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 shadow-md transition-colors duration-200"
+                                  aria-label="Previous image"
                                 >
-                                  <ChevronLeft className="w-8 h-8 text-[#194027]" />
+                                  <ChevronLeft className="w-6 h-6" />
                                 </button>
                               </div>
                               
@@ -342,9 +340,10 @@ export const TripOverviewPage: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => handleNextImage(index)}
-                                  className="h-12 w-12 flex items-center justify-center bg-white border-2 border-[#194027] rounded-full shadow-lg hover:bg-[#f0f0f0] transition-colors"
+                                  className="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 shadow-md transition-colors duration-200"
+                                  aria-label="Next image"
                                 >
-                                  <ChevronRight className="w-8 h-8 text-[#194027]" />
+                                  <ChevronRight className="w-6 h-6" />
                                 </button>
                               </div>
 
