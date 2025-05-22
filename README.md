@@ -148,4 +148,4 @@ This project is configured for easy deployment on Vercel:
    - `VITE_MAPBOX_TOKEN`: Your Mapbox API token
    - `VITE_STRIPE_PUBLISHABLE_KEY`: Your Stripe public key
 
-Note: The backend is not included in the Vercel deployment. You'll need to deploy the backend separately.
+Note: The backend is not included in the Vercel deployment. You'll need to deploy the backend separately
