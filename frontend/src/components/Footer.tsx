@@ -115,7 +115,7 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-beige/70 mt-0.5" />
-                <span className="text-beige/70 text-sm">(555) 123-4567</span>
+                <span className="text-beige/70 text-sm">(248) 904-7411</span>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-beige/70 mt-0.5" />
