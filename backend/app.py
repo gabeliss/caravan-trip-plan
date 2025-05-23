@@ -29,7 +29,15 @@ MAX_CONCURRENT_REQUESTS = 10
 app = Flask(__name__)
 
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
-CORS(app, resources={r"/api/*": {"origins": FRONTEND_URL}}, supports_credentials=True)
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "http://localhost:5173",
+            "https://caravan-trip-plan.vercel.app",
+            "https://www.caravantripplan.com"
+        ]
+    }
+}, supports_credentials=True)
 
 LAMBDA_BASE_URL = os.environ.get('AWS_API_URL', 'https://your-api-gateway-id.execute-api.us-east-1.amazonaws.com/dev')
 
