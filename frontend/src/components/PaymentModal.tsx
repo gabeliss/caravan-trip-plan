@@ -96,15 +96,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-xl shadow-xl max-w-2xl w-full"
+        className="bg-white rounded-xl shadow-xl max-w-2xl w-full my-8 max-h-[90vh] flex flex-col"
       >
-        <div className="border-b p-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Complete Your Trip Purchase</h2>
+        <div className="border-b p-4 md:p-6 flex items-center justify-between flex-shrink-0">
+          <h2 className="text-xl md:text-2xl font-bold">Complete Your Trip Purchase</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-beige/50 rounded-full transition-colors"
@@ -113,28 +113,28 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           </button>
         </div>
 
-        <div className="p-6">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-6">
+        <div className="p-4 md:p-6 overflow-y-auto flex-1">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+            <div className="space-y-4 md:space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-4">Your Trip Package Includes:</h3>
-                <ul className="space-y-4">
+                <h3 className="text-lg font-semibold mb-3 md:mb-4">Your Trip Package Includes:</h3>
+                <ul className="space-y-3 md:space-y-4">
                   <li className="flex items-start gap-3">
-                    <FileText className="w-5 h-5 text-primary-dark mt-1" />
+                    <FileText className="w-5 h-5 text-primary-dark mt-1 flex-shrink-0" />
                     <div>
                       <p className="font-medium">Interactive Trip Guide</p>
                       <p className="text-sm text-gray-600">Access your complete itinerary anytime</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
-                    <MapIcon className="w-5 h-5 text-primary-dark mt-1" />
+                    <MapIcon className="w-5 h-5 text-primary-dark mt-1 flex-shrink-0" />
                     <div>
                       <p className="font-medium">Curated Travel Routes</p>
                       <p className="text-sm text-gray-600">Optimized driving directions and stops</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-primary-dark mt-1" />
+                    <CheckCircle className="w-5 h-5 text-primary-dark mt-1 flex-shrink-0" />
                     <div>
                       <p className="font-medium">Instant Booking Access</p>
                       <p className="text-sm text-gray-600">Direct links to complete your reservations</p>
@@ -150,7 +150,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div className="bg-beige/20 p-4 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">Trip Guide Package</span>
