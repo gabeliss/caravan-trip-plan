@@ -225,14 +225,14 @@ export const TripConfirmation: React.FC<TripConfirmationProps> = ({
                     <div className="text-right space-y-1">
                       <div className="flex justify-between sm:justify-end gap-3 text-sm text-gray-700 whitespace-nowrap">
                         <span className="whitespace-nowrap">Trip Guide (charged now):</span>
-                        <span className="font-medium text-gray-900 whitespace-nowrap">$29.99</span>
+                        <span className="font-medium text-gray-900 whitespace-nowrap">$8.99</span>
                       </div>
                       <div className="flex justify-between sm:justify-end gap-3 text-sm text-gray-700 whitespace-nowrap">
                         <span className="whitespace-nowrap">Estimated Camping Fees:</span>
                         <span className="font-medium text-gray-900 whitespace-nowrap">${totalPrice.toFixed(2)}</span>
                       </div>
                       <div className="text-xl sm:text-2xl font-bold text-primary-dark pt-1">
-                        $29.99 due now
+                        $8.99 due now
                       </div>
                     </div>
                   </div>

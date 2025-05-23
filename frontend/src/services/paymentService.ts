@@ -68,7 +68,7 @@ export const paymentService = {
       status: {
         paid: true,
         transactionId: `tx_${Math.random().toString(36).substr(2, 9)}`,
-        amount: 29.99,
+        amount: 8.99,
         date: new Date().toISOString()
       },
       guideUrl: '/trip-guide.pdf',

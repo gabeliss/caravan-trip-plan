@@ -76,18 +76,6 @@ export const tripItineraries: Record<string, TripItinerary> = {
       'North Cascades': 'north-cascades'
     }
   },
-  'utah': {
-    id: 'utah',
-    name: 'Utah Parks Tour',
-    description: 'Visit the magnificent national parks of Utah',
-    stops: {}, // To be populated with Utah specific itinerary
-    cityScraperIds: {
-      'Zion': 'zion',
-      'Bryce Canyon': 'bryce-canyon',
-      'Arches': 'arches',
-      'Canyonlands': 'canyonlands'
-    }
-  },
   'smoky-mountains': {
     id: 'smoky-mountains',
     name: 'Smoky Mountains Journey',

@@ -153,15 +153,15 @@ export const AboutPage: React.FC = () => {
       {/* CTA Section */}
       <div className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-display text-[#22342B] mb-6">
+          <h2 className="text-4xl font-display text-[#DC7644] mb-6">
             Ready to Start Your Adventure?
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Join thousands of happy travelers who have discovered their perfect outdoor getaway with Caravan.
+            Discover how simple and stress-free outdoor travel can be with Caravan Trip Plan
           </p>
           <Link 
             to="/"
-            className="inline-flex items-center gap-2 bg-[#22342B] text-beige px-8 py-4 rounded-full hover:bg-[#22342B]/90 transition-colors text-lg"
+            className="inline-flex items-center gap-2 border border-[#194027] bg-white text-[#194027] px-8 py-4 rounded-full hover:bg-[#194027] hover:text-white transition-colors text-lg font-medium"
           >
             Plan Your Trip
             <ArrowRight className="w-5 h-5" />

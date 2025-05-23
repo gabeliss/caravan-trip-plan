@@ -249,7 +249,7 @@ export const CampgroundCard: React.FC<CampgroundCardProps> = ({
           <button
             className={`py-2 px-4 rounded font-medium transition-colors duration-200 ${
               isSelected
-                ? 'bg-emerald-600 text-white'
+                ? 'bg-secondary text-white'
                 : isLoading || isUnavailable
                   ? 'bg-gray-400 text-gray-100 cursor-not-allowed'
                   : 'bg-primary hover:bg-primary-dark text-beige'

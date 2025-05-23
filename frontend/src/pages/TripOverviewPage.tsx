@@ -320,7 +320,7 @@ export const TripOverviewPage: React.FC = () => {
                           {highlightImages.length > 1 && (
                             <>
                               {/* Image count indicator */}
-                              <div className="absolute top-4 right-4 bg-[#194027] text-white px-3 py-2 rounded-md text-sm font-medium z-10">
+                              <div className="absolute top-4 right-4 bg-beige/30 text-primary-dark px-3 py-2 rounded-md text-sm font-medium z-10">
                                 {currentIndex + 1} / {highlightImages.length}
                               </div>
                             
@@ -348,16 +348,16 @@ export const TripOverviewPage: React.FC = () => {
                               </div>
 
                               {/* Pagination dots */}
-                              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-black/30 px-3 py-2 rounded-full z-10">
+                              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex justify-center gap-2 z-10">
                                 {highlightImages.map((_, imageIndex) => (
                                   <button
                                     key={imageIndex}
                                     type="button"
                                     onClick={() => handleDotClick(index, imageIndex)}
-                                    className={`w-3 h-3 rounded-full transition-colors ${
+                                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
                                       currentIndex === imageIndex 
-                                        ? 'bg-white' 
-                                        : 'bg-white/40 hover:bg-white/60'
+                                        ? 'bg-primary w-6' 
+                                        : 'bg-gray-300 hover:bg-gray-400'
                                     }`}
                                     aria-label={`Go to image ${imageIndex + 1}`}
                                   />

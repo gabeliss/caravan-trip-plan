@@ -338,7 +338,7 @@ def create_checkout_session():
             line_items=[{
                 'price_data': {
                     'currency': 'usd',
-                    'unit_amount': 2999,  # $29.99 in cents
+                    'unit_amount': 899,  # $8.99 in cents
                     'product_data': {
                         'name': 'Trip Guide Package',
                     },

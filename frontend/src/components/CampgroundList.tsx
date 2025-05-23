@@ -23,7 +23,7 @@ export const CampgroundList: React.FC<CampgroundListProps> = ({
 }) => {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedSiteTypes, setSelectedSiteTypes] = useState<string[]>([]);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(true);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Get unique amenities from all campgrounds
   const allAmenities = Array.from(

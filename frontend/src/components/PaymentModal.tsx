@@ -45,7 +45,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [emailError, setEmailError] = useState<string | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
-  const tripGuidePrice = 29.99;
+  const tripGuidePrice = 8.99;
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 

@@ -76,23 +76,6 @@ TRIP_ITINERARIES = {
             {'city': 'north-cascades', 'nights': 1}
         ]
     },
-    'utah': {
-        3: [
-            {'city': 'zion', 'nights': 2},
-            {'city': 'bryce-canyon', 'nights': 1}
-        ],
-        5: [
-            {'city': 'zion', 'nights': 2},
-            {'city': 'bryce-canyon', 'nights': 1},
-            {'city': 'arches', 'nights': 2}
-        ],
-        7: [
-            {'city': 'zion', 'nights': 2},
-            {'city': 'bryce-canyon', 'nights': 1},
-            {'city': 'arches', 'nights': 2},
-            {'city': 'canyonlands', 'nights': 2}
-        ]
-    },
     'smoky-mountains': {
         3: [
             {'city': 'gatlinburg', 'nights': 2},

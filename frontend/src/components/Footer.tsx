@@ -1,26 +1,8 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import { useTripPlan } from '../context/TripPlanContext';
-
-// TikTok icon as an SVG component since it's not included in lucide-react
-const TikTokIcon = () => (
-  <svg 
-    viewBox="0 0 24 24" 
-    width="20" 
-    height="20" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    fill="none" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <path d="M9 12a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
-    <path d="M16 8v8a5 5 0 0 1-5 5h0a5 5 0 0 1-5-5v0a5 5 0 0 1 5-5h3" />
-    <path d="M22 2v7a1 1 0 0 1-1 1h0a1 1 0 0 1-1-1V5h-6" />
-    <path d="M15 8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h3z" />
-  </svg>
-);
+import { FaTiktok, FaInstagram } from 'react-icons/fa';
 
 interface NavLinkProps {
   to: string;
@@ -65,17 +47,11 @@ export const Footer: React.FC = () => {
               Your ultimate road trip companion for hassle-free outdoor experiences.
             </p>
             <div className="flex space-x-4">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-beige/70 hover:text-beige transition-colors" aria-label="Instagram">
-                <Instagram className="w-5 h-5" />
+              <a href="https://instagram.com/caravantripplan" target="_blank" rel="noopener noreferrer" className="text-beige/70 hover:text-beige transition-colors" aria-label="Instagram">
+                <FaInstagram className="w-5 h-5" />
               </a>
-              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="text-beige/70 hover:text-beige transition-colors" aria-label="TikTok">
-                <TikTokIcon />
-              </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-beige/70 hover:text-beige transition-colors" aria-label="Facebook">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-beige/70 hover:text-beige transition-colors" aria-label="Twitter">
-                <Twitter className="w-5 h-5" />
+              <a href="https://www.tiktok.com/@caravan.trip.plan" target="_blank" rel="noopener noreferrer" className="text-beige/70 hover:text-beige transition-colors" aria-label="TikTok">
+                <FaTiktok className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -84,16 +60,6 @@ export const Footer: React.FC = () => {
           <div className="col-span-1">
             <h3 className="font-display text-beige text-lg mb-4">Explore</h3>
             <ul className="space-y-2">
-              <li>
-                <NavLink to="/" className="text-beige/70 hover:text-beige transition-colors text-sm">
-                  Book a Trip
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/about" className="text-beige/70 hover:text-beige transition-colors text-sm">
-                  About Us
-                </NavLink>
-              </li>
               <li>
                 <NavLink to="/destinations/northern-michigan" className="text-beige/70 hover:text-beige transition-colors text-sm">
                   Northern Michigan
@@ -109,6 +75,16 @@ export const Footer: React.FC = () => {
                   Washington
                 </NavLink>
               </li>
+              <li>
+                <NavLink to="/destinations/smoky-mountains" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                  Smoky Mountains
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/destinations/southern-california" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                  Southern California
+                </NavLink>
+              </li>
             </ul>
           </div>
           
@@ -117,29 +93,14 @@ export const Footer: React.FC = () => {
             <h3 className="font-display text-beige text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-beige/70 hover:text-beige transition-colors text-sm">
-                  Travel Blog
-                </a>
+                <NavLink to="/about" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                  About Us
+                </NavLink>
               </li>
               <li>
-                <a href="#" className="text-beige/70 hover:text-beige transition-colors text-sm">
-                  Camping Guides
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-beige/70 hover:text-beige transition-colors text-sm">
-                  Gear Reviews
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-beige/70 hover:text-beige transition-colors text-sm">
-                  Trip Planning Tips
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-beige/70 hover:text-beige transition-colors text-sm">
-                  FAQ
-                </a>
+                <NavLink to="/dashboard" className="text-beige/70 hover:text-beige transition-colors text-sm">
+                  My Trips
+                </NavLink>
               </li>
             </ul>
           </div>
