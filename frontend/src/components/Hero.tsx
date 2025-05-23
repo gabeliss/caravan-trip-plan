@@ -464,9 +464,102 @@ const Hero: React.FC<HeroProps> = ({ duration, setDuration, onDateSelect }) => {
           </div>
         </div>
       </section>
+
+      {/* Email Signup Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl font-bold text-[#194027] mb-4">
+              Be the first to know
+            </h2>
+            <p className="text-lg text-[#194027]/80 mb-8 max-w-2xl mx-auto">
+              Get notified when we launch new destinations and exclusive early access to trip planning features.
+            </p>
+            
+            <EmailSignupForm />
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 }
+
+const EmailSignupForm: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    setMessage('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/early-signups`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          source_page: 'homepage'
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus('success');
+        setMessage('Thanks! We\'ll keep you updated.');
+        setEmail('');
+      } else {
+        setStatus('error');
+        setMessage(data.error || 'Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      setStatus('error');
+      setMessage('Network error. Please try again.');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#194027] focus:border-transparent"
+          required
+          disabled={status === 'loading'}
+        />
+        <button
+          type="submit"
+          disabled={status === 'loading'}
+          className="px-6 py-3 bg-[#194027] text-white rounded-lg hover:bg-[#194027]/90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+        >
+          {status === 'loading' ? 'Saving...' : 'Notify Me'}
+        </button>
+      </div>
+      
+      {message && (
+        <p className={`mt-3 text-sm ${
+          status === 'success' ? 'text-green-600' : 'text-red-600'
+        }`}>
+          {message}
+        </p>
+      )}
+    </form>
+  );
+};
 
 export default Hero;
 

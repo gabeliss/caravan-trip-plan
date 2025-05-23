@@ -468,6 +468,43 @@ def redeem_checkout_session():
         logger.error(f"Error redeeming checkout session: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
+@app.route('/api/early-signups', methods=['POST', 'OPTIONS'])
+def create_early_signup():
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        data = request.get_json()
+        email = data.get('email', '').strip().lower()
+        
+        if not email:
+            return jsonify({'error': 'Email is required'}), 400
+        
+        # Basic email validation
+        import re
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, email):
+            return jsonify({'error': 'Invalid email format'}), 400
+        
+        # Insert into early_signups table
+        response = supabase.table('early_signups').insert({
+            'email': email,
+            'source_page': data.get('source_page', 'homepage')
+        }).execute()
+        
+        if not response or not response.data:
+            return jsonify({'error': 'Failed to save email'}), 500
+        
+        return jsonify({'message': 'Email saved successfully'}), 200
+        
+    except Exception as e:
+        # Handle duplicate email error gracefully
+        if 'duplicate key value violates unique constraint' in str(e):
+            return jsonify({'message': 'Email already registered'}), 200
+        
+        logger.error(f"Error saving early signup: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
     app.run(host='0.0.0.0', port=port) 
